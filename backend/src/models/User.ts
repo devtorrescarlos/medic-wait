@@ -11,23 +11,34 @@ export enum UserRole {
 export default class User extends Model {
     @PrimaryKey
     @Column({ type: DataType.UUID, defaultValue: () => uuidv4() })
-    id!: string;
+    declare id: string;
 
     @Column({ type: DataType.STRING, allowNull: false, unique: true })
-    email!: string;
+    declare email: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
-    password!: string;
+    declare password: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
-    fullName!: string;
+    declare fullName: string;
 
     @Column({
         type: DataType.ENUM(...Object.values(UserRole)),
         defaultValue: UserRole.PATIENT
     })
-    role!: UserRole;
+    declare role: UserRole;
 
     @Column({ type: DataType.BOOLEAN, defaultValue: true })
-    is_active!: boolean;
+    declare is_active: boolean;
+
+    @Column({
+        type: DataType.STRING(6),
+    })
+    declare token: string
+
+    @Column({ type: DataType.BOOLEAN, defaultValue: false })
+    declare is_email_verified: boolean;
+
+    @Column({ type: DataType.BOOLEAN, defaultValue: false })
+    declare is_approved_by_admin: boolean;
 }

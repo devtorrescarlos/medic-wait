@@ -7,32 +7,32 @@ import Appointment from './Appointment';
 export default class MedicalRecord extends Model {
   @PrimaryKey
   @Column({ type: DataType.UUID, defaultValue: () => uuidv4() })
-  id!: string;
+  declare id: string;
 
   @ForeignKey(() => Appointment)
   @Column({ type: DataType.UUID, allowNull: false })
-  appointment_id!: string;
+  declare appointment_id: string;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID, allowNull: false })
-  patient_id!: string;
+  declare patient_id: string;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID, allowNull: false })
-  doctor_id!: string;
+  declare doctor_id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  initial_diagnosis!: string;
+  declare initial_diagnosis: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  treatment_plan!: string;
+  declare treatment_plan: string;
 
   @BelongsTo(() => Appointment)
-  appointment!: Appointment;
+  declare appointment: Appointment;
 
   @BelongsTo(() => User, 'patient_id')
-  patient!: User;
+  declare patient: User;
 
   @BelongsTo(() => User, 'doctor_id')
-  doctor!: User;
+  declare doctor: User;
 }
