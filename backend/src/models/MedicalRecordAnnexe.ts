@@ -13,28 +13,28 @@ export enum MedicalRecordAnnexeType {
 export default class MedicalRecordAnnexe extends Model {
   @PrimaryKey
   @Column({ type: DataType.UUID, defaultValue: () => uuidv4() })
-  id!: string;
+  declare id: string;
 
   @ForeignKey(() => MedicalRecord)
   @Column({ type: DataType.UUID, allowNull: false })
-  medical_record_id!: string;
+  declare medical_record_id: string;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID, allowNull: false })
-  doctor_id!: string;
+  declare doctor_id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  content!: string;
+  declare content: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(MedicalRecordAnnexeType)),
     allowNull: false
   })
-  type!: MedicalRecordAnnexeType;
+  declare type: MedicalRecordAnnexeType;
 
   @BelongsTo(() => MedicalRecord)
-  medicalRecord!: MedicalRecord;
+  declare medicalRecord: MedicalRecord;
 
   @BelongsTo(() => User, 'doctor_id')
-  doctor!: User;
+  declare doctor: User;
 }

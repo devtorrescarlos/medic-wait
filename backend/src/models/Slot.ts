@@ -5,17 +5,17 @@ import { v4 as uuidv4 } from 'uuid';
 export default class Slot extends Model {
   @PrimaryKey
   @Column({ type: DataType.UUID, defaultValue: () => uuidv4() })
-  id!: string;
+  declare id: string;
 
   @Column({ type: DataType.DATE, allowNull: false })
-  start_time!: Date;
+  declare start_time: Date;
 
   @Column({ type: DataType.DATE, allowNull: false })
-  end_time!: Date;
+  declare end_time: Date;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
-  is_available!: boolean;
+  declare is_available: boolean;
 
   @Column({ type: DataType.INTEGER, defaultValue: 0 })
-  version!: number;
+  declare version: number;
 }
