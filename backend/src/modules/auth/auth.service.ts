@@ -1,13 +1,12 @@
 import User, { UserRole } from "../../models/User"
 import type { registerData, loginData } from "../../types/auth.types"
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
-import { generateToken } from "../../utils/token";
 import { sendVerificationEmail, sendForgotPasswordEmail } from "../../emails";
-import { generateJWT } from "../../utils/jwt";
+import { generateJWT, generateVerificationJWT, verifyVerificationJWT } from "../../utils/jwt";
 
 
 export const register = async (userData: registerData) => {
-    const { email, password, fullName, role } = userData;
+    const { email, password, fullName, role, specialty } = userData;
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
@@ -23,16 +22,15 @@ export const register = async (userData: registerData) => {
         email,
         password: hashedPassword,
         fullName,
-        role
+        role,
+        specialty
     })
 
-    const token = generateToken();
-    user.token = token;
-    await user.save();
+    const token = generateVerificationJWT(user.id);
 
-    sendVerificationEmail(email, token);
+    await sendVerificationEmail(email, token);
 
-    return;
+    return token;
 }
 
 export const login = async (userData: loginData) => {
@@ -75,25 +73,28 @@ export const login = async (userData: loginData) => {
     return token;
 }
 
-export const confirmAccount = async (token: string) => {
-    const user = await User.findOne({ where: { token } });
+export const resendConfirmationEmail = async (email: string) => {
+    const user = await User.findOne({ where: { email } });
 
-    if (!user) {
-        throw {
-            status: 401,
-            message: "Token no válido"
+    if (user) {
+        if (user.is_email_verified) {
+            throw {
+                status: 400,
+                message: "Usuario ya verificado"
+            }
         }
-    }
 
-    user.is_email_verified = true;
-    user.token = "";
-    await user.save();
+        const token = generateVerificationJWT(user.id);
+        await sendVerificationEmail(email, token);
+    }
 
     return;
 }
 
-export const forgotPassword = async (email: string) => {
-    const user = await User.findOne({ where: { email } });
+export const confirmAccount = async (token: string) => {
+
+    const decoded = verifyVerificationJWT(token);
+    const user = await User.findByPk(decoded.id);
 
     if (!user) {
         throw {
@@ -102,17 +103,33 @@ export const forgotPassword = async (email: string) => {
         }
     }
 
-    const token = generateToken();
-    user.token = token;
-    await user.save();
+    if (user.is_email_verified) {
+        throw {
+            status: 400,
+            message: "Usuario ya verificado"
+        }
+    }
 
-    sendForgotPasswordEmail(email, token);
+    user.is_email_verified = true;
+    await user.save();
 
     return;
 }
 
+export const forgotPassword = async (email: string) => {
+    const user = await User.findOne({ where: { email } });
+
+    if (user) {
+        const token = generateVerificationJWT(user.id);
+        await sendForgotPasswordEmail(email, token);
+    }
+
+    return "Si el correo existe, recibirás un enlace de recuperación";
+}
+
 export const verifyToken = async (token: string) => {
-    const user = await User.findOne({ where: { token } });
+    const decoded = verifyVerificationJWT(token);
+    const user = await User.findByPk(decoded.id);
 
     if (!user) {
         throw {
@@ -125,7 +142,8 @@ export const verifyToken = async (token: string) => {
 }
 
 export const resetPasswordWithToken = async (token: string, password: string) => {
-    const user = await User.findOne({ where: { token } });
+    const decoded = verifyVerificationJWT(token);
+    const user = await User.findByPk(decoded.id);
 
     if (!user) {
         throw {
@@ -136,7 +154,6 @@ export const resetPasswordWithToken = async (token: string, password: string) =>
 
     const hashedPassword = await hashPassword(password);
     user.password = hashedPassword;
-    user.token = "";
     await user.save();
 
     return;

@@ -7,6 +7,17 @@ export enum UserRole {
     ADMIN = 'admin',
 }
 
+export enum DoctorSpecialty {
+    GENERAL = "general",
+    CARDIOLOGY = "cardiology",
+    DERMATOLOGY = "dermatology",
+    PEDIATRICS = "pediatrics",
+    GYNECOLOGY = "gynecology",
+    ORTHOPEDICS = "orthopedics",
+    NEUROLOGY = "neurology",
+    PSYCHIATRY = "psychiatry"
+}
+
 @Table({ tableName: 'users' })
 export default class User extends Model {
     @PrimaryKey
@@ -28,13 +39,13 @@ export default class User extends Model {
     })
     declare role: UserRole;
 
+    @Column({
+        type: DataType.ENUM(...Object.values(DoctorSpecialty)),
+    })
+    declare specialty: DoctorSpecialty;
+
     @Column({ type: DataType.BOOLEAN, defaultValue: true })
     declare is_active: boolean;
-
-    @Column({
-        type: DataType.STRING(6),
-    })
-    declare token: string
 
     @Column({ type: DataType.BOOLEAN, defaultValue: false })
     declare is_email_verified: boolean;
