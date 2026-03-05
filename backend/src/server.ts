@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import db from "./config/database";
 import authRoutes from "./modules/auth/auth.routes";
 
@@ -15,6 +16,11 @@ const connectDB = async () => {
 connectDB();
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true
+}));
 
 app.use(express.json());
 

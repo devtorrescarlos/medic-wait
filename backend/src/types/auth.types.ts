@@ -1,4 +1,4 @@
-import { UserRole } from "../models/User";
+import { DoctorSpecialty, UserRole } from "../models/User";
 
 export type registerData = {
     email: string,
@@ -6,7 +6,8 @@ export type registerData = {
     fullName: string,
     is_active?: boolean,
     token?: string,
-    role?: UserRole
+    role?: UserRole,
+    specialty?: DoctorSpecialty
 }
 
 export type registerWithRole = registerData & {

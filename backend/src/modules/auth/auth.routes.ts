@@ -3,8 +3,11 @@ import { body, param } from "express-validator";
 import * as AuthController from "./auth.controller";
 import { handleInputErrors } from "../../middlewares/validation";
 import { authenticate } from "../../middlewares/auth";
+import { limiter } from "../../config/limiter";
 
 const router = Router();
+
+router.use(limiter);
 
 router.post("/register",
     body("email")
@@ -33,14 +36,19 @@ router.post("/login",
     handleInputErrors,
     AuthController.login);
 
-router.post("/confirm-account",
-    body("token")
-        .isLength({
-            min: 6,
-        })
-        .withMessage("Token no válido"),
+router.post("/confirm-account/:token",
+    param("token")
+        .notEmpty()
+        .withMessage("El Token no puede ir vacío"),
     handleInputErrors,
     AuthController.confirmAccount);
+
+router.post("/verify-token/:token",
+    param("token")
+        .notEmpty()
+        .withMessage("El Token no puede ir vacío"),
+    handleInputErrors,
+    AuthController.verifyToken);
 
 router.post('/forgot-password',
     body("email")
@@ -49,28 +57,22 @@ router.post('/forgot-password',
     handleInputErrors,
     AuthController.forgotPassword)
 
-router.post('/verify-token',
-    body("token")
-        .isLength({
-            min: 6,
-        })
-        .withMessage("Token no válido"),
-    handleInputErrors,
-    AuthController.verifyToken)
-
 router.post('/reset-password/:token',
     param("token")
         .notEmpty()
-        .withMessage("El Token no puede ir vacío")
-        .isLength({
-            min: 6,
-        })
-        .withMessage("Token no válido"),
+        .withMessage("El Token no puede ir vacío"),
     body("password")
         .isLength({ min: 6 })
         .withMessage("Password debe tener al menos 6 caracteres"),
     handleInputErrors,
     AuthController.resetPasswordWithToken)
+
+router.post("/resend-confirmation-email",
+    body("email")
+        .isEmail()
+        .withMessage("E-Mail no válido"),
+    handleInputErrors,
+    AuthController.resendConfirmationEmail)
 
 router.get('/user', authenticate, AuthController.getUser)
 // TODO: UPDATE PASSWORD WHEN USER IS LOGGED IN
