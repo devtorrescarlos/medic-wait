@@ -5,11 +5,13 @@ import type { RegisterForm, LoginForm } from "../types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
+import { decodeJWT } from "../utils/jwt";
 
 
 
 export const useAuth = () => {
 
+    const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
@@ -45,7 +47,10 @@ export const useAuth = () => {
         onSuccess: (data) => {
             localStorage.setItem("token", data.token);
             toast.success(data.message);
-            navigate("/dashboard");
+            setUser(data.user);
+            const decoded = decodeJWT(data.token);
+            const role = decoded?.role || 'patient';
+            navigate(`/dashboard/${role}`);
         },
         onSettled: () => {
             setIsLoading(false);

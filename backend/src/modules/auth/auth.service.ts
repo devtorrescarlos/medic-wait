@@ -68,7 +68,7 @@ export const login = async (userData: loginData) => {
         }
     }
 
-    const token = generateJWT(user.id);
+    const token = generateJWT(user.id, user.role);
 
     return token;
 }

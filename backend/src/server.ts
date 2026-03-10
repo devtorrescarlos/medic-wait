@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import db from "./config/database";
 import authRoutes from "./modules/auth/auth.routes";
+import slotsRoutes from "./modules/slots/slots.routes";
 
 const connectDB = async () => {
     try {
@@ -24,8 +25,9 @@ app.use(cors({
 
 app.use(express.json());
 
-// REST APi
+// API ROUTES
 app.use("/api/auth", authRoutes);
+app.use("/api/slots", slotsRoutes);
 
 app.get("/", (req, res) => {
     res.json("OK!")

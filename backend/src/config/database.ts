@@ -1,15 +1,16 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const db = new Sequelize(
-    process.env.DB_NAME!,
-    process.env.DB_USER!,
-    process.env.DB_PASSWORD!,
+    process.env.POSTGRES_DB!,
+    process.env.POSTGRES_USER!,
+    process.env.POSTGRES_PASSWORD!,
     {
-        host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT),
+        host: process.env.POSTGRES_HOST,
+        port: Number(process.env.POSTGRES_PORT),
         dialect: "postgres",
         logging: false,
         models: [__dirname + '/../models/**/*']

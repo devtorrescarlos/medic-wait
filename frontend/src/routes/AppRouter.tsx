@@ -7,6 +7,10 @@ import ConfirmAccountPage from '../pages/auth/ConfirmAccount'
 import ForgotPasswordPage from '../pages/auth/ForgotPassword'
 import ResendConfirmationEmailPage from '../pages/auth/ResendConfirmationEmail'
 import ResetPasswordPage from '../pages/auth/ResetPassword'
+import ProtectedRoute from './ProtectedRoute'
+import DoctorDashboardPage from '../pages/dashboard/DoctorDashboard'
+import DashboardLayout from '../layouts/DashboardLayout'
+
 
 function AppRouter() {
   return (
@@ -21,6 +25,14 @@ function AppRouter() {
         <Route path="resend-confirmation-email" element={<ResendConfirmationEmailPage />} />
         <Route path="reset-password/:token" element={<ResetPasswordPage />} />
       </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["doctor"]} />}>
+        <Route path="dashboard/doctor" element={<DashboardLayout />}>
+          <Route index element={<DoctorDashboardPage />} />
+        </Route>
+      </Route>
+
+
     </Routes>
   )
 }

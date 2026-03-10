@@ -1,0 +1,27 @@
+services:
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: medic_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+  redis_cache:
+    image: redis:7-alpine
+    container_name: medic_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - medic_network
+
+networks:
+  medic_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
