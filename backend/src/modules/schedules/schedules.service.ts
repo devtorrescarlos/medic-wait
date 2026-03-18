@@ -1,6 +1,6 @@
 import DoctorSchedule from "../../models/DoctorSchedule";
 import { Op } from "sequelize";
-import { format, addDays, startOfDay, addMinutes } from "date-fns";
+import { format, addDays, startOfDay, addMinutes, parseISO } from "date-fns";
 import redisClient from "../../config/redis";
 import Slot from "../../models/Slot";
 import { ScheduleData } from "../../types/schedules.types";
@@ -32,14 +32,10 @@ export const createScheduleAndGenerateSlots = async (doctorId: string, scheduleD
 
     const slotsCreated = await generateSlotsForSchedule(doctorId, schedule);
 
-    const keys = await redisClient.keys(`slots:${doctorId}:*`);
-    if (keys.length > 0) await redisClient.del(keys);
-    await redisClient.del(`slots:available:${doctorId}`);
-
     return { schedule, slotsGenerated: slotsCreated };
 };
 
-export const generateSlotsForSchedule = async (doctorId: string, schedule: DoctorSchedule) => {
+const generateSlotsForSchedule = async (doctorId: string, schedule: DoctorSchedule) => {
     const [startH, startM] = schedule.start_time.split(':').map(Number);
     const [endH, endM] = schedule.end_time.split(':').map(Number);
     const dayName = schedule.day_of_week.toLowerCase();
@@ -125,7 +121,13 @@ export const deleteScheduleAndSlots = async (doctorId: string, scheduleId: strin
     });
 
     const idsToDelete = availableSlots
-        .filter(slot => slot.date && format(new Date(slot.date), 'eeee').toLowerCase() === dayToDelete)
+        .filter(slot => {
+            if (!slot.date) return false;
+            const dateObj = parseISO(slot.date);
+            const slotDayName = format(dateObj, 'EEEE').toLowerCase();
+
+            return slotDayName === dayToDelete;
+        })
         .map(s => s.id);
 
     if (idsToDelete.length > 0) {
