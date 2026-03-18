@@ -1,14 +1,11 @@
-import { Request, Response } from "express"
-import * as generateSlotsService from "./slots.service"
+import { Request, Response } from "express";
+import * as slotsService from "./slots.service";
 
-export const generateSlots = async (req: Request, res: Response) => {
-
-    const { startTime, endTime, durationMinutes } = req.body;
-    const doctorId = req.doctorId;
-
+export const getSlots = async (req: Request, res: Response) => {
     try {
-        const slots = await generateSlotsService.generateSlots({ startTime, endTime, durationMinutes, doctorId: doctorId! });
-        res.status(201).json({ message: `${slots.length} slots generados con éxito.`, slots });
+        const doctorId = req.doctorId;
+        const slots = await slotsService.getSlots(doctorId!);
+        res.json(slots);
     } catch (error: any) {
         if (error.status) {
             return res.status(error.status).json({ message: error.message });
@@ -18,37 +15,10 @@ export const generateSlots = async (req: Request, res: Response) => {
 }
 
 export const getAvailableSlots = async (req: Request, res: Response) => {
-    const { doctorId } = req.params;
-
     try {
-        const slots = await generateSlotsService.getAvailableSlots(doctorId as string);
-        res.status(200).json({ message: `${slots.length} slots disponibles.`, slots });
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
-    }
-
-}
-
-export const updateSlotsById = async (req: Request, res: Response) => {
-    const { slotId } = req.params;
-    const { startTime, endTime } = req.body;
-    const doctorId = req.doctorId;
-
-    try {
-        const newStartTime = new Date(startTime);
-        const newEndTime = new Date(endTime);
-
-        const slot = await generateSlotsService.updateSlotsById(
-            slotId as string,
-            doctorId!,
-            newStartTime,
-            newEndTime
-        );
-
-        res.status(200).json({ message: "Slot actualizado exitosamente.", slot });
+        const doctorId = req.params.doctorId;
+        const availableSlots = await slotsService.getAvailableSlots(doctorId as string);
+        res.json(availableSlots);
     } catch (error: any) {
         if (error.status) {
             return res.status(error.status).json({ message: error.message });
@@ -57,12 +27,12 @@ export const updateSlotsById = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteSlots = async (req: Request, res: Response) => {
-    const { doctorId } = req.params;
-
+export const deleteSlot = async (req: Request, res: Response) => {
     try {
-        const slots = await generateSlotsService.deleteSlots(doctorId as string);
-        res.status(200).json({ message: `${slots.length} slots eliminados con éxito.`, slots });
+        const doctorId = req.doctorId;
+        const slotId = req.params.slotId;
+        const deletedSlot = await slotsService.deleteSlot(slotId as string, doctorId!);
+        res.json(deletedSlot);
     } catch (error: any) {
         if (error.status) {
             return res.status(error.status).json({ message: error.message });
@@ -71,13 +41,13 @@ export const deleteSlots = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteSlotsById = async (req: Request, res: Response) => {
-    const { slotId } = req.params;
-    const doctorId = req.doctorId;
-
+export const updateSlot = async (req: Request, res: Response) => {
     try {
-        const slot = await generateSlotsService.deleteSlotsById(slotId as string, doctorId!);
-        res.status(200).json({ message: "Slot eliminado exitosamente.", slot });
+        const doctorId = req.doctorId;
+        const slotId = req.params.slotId;
+        const { start_time, end_time } = req.body;
+        const updatedSlot = await slotsService.updateSlot(slotId as string, doctorId!, start_time, end_time);
+        res.json(updatedSlot);
     } catch (error: any) {
         if (error.status) {
             return res.status(error.status).json({ message: error.message });

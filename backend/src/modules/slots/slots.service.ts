@@ -1,199 +1,152 @@
 import Slot from "../../models/Slot";
-import { Op } from "sequelize";
 import redisClient from "../../config/redis";
-import { slotData } from "../../types/slots.types";
+import { parse } from "date-fns";
 
-export const generateSlots = async (slotData: slotData) => {
-    const startDate = new Date(slotData.startTime);
-    const endDate = new Date(slotData.endTime);
-
-    const existingSlots = await Slot.findAll({
-        where: {
-            doctor_id: slotData.doctorId,
-            [Op.or]: [
-                {
-                    start_time: {
-                        [Op.lt]: endDate
-                    },
-                    end_time: {
-                        [Op.gt]: startDate
-                    }
-                }
-            ]
-        }
-    });
-
-    if (existingSlots.length > 0) {
-        throw {
-            status: 409,
-            message: "Ya existen horarios registrados en este rango de tiempo"
-        }
+const invalidateDoctorSlotsCache = async (doctorId: string): Promise<void> => {
+    const pattern = `slots:${doctorId}:*`;
+    const keys = await redisClient.keys(pattern);
+    if (keys.length > 0) {
+        await redisClient.del(keys);
     }
+    await redisClient.del(`slots:available:${doctorId}`);
+};
 
-    let slots = [];
-    let currentPointer = new Date(slotData.startTime);
-    const endPointer = new Date(slotData.endTime);
+const parseTimeString = (timeStr: string, referenceDate: Date): Date => {
+    return parse(timeStr, "HH:mm", referenceDate);
+};
 
-    while (currentPointer < endPointer) {
-        let slotEnd = new Date(currentPointer.getTime() + slotData.durationMinutes * 60000);
-
-        if (slotEnd <= endPointer) {
-            slots.push({
-                doctor_id: slotData.doctorId,
-                start_time: new Date(currentPointer),
-                end_time: slotEnd,
-                is_available: true,
-                version: 1
-            });
-        }
-
-        currentPointer = slotEnd;
-    }
-
-    await Slot.bulkCreate(slots)
-
-    return slots;
-}
 
 export const getAvailableSlots = async (doctorId: string) => {
-    const cacheKey = `slots:available:${doctorId}`;
+    const cachedAvailableSlots = await redisClient.get(`slots:available:${doctorId}`);
 
-    const cachedSlots = await redisClient.get(cacheKey);
+    if (cachedAvailableSlots) {
+        return JSON.parse(cachedAvailableSlots);
+    }
 
+    const availableSlots = await Slot.findAll({
+        where: {
+            doctor_id: doctorId,
+            is_available: true
+        }
+    })
+
+    if (!availableSlots) {
+        throw {
+            status: 404,
+            message: "No se encontraron slots disponibles"
+        }
+    }
+
+    await redisClient.set(`slots:available:${doctorId}`, JSON.stringify(availableSlots), {
+        EX: 3600
+    });
+
+    return availableSlots;
+}
+
+export const getSlots = async (doctorId: string) => {
+
+    const cachedSlots = await redisClient.get(`slots:${doctorId}`);
     if (cachedSlots) {
         return JSON.parse(cachedSlots);
     }
 
     const slots = await Slot.findAll({
         where: {
-            doctor_id: doctorId,
-            is_available: true
-        }
-    });
-
-    if (slots.length > 0) {
-        await redisClient.set(cacheKey, JSON.stringify(slots), {
-            EX: 600
-        });
-    }
-
-    return slots;
-}
-
-export const updateSlotsById = async (slotId: string, doctorId: string, newStartTime: Date, newEndTime: Date) => {
-    const slot = await Slot.findByPk(slotId);
-
-    if (!slot) {
-        throw {
-            status: 404,
-            message: "Slot no encontrado"
-        };
-    }
-
-    if (slot.doctor_id !== doctorId) {
-        throw {
-            status: 403,
-            message: "No tienes permiso para editar este slot"
-        };
-    }
-
-    if (!slot.is_available) {
-        throw {
-            status: 409,
-            message: "No puedes editar un slot que no está disponible. Primero debes cancelarlo."
-        };
-    }
-
-    const existingSlots = await Slot.findAll({
-        where: {
-            doctor_id: doctorId,
-            id: { [Op.ne]: slotId },
-            [Op.or]: [
-                {
-                    start_time: {
-                        [Op.lt]: newEndTime
-                    },
-                    end_time: {
-                        [Op.gt]: newStartTime
-                    }
-                }
-            ]
-        }
-    });
-
-    if (existingSlots.length > 0) {
-        throw {
-            status: 409,
-            message: "Ya existen horarios registrados en este nuevo rango de tiempo"
-        };
-    }
-
-    await slot.update({
-        start_time: newStartTime,
-        end_time: newEndTime,
-        version: slot.version + 1
-    });
-
-    return slot;
-}
-
-export const deleteSlots = async (doctorId: string) => {
-    const slots = await Slot.findAll({
-        where: {
             doctor_id: doctorId
         }
-    });
-
-    if (slots.length === 0) {
+    })
+    if (!slots) {
         throw {
             status: 404,
-            message: "No se encontraron slots para eliminar"
-        };
-    }
-
-    const slotsAreAvailable = slots.every(slot => slot.is_available);
-
-    if (slotsAreAvailable) {
-        throw {
-            status: 409,
-            message: "No puedes eliminar un slot que está disponible. Primero debes cancelarlo."
-        };
-    }
-
-    await Slot.destroy({
-        where: {
-            doctor_id: doctorId
+            message: "No se encontraron slots"
         }
+    }
+
+    await redisClient.set(`slots:${doctorId}`, JSON.stringify(slots), {
+        EX: 3600
     });
 
     return slots;
 }
 
-export const deleteSlotsById = async (slotId: string, doctorId: string) => {
-    const slot = await Slot.findByPk(slotId);
-
+export const deleteSlot = async (slotId: string, doctorId: string) => {
+    const slot = await Slot.findOne({
+        where: {
+            id: slotId,
+            doctor_id: doctorId
+        }
+    });
     if (!slot) {
         throw {
             status: 404,
-            message: "Slot no encontrado"
-        };
-    }
-
-    if (!slot.is_available) {
-        throw {
-            status: 409,
-            message: "No puedes eliminar un slot que no está disponible. Primero debes cancelarlo."
-        };
+            message: "No se encontro el slot"
+        }
     }
 
     if (slot.doctor_id !== doctorId) {
         throw {
             status: 403,
             message: "No tienes permiso para eliminar este slot"
-        };
+        }
+    }
+
+    if (!slot.is_available) {
+        throw {
+            status: 400,
+            message: "El slot ya está ocupado. Debes cancelar la cita primero."
+        }
     }
 
     await slot.destroy();
-
+    await redisClient.del(`slots:${slot.doctor_id}`);
+    await redisClient.del(`slots:available:${slot.doctor_id}`);
     return slot;
 }
+
+export const updateSlot = async (slotId: string, doctorId: string, start_time: string, end_time: string) => {
+    const slot = await Slot.findOne({
+        where: {
+            id: slotId,
+            doctor_id: doctorId
+        }
+    });
+    if (!slot) {
+        throw {
+            status: 404,
+            message: "No se encontro el slot"
+        }
+    }
+
+    if (slot.doctor_id !== doctorId) {
+        throw {
+            status: 403,
+            message: "No tienes permiso para actualizar este slot"
+        }
+    }
+
+    if (!slot.is_available) {
+        throw {
+            status: 400,
+            message: "El slot ya está ocupado. Debes cancelar la cita primero."
+        }
+    }
+
+    const slotDate = new Date(slot.date);
+    const newStartTime = parseTimeString(start_time, slotDate);
+    const newEndTime = parseTimeString(end_time, slotDate);
+
+    if (newStartTime >= newEndTime) {
+        throw {
+            status: 400,
+            message: "La hora de inicio debe ser menor a la hora de fin"
+        }
+    }
+
+    slot.start_time = newStartTime;
+    slot.end_time = newEndTime;
+    await slot.save();
+
+    await invalidateDoctorSlotsCache(slot.doctor_id);
+    return slot;
+}   
