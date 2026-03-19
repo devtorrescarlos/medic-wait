@@ -1,47 +1,45 @@
 import Slot from "../../models/Slot";
 import redisClient from "../../config/redis";
 import { parse } from "date-fns";
+import { invalidateDoctorSlotsCache } from "../../utils/invalidateSlotCache";
 
-const invalidateDoctorSlotsCache = async (doctorId: string): Promise<void> => {
-    const pattern = `slots:${doctorId}:*`;
-    const keys = await redisClient.keys(pattern);
-    if (keys.length > 0) {
-        await redisClient.del(keys);
-    }
-    await redisClient.del(`slots:available:${doctorId}`);
-};
 
 const parseTimeString = (timeStr: string, referenceDate: Date): Date => {
     return parse(timeStr, "HH:mm", referenceDate);
 };
 
 
-export const getAvailableSlots = async (doctorId: string) => {
-    const cachedAvailableSlots = await redisClient.get(`slots:available:${doctorId}`);
+export const getAvailableSlots = async (doctorId: string, page: number, limit: number) => {
+    const cachedAvailableSlots = await redisClient.get(`slots:available:${doctorId}:p:${page}:l:${limit}`);
 
     if (cachedAvailableSlots) {
         return JSON.parse(cachedAvailableSlots);
     }
 
-    const availableSlots = await Slot.findAll({
+    const { count, rows } = await Slot.findAndCountAll({
         where: {
             doctor_id: doctorId,
             is_available: true
-        }
-    })
-
-    if (!availableSlots) {
-        throw {
-            status: 404,
-            message: "No se encontraron slots disponibles"
-        }
-    }
-
-    await redisClient.set(`slots:available:${doctorId}`, JSON.stringify(availableSlots), {
-        EX: 3600
+        },
+        limit,
+        offset: (page - 1) * limit,
+        order: [['start_time', 'ASC']]
     });
 
-    return availableSlots;
+    if (count === 0) {
+        throw { status: 404, message: "No se encontraron slots disponibles" };
+    }
+
+    const response = {
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        slots: rows
+    };
+
+    await redisClient.set(`slots:available:${doctorId}:p:${page}:l:${limit}`, JSON.stringify(response), { EX: 3600 });
+
+    return response;
 }
 
 export const getSlots = async (doctorId: string) => {
@@ -99,8 +97,8 @@ export const deleteSlot = async (slotId: string, doctorId: string) => {
     }
 
     await slot.destroy();
-    await redisClient.del(`slots:${slot.doctor_id}`);
-    await redisClient.del(`slots:available:${slot.doctor_id}`);
+    await invalidateDoctorSlotsCache(doctorId);
+
     return slot;
 }
 

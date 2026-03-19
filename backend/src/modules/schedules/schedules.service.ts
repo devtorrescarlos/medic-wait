@@ -1,9 +1,9 @@
 import DoctorSchedule from "../../models/DoctorSchedule";
 import { Op } from "sequelize";
 import { format, addDays, startOfDay, addMinutes, parseISO } from "date-fns";
-import redisClient from "../../config/redis";
 import Slot from "../../models/Slot";
 import { ScheduleData } from "../../types/schedules.types";
+import { invalidateDoctorSlotsCache } from "../../utils/invalidateSlotCache";
 
 const DAYS_TO_GENERATE = 30;
 
@@ -75,7 +75,7 @@ const generateSlotsForSchedule = async (doctorId: string, schedule: DoctorSchedu
         slotsCreated = slotsToCreate.length;
     }
 
-    await redisClient.del(`slots:available:${doctorId}`);
+    await invalidateDoctorSlotsCache(doctorId);
 
     return slotsCreated;
 };
@@ -134,5 +134,5 @@ export const deleteScheduleAndSlots = async (doctorId: string, scheduleId: strin
         await Slot.destroy({ where: { id: idsToDelete } });
     }
 
-    await redisClient.del(`slots:available:${doctorId}`);
+    await invalidateDoctorSlotsCache(doctorId);
 };

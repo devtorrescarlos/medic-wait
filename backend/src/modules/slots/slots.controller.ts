@@ -4,7 +4,7 @@ import * as slotsService from "./slots.service";
 export const getSlots = async (req: Request, res: Response) => {
     try {
         const doctorId = req.doctorId;
-        const slots = await slotsService.getSlots(doctorId!);
+        const slots = await slotsService.getSlots(doctorId!,);
         res.json(slots);
     } catch (error: any) {
         if (error.status) {
@@ -17,7 +17,9 @@ export const getSlots = async (req: Request, res: Response) => {
 export const getAvailableSlots = async (req: Request, res: Response) => {
     try {
         const doctorId = req.params.doctorId;
-        const availableSlots = await slotsService.getAvailableSlots(doctorId as string);
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const availableSlots = await slotsService.getAvailableSlots(doctorId as string, page, limit);
         res.json(availableSlots);
     } catch (error: any) {
         if (error.status) {
