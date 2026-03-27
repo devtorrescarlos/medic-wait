@@ -1,9 +1,11 @@
-export type slotData = {
-    id?: string;
-    doctorId: string;
-    startTime: Date;
-    endTime: Date;
-    durationMinutes: number;
-    isAvailable?: boolean;
-    version?: number;
+export type PaginatedResponse<T> = {
+    data: T[];
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+    };
 }

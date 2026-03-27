@@ -2,6 +2,7 @@ import Slot from "../../models/Slot";
 import redisClient from "../../config/redis";
 import { parse } from "date-fns";
 import { invalidateDoctorSlotsCache } from "../../utils/invalidateSlotCache";
+import DoctorSchedule from "../../models/DoctorSchedule";
 
 
 const parseTimeString = (timeStr: string, referenceDate: Date): Date => {
@@ -42,30 +43,56 @@ export const getAvailableSlots = async (doctorId: string, page: number, limit: n
     return response;
 }
 
-export const getSlots = async (doctorId: string) => {
+export const getSlots = async (doctorId: string, page: number, limit: number, day?: string, date?: string) => {
+    const cacheKey = `slots:${doctorId}:p:${page}:l:${limit}:d:${day || 'all'}:dt:${date || 'all'}`;
 
-    const cachedSlots = await redisClient.get(`slots:${doctorId}`);
+    const cachedSlots = await redisClient.get(cacheKey);
     if (cachedSlots) {
         return JSON.parse(cachedSlots);
     }
 
-    const slots = await Slot.findAll({
-        where: {
-            doctor_id: doctorId
-        }
-    })
-    if (!slots) {
-        throw {
-            status: 404,
-            message: "No se encontraron slots"
-        }
+    const whereClause: any = { doctor_id: doctorId };
+    if (date) {
+        whereClause.date = date;
     }
 
-    await redisClient.set(`slots:${doctorId}`, JSON.stringify(slots), {
-        EX: 3600
+    const includeClause: any = {
+        model: DoctorSchedule,
+        attributes: ['day_of_week']
+    };
+    if (day) {
+        includeClause.where = { day_of_week: day };
+    }
+
+    const { count, rows } = await Slot.findAndCountAll({
+        where: whereClause,
+        include: [includeClause],
+        limit,
+        offset: (page - 1) * limit,
+        order: [['start_time', 'ASC']]
     });
 
-    return slots;
+    if (rows.length === 0) {
+        return {
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: page,
+            slots: [],
+            day_of_week: null
+        };
+    }
+
+    const response = {
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        slots: rows,
+        day_of_week: rows[0].schedule.day_of_week
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(response), { EX: 3600 });
+
+    return response;
 }
 
 export const deleteSlot = async (slotId: string, doctorId: string) => {
@@ -97,9 +124,27 @@ export const deleteSlot = async (slotId: string, doctorId: string) => {
     }
 
     await slot.destroy();
-    await invalidateDoctorSlotsCache(doctorId);
 
-    return slot;
+    const remainingSlots = await Slot.count({
+        where: {
+            doctor_id: doctorId,
+            schedule_id: slot.schedule_id
+        }
+    });
+
+    if (remainingSlots === 0) {
+        await DoctorSchedule.update(
+            { is_active: false },
+            {
+                where: {
+                    id: slot.schedule_id,
+                    doctor_id: doctorId
+                }
+            }
+        );
+    }
+
+    await invalidateDoctorSlotsCache(doctorId);
 }
 
 export const updateSlot = async (slotId: string, doctorId: string, start_time: string, end_time: string) => {

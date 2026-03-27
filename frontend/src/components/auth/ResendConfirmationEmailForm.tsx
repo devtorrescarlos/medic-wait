@@ -38,6 +38,7 @@ export default function ResendConfirmationEmailForm() {
 
             <button
                 type="submit"
+                disabled={resendConfirmationEmailMutation.isPending}
                 className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition-colors"
             >
                 Reenviar correo de confirmación

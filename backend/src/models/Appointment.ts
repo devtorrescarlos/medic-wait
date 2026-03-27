@@ -26,7 +26,7 @@ export default class Appointment extends Model {
   declare patient_id: string;
 
   @ForeignKey(() => Slot)
-  @Column({ type: DataType.UUID, allowNull: false })
+  @Column({ type: DataType.UUID, allowNull: false, onDelete: 'CASCADE' })
   declare slot_id: string;
 
   @Column({ type: DataType.STRING, allowNull: false })

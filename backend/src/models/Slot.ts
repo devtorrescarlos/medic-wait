@@ -1,6 +1,7 @@
 import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 import User from './User';
+import DoctorSchedule from './DoctorSchedule';
 
 @Table({ tableName: 'slots' })
 export default class Slot extends Model {
@@ -9,7 +10,7 @@ export default class Slot extends Model {
   declare id: string;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.UUID, allowNull: false })
+  @Column({ type: DataType.UUID, allowNull: false, onDelete: 'CASCADE' })
   declare doctor_id: string;
 
   @BelongsTo(() => User)
@@ -21,9 +22,19 @@ export default class Slot extends Model {
   @Column({ type: DataType.DATE, allowNull: false })
   declare end_time: Date;
 
+  @Column({ type: DataType.DATEONLY, allowNull: false })
+  declare date: string;
+
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare is_available: boolean;
 
   @Column({ type: DataType.INTEGER, defaultValue: 0 })
   declare version: number;
+
+  @ForeignKey(() => DoctorSchedule)
+  @Column({ type: DataType.UUID, allowNull: false, onDelete: 'CASCADE' })
+  declare schedule_id: string;
+
+  @BelongsTo(() => DoctorSchedule)
+  declare schedule: DoctorSchedule;
 }

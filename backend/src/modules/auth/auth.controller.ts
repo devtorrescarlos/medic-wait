@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import * as authService from "./auth.service";
-import type { loginData, registerData } from "../../types/auth.types";
+import type { LoginData, RegisterData } from "../../types/auth.types";
 
 export const register = async (req: Request, res: Response) => {
-    const userData: registerData = req.body;
+    const userData: RegisterData = req.body;
     try {
         const token = await authService.register(userData);
         res.status(201).json({
@@ -19,7 +19,7 @@ export const register = async (req: Request, res: Response) => {
 }
 
 export const login = async (req: Request, res: Response) => {
-    const userData: loginData = req.body;
+    const userData: LoginData = req.body;
     try {
         const token = await authService.login(userData);
         res.status(200).json({ token });

@@ -4,6 +4,7 @@ import * as slotsController from "../slots/slots.controller";
 import { authenticate } from "../../middlewares/auth";
 import { handleInputErrors } from "../../middlewares/validation";
 import { verifyDoctorApproved } from "../../middlewares/verifyDoctorApproved";
+import { doctorIdValidation } from "../../middlewares/slotsAndScheduleValidation";
 
 
 const router = Router();
@@ -12,9 +13,7 @@ router.get("/", authenticate, verifyDoctorApproved, slotsController.getSlots)
 
 router.get("/:doctorId",
     authenticate,
-    param("doctorId")
-        .isUUID()
-        .withMessage("El id del doctor debe ser un UUID"),
+    doctorIdValidation,
     handleInputErrors,
     slotsController.getAvailableSlots)
 

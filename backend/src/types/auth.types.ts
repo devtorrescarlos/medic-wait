@@ -1,6 +1,6 @@
 import { DoctorSpecialty, UserRole } from "../models/User";
 
-export type registerData = {
+export type RegisterData = {
     email: string,
     password: string,
     fullName: string,
@@ -10,11 +10,11 @@ export type registerData = {
     specialty?: DoctorSpecialty
 }
 
-export type registerWithRole = registerData & {
+export type RegisterWithRole = RegisterData & {
     requesterRole: UserRole
 }
 
-export type loginData = {
+export type LoginData = {
     email: string,
     password: string
 }   

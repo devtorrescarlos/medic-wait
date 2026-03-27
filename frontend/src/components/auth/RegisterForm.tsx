@@ -18,10 +18,10 @@ const initialValues = {
 export default function RegisterForm() {
     const [isDoctor, setIsDoctor] = useState(false);
     const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues });
-    const { isLoading, registerMutation } = useAuth();
+    const { registerMutation } = useAuth();
 
 
-    const handleOnSubmit = async (data: RegisterForm) => {
+    const handleOnSubmit = (data: RegisterForm) => {
         const { confirmPassword, specialty, ...rest } = data;
 
         const payload = isDoctor
@@ -195,7 +195,7 @@ export default function RegisterForm() {
 
                 <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={registerMutation.isPending}
                     className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
                 >
                     Crear cuenta
