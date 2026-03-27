@@ -30,7 +30,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
         const decoded = jwt.verify(token, process.env.SUPER_SECRET as string) as { id: string };
 
         const user = await User.findByPk(decoded.id, {
-            attributes: ["id", "fullName", "email"]
+            attributes: ["id", "fullName", "email", "role", "is_approved_by_admin"]
         })
 
 

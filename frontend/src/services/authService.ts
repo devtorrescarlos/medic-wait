@@ -42,3 +42,9 @@ export const resetPassword = async (token: string, data: { password: string }) =
     const response = await api.post(url, data);
     return response.data;
 }
+
+export const getUser = async () => {
+    const url = `${import.meta.env.VITE_API_URL}/auth/user`;
+    const response = await api.get(url);
+    return response.data;
+}

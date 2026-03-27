@@ -61,6 +61,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
 
                 <button
                     type="submit"
+                    disabled={resetPasswordMutation.isPending}
                     className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700"
                 >
                     Restablecer contraseña

@@ -1,11 +1,11 @@
 import User, { UserRole } from "../../models/User"
-import type { registerData, loginData } from "../../types/auth.types"
+import type { RegisterData, LoginData } from "../../types/auth.types"
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
 import { sendVerificationEmail, sendForgotPasswordEmail } from "../../emails";
 import { generateJWT, generateVerificationJWT, verifyVerificationJWT } from "../../utils/jwt";
 
 
-export const register = async (userData: registerData) => {
+export const register = async (userData: RegisterData) => {
     const { email, password, fullName, role, specialty } = userData;
     const existingUser = await User.findOne({ where: { email } });
 
@@ -33,7 +33,7 @@ export const register = async (userData: registerData) => {
     return token;
 }
 
-export const login = async (userData: loginData) => {
+export const login = async (userData: LoginData) => {
     const { email, password } = userData;
 
     const user = await User.findOne({ where: { email } });
@@ -68,7 +68,7 @@ export const login = async (userData: loginData) => {
         }
     }
 
-    const token = generateJWT(user.id);
+    const token = generateJWT(user.id, user.role);
 
     return token;
 }

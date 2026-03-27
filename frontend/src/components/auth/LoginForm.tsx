@@ -2,11 +2,8 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../hooks/useAuth";
 import ErrorMessage from "../shared/ErrorMessage";
+import type { LoginForm } from "../../types";
 
-type LoginForm = {
-    email: string;
-    password: string;
-}
 
 const initialValues: LoginForm = {
     email: "",
@@ -16,7 +13,7 @@ const initialValues: LoginForm = {
 export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({ defaultValues: initialValues });
 
-    const { loginMutation, isLoading } = useAuth();
+    const { loginMutation } = useAuth();
 
     const handleOnSubmit = (data: LoginForm) => {
         loginMutation.mutate(data);
@@ -81,10 +78,10 @@ export default function LoginForm() {
 
             <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full cursor-pointer flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200"
+                disabled={loginMutation.isPending}
+                className="w-full cursor-pointer flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Iniciar sesión
+                {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar sesión"}
             </button>
         </form>
     )
