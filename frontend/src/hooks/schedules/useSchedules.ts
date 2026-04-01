@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
-import { deleteScheduleById, generateScheduleAndSlots, getAllSchedules, toggleSchedule, updateSchedule } from "../services/slotsAndSchedulesService"
-import type { ScheduleData, ScheduleFormData } from "../types"
+import { deleteScheduleById, generateScheduleAndSlots, getAllSchedules, toggleSchedule, updateSchedule } from "../../services/slotsAndSchedulesService"
+import type { ScheduleData, ScheduleFormData } from "../../types"
 import { toast } from "react-toastify"
 import { isAxiosError } from "axios"
 
