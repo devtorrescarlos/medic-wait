@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Filter, Trash2, Pencil } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import type { SlotsData } from "../../../types";
+import type { Slot, SlotsData } from "../../../types";
 import { Link } from "react-router-dom";
 import { useSlotsMutations } from "../../../hooks/useSlots";
 import { formatDay } from "../../../utils/formatDay";
@@ -41,7 +41,7 @@ export default function SlotsTable({ data, setPage, page, dayFilter, setDayFilte
         setPage(1);
     };
 
-    const filteredSlots = useMemo(() => {
+    const filteredSlots: Slot[] = useMemo(() => {
         return data.slots.filter(slot => {
             if (statusFilter === "available" && !slot.is_available) return false;
             if (statusFilter === "booked" && slot.is_available) return false;
@@ -52,6 +52,8 @@ export default function SlotsTable({ data, setPage, page, dayFilter, setDayFilte
     const handlePageChange = (newPage: number) => {
         setPage(newPage)
     }
+
+    console.log(data.slots)
 
     return (
         <div className="space-y-4">
@@ -134,7 +136,7 @@ export default function SlotsTable({ data, setPage, page, dayFilter, setDayFilte
                                         </td>
 
                                         <td className="px-4 py-3 text-sm text-gray-600 text-center">
-                                            {slot.date ? format(parseISO(slot.date), 'dd/MM/yyyy') + ' - ' + formatDay(data.day_of_week) : '-'}
+                                            {slot.date ? format(parseISO(slot.date), 'dd/MM/yyyy') + ' - ' + formatDay(slot.schedule.day_of_week) : '-'}
                                         </td>
 
                                         <td className="px-4 py-3">
