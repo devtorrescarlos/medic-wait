@@ -5,6 +5,7 @@ declare global {
     namespace Express {
         interface Request {
             doctorId?: string;
+            patientId?: string;
         }
     }
 }
@@ -26,5 +27,20 @@ export const verifyDoctorApproved = async (req: Request, res: Response, next: Ne
 
     req.doctorId = user.id;
 
+    next();
+};
+
+export const verifyPatient = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user as User;
+
+    if (!user) {
+        return res.status(401).json({ message: "No autenticado" });
+    }
+
+    if (user.role !== "patient") {
+        return res.status(403).json({ message: "No tienes permiso para realizar esta acción" });
+    }
+
+    req.patientId = user.id;
     next();
 };

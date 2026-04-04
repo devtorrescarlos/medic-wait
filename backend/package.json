@@ -16,22 +16,25 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
-    "dev:api": "nodemon src/index.ts --api"
+    "dev:api": "nodemon src/index.ts --api",
+    "test:concurrency": "nodemon test-concurrency.ts"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/nodemailer": "^7.0.11",
+    "@types/redlock": "^4.0.8",
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.18.1",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/node-cron": "^3.0.11",
-    "@types/uuid": "^10.0.0",
+    "axios": "^1.14.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "date-fns": "^4.1.0",
@@ -39,13 +42,15 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.3.0",
     "express-validator": "^7.3.1",
+    "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.3",
     "node-cron": "^4.2.1",
     "nodemailer": "^8.0.1",
     "pg": "^8.19.0",
     "pg-hstore": "^2.3.4",
-    "redis": "^5.11.0",
+    "redlock": "^5.0.0-beta.2",
     "sequelize-typescript": "^2.1.6",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "ws": "^8.20.0"
   }
 }

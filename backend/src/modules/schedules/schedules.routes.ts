@@ -1,7 +1,7 @@
 import Router from "express";
 import * as scheduleController from "./schedules.controller"
 import { authenticate } from "../../middlewares/auth";
-import { verifyDoctorApproved } from "../../middlewares/verifyDoctorApproved";
+import { verifyDoctorApproved } from "../../middlewares/verifyRole";
 import { scheduleIdValidation, doctorIdValidation, scheduleInputsValidation } from "../../middlewares/slotsAndScheduleValidation";
 import { handleInputErrors } from "../../middlewares/validation";
 

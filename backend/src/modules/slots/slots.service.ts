@@ -1,7 +1,7 @@
 import Slot from "../../models/Slot";
 import redisClient from "../../config/ioredis";
 import { parse } from "date-fns";
-import { invalidateDoctorSlotsCache } from "../../utils/invalidateSlotCache";
+import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 import DoctorSchedule from "../../models/DoctorSchedule";
 
 

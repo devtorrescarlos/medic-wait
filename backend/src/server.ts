@@ -4,6 +4,7 @@ import db from "./config/database";
 import authRoutes from "./modules/auth/auth.routes";
 import slotsRoutes from "./modules/slots/slots.routes";
 import scheduleRoutes from "./modules/schedules/schedules.routes";
+import appointmentsRoutes from "./modules/appointments/appointments.routes";
 import { limiter } from "./config/limiter";
 
 const connectDB = async () => {
@@ -27,11 +28,12 @@ app.use(cors({
 
 app.use(express.json());
 
-// API ROUTES
+// ROUTES
 app.use("/api", limiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/slots", slotsRoutes);
 app.use("/api/schedules", scheduleRoutes);
+app.use("/api/appointments", appointmentsRoutes);
 
 app.get("/", (req, res) => {
     res.json("OK!")

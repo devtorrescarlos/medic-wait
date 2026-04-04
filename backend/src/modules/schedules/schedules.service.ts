@@ -3,7 +3,7 @@ import { Op } from "sequelize";
 import { format, addDays, startOfDay, addMinutes } from "date-fns";
 import Slot from "../../models/Slot";
 import { ScheduleData } from "../../types/schedules.types";
-import { invalidateDoctorSlotsCache } from "../../utils/invalidateSlotCache";
+import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 
 const DAYS_TO_GENERATE = 14;
 
@@ -77,7 +77,6 @@ const generateSlotsForSchedule = async (doctorId: string, schedule: DoctorSchedu
                         end_time: slotEnd,
                         date: format(currentDay, 'yyyy-MM-dd'),
                         is_available: true,
-                        version: 1,
                         schedule_id: schedule.id
                     });
                 }
@@ -123,7 +122,9 @@ export const toggleSchedule = async (doctorId: string, scheduleId: string) => {
     await schedule.save();
 
     if (!schedule.is_active) {
-        await Slot.destroy({
+        await Slot.update({
+            is_active: false
+        }, {
             where: {
                 schedule_id: scheduleId,
                 is_available: true,
