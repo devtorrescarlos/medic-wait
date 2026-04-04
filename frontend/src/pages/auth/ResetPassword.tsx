@@ -1,7 +1,7 @@
 import ResetPasswordForm from "../../components/auth/ResetPasswordForm";
 import { useParams } from "react-router-dom";
 import { useEffect, useRef } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 
 export default function ResetPasswordPage() {

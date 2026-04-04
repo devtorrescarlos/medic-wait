@@ -1,4 +1,4 @@
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/auth/useAuth";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../shared/ErrorMessage";
 

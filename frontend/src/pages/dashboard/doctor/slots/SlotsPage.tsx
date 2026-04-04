@@ -1,25 +1,17 @@
-import { useState } from "react";
 import SlotsTable from "../../../../components/dashboard/slots/SlotsTable";
 import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
-import { useSlots } from "../../../../hooks/useSlots";
-
-
-
+import { useSlots } from "../../../../hooks/slots/useSlots";
+import { useSlotsFilters } from "../../../../hooks/slots/useSlotsFilters";
 
 export default function SlotsPage() {
-    const [page, setPage] = useState(1);
-    const [dayFilter, setDayFilter] = useState("");
-    const [dateFilter, setDateFilter] = useState("");
 
-    const limit = 10;
-
+    const { page, dayFilter, dateFilter, limit } = useSlotsFilters();
     const { data, isLoading, error } = useSlots(page, limit, dayFilter || undefined, dateFilter || undefined);
 
     if (isLoading) return <LoadingSpinner />
 
     if (error) return <p>Error al cargar los slots</p>
 
-    const hasNoResults = data.slots.length === 0 && data.totalItems === 0;
 
     return (
         <div className="p-4 lg:p-6 space-y-6">
@@ -30,13 +22,7 @@ export default function SlotsPage() {
 
             <SlotsTable
                 data={data}
-                setPage={setPage}
                 page={page}
-                dayFilter={dayFilter}
-                setDayFilter={setDayFilter}
-                dateFilter={dateFilter}
-                setDateFilter={setDateFilter}
-                hasNoResults={hasNoResults}
             />
         </div>
     )

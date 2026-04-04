@@ -4,7 +4,7 @@ import type { ScheduleData } from "../../../types/index";
 import { Clock, Pencil, Trash2 } from "lucide-react";
 import { format, parse } from "date-fns";
 import { formatDay } from "../../../utils/formatDay";
-import { useSchedulesMutations } from "../../../hooks/useSchedules";
+import { useSchedulesMutations } from "../../../hooks/schedules/useSchedules";
 
 
 interface ScheduleCardProps {

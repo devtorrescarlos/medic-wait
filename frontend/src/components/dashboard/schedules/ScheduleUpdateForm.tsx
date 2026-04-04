@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Calendar, ChevronDown, Clock } from "lucide-react";
 import ErrorMessage from "../../shared/ErrorMessage";
-import { useSchedulesMutations } from "../../../hooks/useSchedules";
+import { useSchedulesMutations } from "../../../hooks/schedules/useSchedules";
 import { daysOfWeek } from "../../../constants";
 import type { ScheduleFormData, ScheduleData } from "../../../types";
 

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Calendar, ChevronDown, Clock } from "lucide-react";
 import ErrorMessage from "../../shared/ErrorMessage";
-import { useSchedulesMutations } from "../../../hooks/useSchedules";
+import { useSchedulesMutations } from "../../../hooks/schedules/useSchedules";
 import { daysOfWeek } from "../../../constants";
 import type { ScheduleFormData } from "../../../types";
 
