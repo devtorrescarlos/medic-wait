@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import LoadingSpinner from "../../../../components/shared/LoadingSpinner"
-import { useSchedule } from "../../../../hooks/useSchedules"
+import { useSchedule } from "../../../../hooks/schedules/useSchedules"
 import { Plus } from "lucide-react"
 import ScheduleCard from "../../../../components/dashboard/schedules/ScheduleCard"
 

@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import ErrorMessage from "../shared/ErrorMessage"
 import type { RegisterForm } from "../../types";
 import { specialties } from "../../data/specialties";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/auth/useAuth";
 
 
 

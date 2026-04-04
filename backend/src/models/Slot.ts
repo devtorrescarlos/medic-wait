@@ -28,8 +28,8 @@ export default class Slot extends Model {
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare is_available: boolean;
 
-  @Column({ type: DataType.INTEGER, defaultValue: 0 })
-  declare version: number;
+  @Column({ type: DataType.BOOLEAN, defaultValue: true })
+  declare is_active: boolean;
 
   @ForeignKey(() => DoctorSchedule)
   @Column({ type: DataType.UUID, allowNull: false, onDelete: 'CASCADE' })

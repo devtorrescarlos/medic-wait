@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import Header from "../components/dashboard/Header";
 import Sidebar from "../components/dashboard/Sidebar";
-import { useUser } from "../hooks/useUser";
+import { useUser } from "../hooks/auth/useUser";
 import LoadingSpinner from "../components/shared/LoadingSpinner";
 
 export default function DashboardLayout() {

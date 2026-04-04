@@ -27,7 +27,9 @@ export type Slot = {
     end_time: string;
     date: string;
     is_available: boolean;
-    day_of_week: string;
+    schedule: {
+        day_of_week: string;
+    }
     createdAt: string;
 }
 

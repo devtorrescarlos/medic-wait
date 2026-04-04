@@ -3,7 +3,7 @@ import { body, param } from "express-validator";
 import * as slotsController from "../slots/slots.controller";
 import { authenticate } from "../../middlewares/auth";
 import { handleInputErrors } from "../../middlewares/validation";
-import { verifyDoctorApproved } from "../../middlewares/verifyDoctorApproved";
+import { verifyDoctorApproved } from "../../middlewares/verifyRole";
 import { doctorIdValidation } from "../../middlewares/slotsAndScheduleValidation";
 
 

@@ -5,9 +5,28 @@ export const generateJWT = (id: string, role: string) => {
     return token;
 }
 
+// This is for E-Mail verification
 export const generateVerificationJWT = (id: string) => {
     const token = jwt.sign({ id }, process.env.VERIFICATION_SECRET as string, { expiresIn: "15m" });
     return token;
+}
+
+export const verifyJWT = (token: string) => {
+    try {
+        const decoded = jwt.verify(token, process.env.SUPER_SECRET as string) as { id: string; role: string };
+        return decoded;
+    } catch (error: any) {
+        if (error.name === "TokenExpiredError") {
+            throw {
+                status: 401,
+                message: "El token ha expirado"
+            };
+        }
+        throw {
+            status: 401,
+            message: "Token no válido"
+        };
+    }
 }
 
 export const verifyVerificationJWT = (token: string) => {

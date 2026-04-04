@@ -1,57 +1,36 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Filter, Trash2, Pencil } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import type { SlotsData } from "../../../types";
+import type { Slot, SlotsData } from "../../../types";
 import { Link } from "react-router-dom";
-import { useSlotsMutations } from "../../../hooks/useSlots";
+import { useSlotsMutations } from "../../../hooks/slots/useSlots";
 import { formatDay } from "../../../utils/formatDay";
+import { useSlotsFilters } from "../../../hooks/slots/useSlotsFilters";
 
 
 type SlotsTableProps = {
     data: SlotsData,
-    setPage: React.Dispatch<React.SetStateAction<number>>,
-    page: number,
-    dayFilter: string,
-    setDayFilter: React.Dispatch<React.SetStateAction<string>>,
-    dateFilter: string,
-    setDateFilter: React.Dispatch<React.SetStateAction<string>>,
-    hasNoResults: boolean
+    page: number
 }
 
-export default function SlotsTable({ data, setPage, page, dayFilter, setDayFilter, dateFilter, setDateFilter, hasNoResults }: SlotsTableProps) {
+export default function SlotsTable({ data, page }: SlotsTableProps) {
 
     const { deleteSlotMutation } = useSlotsMutations();
 
-    const [statusFilter, setStatusFilter] = useState("");
+    const { statusFilter, dayFilter, dateFilter, handleDayFilterChange, handleDateFilterChange, handleCleanFilters, handlePageChange, handleStatusFilterChange } = useSlotsFilters();
 
-    const handleDayFilterChange = (value: string) => {
-        setDayFilter(value);
-        setPage(1);
-    };
 
-    const handleDateFilterChange = (value: string) => {
-        setDateFilter(value);
-        setPage(1);
-    };
-
-    const handleCleanFilters = () => {
-        setStatusFilter("");
-        setDateFilter("");
-        setDayFilter("");
-        setPage(1);
-    };
-
-    const filteredSlots = useMemo(() => {
+    const filteredSlots: Slot[] = useMemo(() => {
         return data.slots.filter(slot => {
             if (statusFilter === "available" && !slot.is_available) return false;
             if (statusFilter === "booked" && slot.is_available) return false;
+            if (dateFilter && slot.date !== dateFilter) return false;
+            if (dayFilter && formatDay(slot.date) !== dayFilter) return false;
             return true;
         });
-    }, [data.slots, statusFilter]);
+    }, [data.slots, statusFilter, dateFilter, dayFilter]);
 
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage)
-    }
+    const hasNoResults = filteredSlots.length === 0;
 
     return (
         <div className="space-y-4">
@@ -61,7 +40,7 @@ export default function SlotsTable({ data, setPage, page, dayFilter, setDayFilte
                         <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                         <select
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => handleStatusFilterChange(e.target.value)}
                             className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white w-full sm:w-48">
                             <option value="">Todos los estados</option>
                             <option value="available">Disponible</option>
@@ -134,7 +113,7 @@ export default function SlotsTable({ data, setPage, page, dayFilter, setDayFilte
                                         </td>
 
                                         <td className="px-4 py-3 text-sm text-gray-600 text-center">
-                                            {slot.date ? format(parseISO(slot.date), 'dd/MM/yyyy') + ' - ' + formatDay(data.day_of_week) : '-'}
+                                            {slot.date ? format(parseISO(slot.date), 'dd/MM/yyyy') + ' - ' + formatDay(slot.schedule.day_of_week) : '-'}
                                         </td>
 
                                         <td className="px-4 py-3">

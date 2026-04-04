@@ -1,5 +1,5 @@
 import { Clock } from "lucide-react";
-import { useSlotsMutations } from "../../../hooks/useSlots";
+import { useSlotsMutations } from "../../../hooks/slots/useSlots";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../../shared/ErrorMessage";

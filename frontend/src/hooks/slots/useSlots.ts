@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getSlots, deleteSlotById, updateSlotById } from "../services/slotsAndSchedulesService"
+import { getSlots, deleteSlotById, updateSlotById } from "../../services/slotsAndSchedulesService"
 import { toast } from "react-toastify";
-import type { SlotsData, Slot } from "../types"
+import type { SlotsData, Slot } from "../../types"
 import { isAxiosError } from "axios"
 import { useNavigate } from "react-router-dom"
 

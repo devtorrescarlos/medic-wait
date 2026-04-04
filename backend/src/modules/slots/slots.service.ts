@@ -1,7 +1,7 @@
 import Slot from "../../models/Slot";
-import redisClient from "../../config/redis";
+import redisClient from "../../config/ioredis";
 import { parse } from "date-fns";
-import { invalidateDoctorSlotsCache } from "../../utils/invalidateSlotCache";
+import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 import DoctorSchedule from "../../models/DoctorSchedule";
 
 
@@ -20,6 +20,7 @@ export const getAvailableSlots = async (doctorId: string, page: number, limit: n
     const { count, rows } = await Slot.findAndCountAll({
         where: {
             doctor_id: doctorId,
+            is_active: true,
             is_available: true
         },
         limit,
@@ -38,7 +39,7 @@ export const getAvailableSlots = async (doctorId: string, page: number, limit: n
         slots: rows
     };
 
-    await redisClient.set(`slots:available:${doctorId}:p:${page}:l:${limit}`, JSON.stringify(response), { EX: 3600 });
+    await redisClient.set(`slots:available:${doctorId}:p:${page}:l:${limit}`, JSON.stringify(response), 'EX', 3600);
 
     return response;
 }
@@ -51,7 +52,7 @@ export const getSlots = async (doctorId: string, page: number, limit: number, da
         return JSON.parse(cachedSlots);
     }
 
-    const whereClause: any = { doctor_id: doctorId };
+    const whereClause: any = { doctor_id: doctorId, is_active: true };
     if (date) {
         whereClause.date = date;
     }
@@ -86,11 +87,10 @@ export const getSlots = async (doctorId: string, page: number, limit: number, da
         totalItems: count,
         totalPages: Math.ceil(count / limit),
         currentPage: page,
-        slots: rows,
-        day_of_week: rows[0].schedule.day_of_week
+        slots: rows
     };
 
-    await redisClient.set(cacheKey, JSON.stringify(response), { EX: 3600 });
+    await redisClient.set(cacheKey, JSON.stringify(response), 'EX', 3600);
 
     return response;
 }
@@ -123,7 +123,14 @@ export const deleteSlot = async (slotId: string, doctorId: string) => {
         }
     }
 
-    await slot.destroy();
+    if (!slot.is_active) {
+        throw {
+            status: 400,
+            message: "El slot ya está inactivo"
+        }
+    }
+
+    await slot.update({ is_active: false });
 
     const remainingSlots = await Slot.count({
         where: {

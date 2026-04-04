@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { registerUser, loginUser, confirmAccount, forgotPassword, verifyToken, resendConfirmationEmail, resetPassword } from "../services/authService";
-import type { RegisterForm, LoginForm } from "../types";
+import { registerUser, loginUser, confirmAccount, forgotPassword, verifyToken, resendConfirmationEmail, resetPassword } from "../../services/authService";
+import type { RegisterForm, LoginForm } from "../../types";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { isAxiosError } from "axios";
-import { decodeJWT } from "../utils/jwt";
+import { decodeJWT } from "../../utils/jwt";
 
 
 
