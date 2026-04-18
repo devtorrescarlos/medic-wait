@@ -24,6 +24,16 @@ router.post("/",
         .withMessage("El id del slot debe ser un uuid")
         .notEmpty()
         .withMessage("El id del slot es obligatorio"),
+    body("patientName")
+        .isString()
+        .withMessage("El nombre del paciente debe ser un string")
+        .notEmpty()
+        .withMessage("El nombre del paciente es obligatorio"),
+    body("patientEmail")
+        .isEmail()
+        .withMessage("El email del paciente debe ser un email")
+        .notEmpty()
+        .withMessage("El email del paciente es obligatorio"),
     authenticate,
     verifyPatient,
     appointmentController.createAppointment

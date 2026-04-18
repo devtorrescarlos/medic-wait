@@ -1,8 +1,10 @@
 import Appointment from "../../models/Appointment"
+import User from "../../models/User"
 import Slot from "../../models/Slot"
 import { redlock } from "../../config/redlock"
 import redisClient from "../../config/ioredis";
 import { notifyAppointmentChange } from "../../config/websocket";
+import { Op } from "sequelize";
 import { invalidateAppointmentCache, invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 import { differenceInMinutes } from "date-fns";
 
@@ -16,6 +18,19 @@ export const createAppointment = async (patientId: string, doctorId: string, rea
 
     try {
         lock = await redlock.acquire([resource], ttl);
+
+        const patient = await User.findOne({
+            where: {
+                id: patientId,
+            }
+        })
+
+        if (!patient) {
+            throw {
+                status: 404,
+                message: "El paciente no existe"
+            }
+        }
 
         const existingAppointment = await Appointment.findOne({
             where: {
@@ -55,6 +70,11 @@ export const createAppointment = async (patientId: string, doctorId: string, rea
             doctor_id: doctorId,
             slot_id: slotId,
             reason,
+            patient_fullName: patient.fullName,
+            patient_email: patient.email,
+            date: slot.date,
+            end_time: slot.end_time,
+            start_time: slot.start_time,
             status: "pending"
         })
 
@@ -116,7 +136,7 @@ export const confirmAppointment = async (appointmentId: string, patientId: strin
     return appointment;
 }
 
-export const cancelAppointment = async (appointmentId: string, cancellationReason: string) => {
+export const cancelAppointment = async (appointmentId: string, cancellationReason: string, userId: string) => {
     const appointment = await Appointment.findOne({
         where: {
             id: appointmentId
@@ -135,6 +155,13 @@ export const cancelAppointment = async (appointmentId: string, cancellationReaso
         throw {
             status: 400,
             message: "La cita ya ha sido cancelada"
+        }
+    }
+
+    if (appointment.patient_id !== userId && appointment.doctor_id !== userId) {
+        throw {
+            status: 403,
+            message: "No tienes permiso para cancelar esta cita"
         }
     }
 
@@ -318,16 +345,28 @@ export const getAppointmentsByPatientId = async (patientId: string, page: number
 
 }
 
-export const getAllAppointments = async (page: number, limit: number) => {
+export const getAllAppointments = async (page: number, limit: number, patient: string, date: string, status: string) => {
 
-    const cacheKey = `appointments:all:${page}:${limit}`;
+    const cacheKey = `appointments:all:${page}:${limit}:p:${patient}:d:${date}:s:${status}`;
     const cachedAppointments = await redisClient.get(cacheKey);
 
     if (cachedAppointments) {
         return JSON.parse(cachedAppointments);
     }
 
+    const whereClause: any = {};
+    if (patient) {
+        whereClause.patient_fullName = { [Op.iLike]: `%${patient}%` };
+    }
+    if (date) {
+        whereClause.date = date;
+    }
+    if (status) {
+        whereClause.status = status;
+    }
+
     const { count, rows } = await Appointment.findAndCountAll({
+        where: whereClause,
         limit,
         offset: (page - 1) * limit,
         order: [['created_at', 'DESC']]

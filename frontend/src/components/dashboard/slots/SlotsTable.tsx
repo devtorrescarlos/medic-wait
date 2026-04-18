@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { Filter, Trash2, Pencil } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { Trash2, Pencil } from "lucide-react";
 import type { Slot, SlotsData } from "../../../types";
 import { Link } from "react-router-dom";
 import { useSlotsMutations } from "../../../hooks/slots/useSlots";
-import { formatDay } from "../../../utils/formatDay";
+import { formatDay, formatDate, formatTime } from "../../../utils/formatDayAndDates";
 import { useSlotsFilters } from "../../../hooks/slots/useSlotsFilters";
+import TableFilters from "../../shared/TableFilters";
 
 
 type SlotsTableProps = {
@@ -19,61 +19,28 @@ export default function SlotsTable({ data, page }: SlotsTableProps) {
 
     const { statusFilter, dayFilter, dateFilter, handleDayFilterChange, handleDateFilterChange, handleCleanFilters, handlePageChange, handleStatusFilterChange } = useSlotsFilters();
 
-
     const filteredSlots: Slot[] = useMemo(() => {
         return data.slots.filter(slot => {
             if (statusFilter === "available" && !slot.is_available) return false;
             if (statusFilter === "booked" && slot.is_available) return false;
             if (dateFilter && slot.date !== dateFilter) return false;
-            if (dayFilter && formatDay(slot.date) !== dayFilter) return false;
+            if (dayFilter && slot.schedule.day_of_week !== dayFilter) return false;
             return true;
         });
     }, [data.slots, statusFilter, dateFilter, dayFilter]);
 
     const hasNoResults = filteredSlots.length === 0;
 
+    const filters = [
+        { label: "Estado", type: "select" as const, value: statusFilter, onChange: handleStatusFilterChange, options: [{ value: "", label: "Todos los estados" }, { value: "available", label: "Disponible" }, { value: "booked", label: "Reservado" }] },
+        { label: "Fecha", type: "date" as const, value: dateFilter, onChange: handleDateFilterChange },
+        { label: "Día", type: "select" as const, value: dayFilter, onChange: handleDayFilterChange, options: [{ value: "", label: "Todos los días" }, { value: "monday", label: "Lunes" }, { value: "tuesday", label: "Martes" }, { value: "wednesday", label: "Miércoles" }, { value: "thursday", label: "Jueves" }, { value: "friday", label: "Viernes" }, { value: "saturday", label: "Sábado" }, { value: "sunday", label: "Domingo" }] }
+    ]
+
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row justify-between gap-4">
-                <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex items-center">
-                        <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => handleStatusFilterChange(e.target.value)}
-                            className="pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white w-full sm:w-48">
-                            <option value="">Todos los estados</option>
-                            <option value="available">Disponible</option>
-                            <option value="booked">Reservado</option>
-                        </select>
-                    </div>
-                    <input
-                        type="date"
-                        value={dateFilter}
-                        onChange={(e) => handleDateFilterChange(e.target.value)}
-                        className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    />
-
-                    <select
-                        value={dayFilter}
-                        onChange={(e) => handleDayFilterChange(e.target.value)}
-                        className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white w-full sm:w-48">
-                        <option value="">Todos los días</option>
-                        <option value="monday">Lunes</option>
-                        <option value="tuesday">Martes</option>
-                        <option value="wednesday">Miercoles</option>
-                        <option value="thursday">Jueves</option>
-                        <option value="friday">Viernes</option>
-                        <option value="saturday">Sabado</option>
-                        <option value="sunday">Domingo</option>
-                    </select>
-
-                    <button
-                        onClick={handleCleanFilters}
-                        className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                        Limpiar Filtros
-                    </button>
-                </div>
+                <TableFilters filters={filters} onClear={handleCleanFilters} showClearButton={true} />
             </div>
 
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -98,12 +65,12 @@ export default function SlotsTable({ data, page }: SlotsTableProps) {
                                         <td className="px-4 py-3 text-sm font-mono text-gray-600">{slot.id.split('-')[0]}...</td>
 
                                         <td className="px-4 py-3 text-sm text-gray-800">
-                                            {slot.start_time ? format(new Date(slot.start_time), 'hh:mm a') : '-'}
+                                            {slot.start_time ? formatTime(slot.start_time) : '-'}
                                         </td>
 
 
                                         <td className="px-4 py-3 text-sm text-gray-800">
-                                            {slot.end_time ? format(new Date(slot.end_time), 'hh:mm a') : '-'}
+                                            {slot.end_time ? formatTime(slot.end_time) : '-'}
                                         </td>
 
                                         <td className="px-4 py-3">
@@ -113,7 +80,7 @@ export default function SlotsTable({ data, page }: SlotsTableProps) {
                                         </td>
 
                                         <td className="px-4 py-3 text-sm text-gray-600 text-center">
-                                            {slot.date ? format(parseISO(slot.date), 'dd/MM/yyyy') + ' - ' + formatDay(slot.schedule.day_of_week) : '-'}
+                                            {slot.date ? formatDate(slot.date) + ' - ' + formatDay(slot.schedule.day_of_week) : '-'}
                                         </td>
 
                                         <td className="px-4 py-3">
@@ -139,7 +106,7 @@ export default function SlotsTable({ data, page }: SlotsTableProps) {
 
             <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-500">
-                    {`Total: ${data.totalItems} horarios`}
+                    {`Total: ${data.totalItems} slot(s)`}
                     <span className="ml-2">Página {page} de {data.totalPages || 1}</span>
                 </p>
                 <div className="flex items-center gap-2">

@@ -38,8 +38,9 @@ export const cancelAppointment = async (req: Request, res: Response) => {
     try {
         const appointmentId = req.params.appointmentId;
         const cancellationReason = req.body.cancellation_reason;
+        const user = req.user?.id;
 
-        const appointment = await appointmentService.cancelAppointment(appointmentId as string, cancellationReason);
+        const appointment = await appointmentService.cancelAppointment(appointmentId as string, cancellationReason, user as string);
 
         return res.status(200).json(appointment);
     } catch (error: any) {
@@ -113,7 +114,10 @@ export const getAllAppointments = async (req: Request, res: Response) => {
     try {
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
-        const appointments = await appointmentService.getAllAppointments(page, limit);
+        const patient = req.query.patient as string;
+        const date = req.query.date as string;
+        const status = req.query.status as string;
+        const appointments = await appointmentService.getAllAppointments(page, limit, patient, date, status);
         return res.status(200).json(appointments);
     } catch (error: any) {
         if (error.status) {

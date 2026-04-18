@@ -22,7 +22,7 @@ export default class Slot extends Model {
   @Column({ type: DataType.DATE, allowNull: false })
   declare end_time: Date;
 
-  @Column({ type: DataType.DATEONLY, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: false })
   declare date: string;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: true })

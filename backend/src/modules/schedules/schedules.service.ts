@@ -106,6 +106,7 @@ export const toggleSchedule = async (doctorId: string, scheduleId: string) => {
             where: {
                 schedule_id: scheduleId,
                 is_available: false,
+                is_active: true,
                 date: { [Op.gte]: today }
             }
         });
@@ -178,7 +179,9 @@ export const updateSchedule = async (doctorId: string, scheduleId: string, sched
     schedule.end_time = scheduleData.end_time;
     await schedule.save();
 
-    await Slot.destroy({
+    await Slot.update({
+        is_active: false
+    }, {
         where: {
             schedule_id: scheduleId,
             is_available: true
@@ -203,6 +206,7 @@ export const deleteScheduleAndSlots = async (doctorId: string, scheduleId: strin
         where: {
             schedule_id: scheduleId,
             is_available: false,
+            is_active: true,
             date: { [Op.gte]: today }
         }
     });
@@ -215,6 +219,15 @@ export const deleteScheduleAndSlots = async (doctorId: string, scheduleId: strin
     }
 
     await schedule.destroy();
+
+    await Slot.update({
+        is_active: false
+    }, {
+        where: {
+            schedule_id: scheduleId,
+            is_available: true
+        }
+    });
 
     await invalidateDoctorSlotsCache(doctorId);
 };

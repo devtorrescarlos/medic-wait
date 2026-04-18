@@ -6,9 +6,8 @@ import Slot from './Slot';
 export enum AppointmentStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
-  IN_PROGRESS = 'in progress',
   COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  CANCELLED = 'cancelled'
 }
 
 @Table({ tableName: 'appointments' })
@@ -34,6 +33,21 @@ export default class Appointment extends Model {
 
   @Column({ type: DataType.STRING, allowNull: true })
   declare cancellation_reason: string;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  declare patient_fullName: string;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  declare patient_email: string;
+
+  @Column({ type: DataType.DATE, allowNull: false })
+  declare start_time: Date;
+
+  @Column({ type: DataType.DATE, allowNull: false })
+  declare end_time: Date;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  declare date: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(AppointmentStatus)),
