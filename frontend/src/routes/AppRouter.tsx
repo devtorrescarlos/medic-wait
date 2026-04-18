@@ -15,6 +15,8 @@ import ScheduleRegisterPage from '../pages/dashboard/doctor/schedules/ScheduleRe
 import SlotUpdatePage from '../pages/dashboard/doctor/slots/SlotUpdatePage'
 import ScheduleCalendarPage from '../pages/dashboard/doctor/schedules/ScheduleCalendarPage'
 import ScheduleUpdatePage from '../pages/dashboard/doctor/schedules/ScheduleUpdatePage'
+import AppointmentsPage from '../pages/dashboard/doctor/appointments/AppointmentsPage'
+import AppointmentDetailPage from '../pages/dashboard/doctor/appointments/AppointmentDetailPage'
 
 function AppRouter() {
   return (
@@ -38,6 +40,8 @@ function AppRouter() {
           <Route path='schedule/register' element={<ScheduleRegisterPage />} />
           <Route path='schedule/edit/:id' element={<ScheduleUpdatePage />} />
           <Route path='schedule' element={<ScheduleCalendarPage />} />
+          <Route path='appointments' element={<AppointmentsPage />} />
+          <Route path='appointments/:id' element={<AppointmentDetailPage />} />
         </Route>
       </Route>
 

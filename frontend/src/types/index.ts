@@ -60,3 +60,24 @@ export type ScheduleFormData = {
     slot_duration?: number;
     is_active?: boolean;
 }
+
+export type Appointment = {
+    id: string;
+    patient_fullName: string;
+    patient_email: string;
+    reason: string;
+    status: string;
+    date: string;
+    created_at: string;
+    start_time: string;
+    end_time: string;
+    doctor_id: string;
+    patient_id: string;
+}
+
+export type AppointmentsData = {
+    appointments: Appointment[];
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+}

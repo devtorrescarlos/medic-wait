@@ -47,7 +47,6 @@ export const useSlotsMutations = () => {
         onError: (error: any) => {
             if (isAxiosError(error) && error.response) {
                 toast.error(error.response.data.message);
-                console.log(error.response.data)
             }
         },
     })
