@@ -1,22 +1,7 @@
-import { Table, Column, Model, DataType, PrimaryKey } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsToMany, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
-
-export enum UserRole {
-    PATIENT = 'patient',
-    DOCTOR = 'doctor',
-    ADMIN = 'admin',
-}
-
-export enum DoctorSpecialty {
-    GENERAL = "general",
-    CARDIOLOGY = "cardiology",
-    DERMATOLOGY = "dermatology",
-    PEDIATRICS = "pediatrics",
-    GYNECOLOGY = "gynecology",
-    ORTHOPEDICS = "orthopedics",
-    NEUROLOGY = "neurology",
-    PSYCHIATRY = "psychiatry"
-}
+import Role from './Role';
+import UserRole from './UserRole';
 
 @Table({ tableName: 'users' })
 export default class User extends Model {
@@ -31,18 +16,11 @@ export default class User extends Model {
     declare password: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
-    declare fullName: string;
+    declare full_name: string;
 
-    @Column({
-        type: DataType.ENUM(...Object.values(UserRole)),
-        defaultValue: UserRole.PATIENT
-    })
-    declare role: UserRole;
-
-    @Column({
-        type: DataType.ENUM(...Object.values(DoctorSpecialty)),
-    })
-    declare specialty: DoctorSpecialty;
+    @ForeignKey(() => Role)
+    @Column({ type: DataType.UUID, allowNull: true })
+    declare specialty_id: string;
 
     @Column({ type: DataType.BOOLEAN, defaultValue: true })
     declare is_active: boolean;
@@ -52,4 +30,15 @@ export default class User extends Model {
 
     @Column({ type: DataType.BOOLEAN, defaultValue: false })
     declare is_approved_by_admin: boolean;
+
+    @CreatedAt
+    @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+    declare created_at: Date;
+
+    @UpdatedAt
+    @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+    declare updated_at: Date;
+
+    @BelongsToMany(() => Role, () => UserRole, 'user_id')
+    declare roles: Role[];
 }

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
+import Role from "../models/Role";
 
 declare global {
     namespace Express {

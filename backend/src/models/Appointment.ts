@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, Default, ForeignKey, BelongsTo, CreatedAt } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 import User from './User';
 import Slot from './Slot';
@@ -28,26 +28,11 @@ export default class Appointment extends Model {
   @Column({ type: DataType.UUID, allowNull: false, onDelete: 'CASCADE' })
   declare slot_id: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.TEXT, allowNull: false })
   declare reason: string;
 
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.TEXT, allowNull: true })
   declare cancellation_reason: string;
-
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare patient_fullName: string;
-
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare patient_email: string;
-
-  @Column({ type: DataType.DATE, allowNull: false })
-  declare start_time: Date;
-
-  @Column({ type: DataType.DATE, allowNull: false })
-  declare end_time: Date;
-
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare date: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(AppointmentStatus)),
@@ -56,8 +41,12 @@ export default class Appointment extends Model {
   declare status: AppointmentStatus;
 
   @CreatedAt
-  @Column({ type: DataType.DATE })
+  @Column({ type: DataType.DATE, defaultValue: () => new Date() })
   declare created_at: Date;
+
+  @UpdatedAt
+  @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+  declare updated_at: Date;
 
   @BelongsTo(() => User, 'doctor_id')
   declare doctor: User;
