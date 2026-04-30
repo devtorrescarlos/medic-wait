@@ -1,20 +1,16 @@
-import { DoctorSpecialty, UserRole } from "../models/User";
-
 export type RegisterData = {
     email: string,
     password: string,
-    fullName: string,
-    is_active?: boolean,
-    token?: string,
-    role?: UserRole,
-    specialty?: DoctorSpecialty
+    full_name: string,
+    role?: "admin" | "doctor" | "patient",
+    specialty_id?: string
 }
 
 export type RegisterWithRole = RegisterData & {
-    requesterRole: UserRole
+    requesterRole: string
 }
 
 export type LoginData = {
     email: string,
     password: string
-}   
+}

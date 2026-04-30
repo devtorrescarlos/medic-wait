@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 import Role from "../models/Role";
+import UserRole from "../models/UserRole";
 
 declare global {
     namespace Express {
@@ -11,37 +12,47 @@ declare global {
     }
 }
 
-export const verifyDoctorApproved = async (req: Request, res: Response, next: NextFunction) => {
+const verifyUserRole = async (user: User, requiredRole: string): Promise<boolean> => {
+    const userRoles = await UserRole.findAll({
+        where: { user_id: user.id },
+        include: [{ model: Role }]
+    });
+
+    return userRoles.some(ur => ur.role.name === requiredRole);
+};
+
+export const verifyRole = async (role: string, req: Request, res: Response, next: NextFunction) => {
     const user = req.user as User;
 
     if (!user) {
         return res.status(401).json({ message: "No autenticado" });
     }
 
-    if (user.role !== "doctor") {
+    const hasRole = await verifyUserRole(user, role);
+
+    if (!hasRole) {
         return res.status(403).json({ message: "No tienes permiso para realizar esta acción" });
     }
 
-    if (!user.is_approved_by_admin) {
+    if (role === "doctor" && !user.is_approved_by_admin) {
         return res.status(403).json({ message: "Tu cuenta aún no ha sido aprobada por un administrador" });
+    } else if (role === "patient") {
+        req.patientId = user.id;
+    } else if (role === "doctor") {
+        req.doctorId = user.id;
     }
-
-    req.doctorId = user.id;
 
     next();
 };
 
+export const verifyDoctorApproved = async (req: Request, res: Response, next: NextFunction) => {
+    return verifyRole("doctor", req, res, next);
+};
+
 export const verifyPatient = async (req: Request, res: Response, next: NextFunction) => {
-    const user = req.user as User;
+    return verifyRole("patient", req, res, next);
+};
 
-    if (!user) {
-        return res.status(401).json({ message: "No autenticado" });
-    }
-
-    if (user.role !== "patient") {
-        return res.status(403).json({ message: "No tienes permiso para realizar esta acción" });
-    }
-
-    req.patientId = user.id;
-    next();
+export const verifyAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    return verifyRole("admin", req, res, next);
 };

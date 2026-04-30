@@ -1,7 +1,8 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsToMany, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsToMany, CreatedAt, UpdatedAt, BelongsTo } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 import Role from './Role';
 import UserRole from './UserRole';
+import Specialty from './Specialty';
 
 @Table({ tableName: 'users' })
 export default class User extends Model {
@@ -18,9 +19,12 @@ export default class User extends Model {
     @Column({ type: DataType.STRING, allowNull: false })
     declare full_name: string;
 
-    @ForeignKey(() => Role)
+    @ForeignKey(() => Specialty)
     @Column({ type: DataType.UUID, allowNull: true })
     declare specialty_id: string;
+
+    @BelongsTo(() => Specialty)
+    declare specialty: Specialty;
 
     @Column({ type: DataType.BOOLEAN, defaultValue: true })
     declare is_active: boolean;

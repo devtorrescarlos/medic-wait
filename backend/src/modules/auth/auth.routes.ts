@@ -18,7 +18,7 @@ router.post("/register",
     body("password")
         .isLength({ min: 6 })
         .withMessage("Password debe tener al menos 6 caracteres"),
-    body("fullName")
+    body("full_name")
         .isLength({ min: 3 })
         .withMessage("Nombre debe tener al menos 3 caracteres"),
     handleInputErrors,

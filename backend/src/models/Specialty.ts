@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, CreatedAt } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, PrimaryKey, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 
 @Table({ tableName: 'specialties' })
@@ -13,4 +13,8 @@ export default class Specialty extends Model {
     @CreatedAt
     @Column({ type: DataType.DATE, defaultValue: () => new Date() })
     declare created_at: Date;
+
+    @UpdatedAt
+    @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+    declare updated_at: Date;
 }

@@ -6,9 +6,10 @@ import { ScheduleData } from "../../types/schedules.types";
 import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 
 const DAYS_TO_GENERATE = 14;
+const SLOT_DURATION = 60;
 
 export const createScheduleAndGenerateSlots = async (doctorId: string, scheduleData: ScheduleData) => {
-    const { day_of_week, start_time, end_time, slot_duration } = scheduleData;
+    const { day_of_week, start_time, end_time } = scheduleData;
 
     const existingSchedule = await DoctorSchedule.findOne({
         where: { doctor_id: doctorId, day_of_week }
@@ -26,14 +27,14 @@ export const createScheduleAndGenerateSlots = async (doctorId: string, scheduleD
     const [endH, endM] = end_time.split(':').map(Number);
     const totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
 
-    if (totalMinutes < slot_duration) {
+    if (totalMinutes < SLOT_DURATION) {
         throw { status: 400, message: "El horario debe durar al menos lo que dure un slot" };
     }
 
-    if (totalMinutes % slot_duration !== 0) {
+    if (totalMinutes % SLOT_DURATION !== 0) {
         throw {
             status: 400,
-            message: `El horario debe ser divisible por la duración del slot. Tiempo disponible: ${totalMinutes} min, duración del slot: ${slot_duration} min`
+            message: `El horario debe ser divisible por la duración del slot. Tiempo disponible: ${totalMinutes} min, duración del slot: ${SLOT_DURATION} min`
         };
     }
 
@@ -41,8 +42,7 @@ export const createScheduleAndGenerateSlots = async (doctorId: string, scheduleD
         doctor_id: doctorId,
         day_of_week,
         start_time,
-        end_time,
-        slot_duration
+        end_time
     });
 
     const slotsCreated = await generateSlotsForSchedule(doctorId, schedule);
@@ -68,16 +68,16 @@ const generateSlotsForSchedule = async (doctorId: string, schedule: DoctorSchedu
             const dayEnd = addMinutes(startOfDay(currentDay), endH * 60 + endM);
 
             while (slotStart < dayEnd) {
-                const slotEnd = addMinutes(slotStart, schedule.slot_duration);
+                const slotEnd = addMinutes(slotStart, SLOT_DURATION);
 
                 if (slotEnd <= dayEnd) {
                     slotsToCreate.push({
-                        doctor_id: doctorId,
+                        schedule_id: schedule.id,
                         start_time: slotStart,
                         end_time: slotEnd,
                         date: format(currentDay, 'yyyy-MM-dd'),
                         is_available: true,
-                        schedule_id: schedule.id
+                        is_active: true
                     });
                 }
                 slotStart = slotEnd;
