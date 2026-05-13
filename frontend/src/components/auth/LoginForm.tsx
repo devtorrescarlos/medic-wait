@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../hooks/auth/useAuth";
+import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 import ErrorMessage from "../shared/ErrorMessage";
 import type { LoginForm } from "../../types";
 
@@ -13,7 +13,7 @@ const initialValues: LoginForm = {
 export default function LoginForm() {
     const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({ defaultValues: initialValues });
 
-    const { loginMutation } = useAuth();
+    const { loginMutation } = useAuthMutations();
 
     const handleOnSubmit = (data: LoginForm) => {
         loginMutation.mutate(data);

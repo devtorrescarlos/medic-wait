@@ -16,7 +16,6 @@ export type LoginForm = {
 export type User = {
     email: string;
     id: string;
-    role: string;
     fullName: string;
     is_approved_by_admin: boolean;
 }
@@ -59,6 +58,11 @@ export type ScheduleFormData = {
     end_time: string;
     slot_duration?: number;
     is_active?: boolean;
+}
+
+export type Role = {
+    id: string,
+    name: string
 }
 
 export type Appointment = {

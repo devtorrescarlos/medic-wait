@@ -2,8 +2,8 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import ErrorMessage from "../shared/ErrorMessage"
 import type { RegisterForm } from "../../types";
-import { specialties } from "../../data/specialties";
-import { useAuth } from "../../hooks/auth/useAuth";
+import { specialties } from "../../constants/specialties";
+import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 
 
 
@@ -18,7 +18,7 @@ const initialValues = {
 export default function RegisterForm() {
     const [isDoctor, setIsDoctor] = useState(false);
     const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterForm>({ defaultValues: initialValues });
-    const { registerMutation } = useAuth();
+    const { registerMutation } = useAuthMutations();
 
 
     const handleOnSubmit = (data: RegisterForm) => {

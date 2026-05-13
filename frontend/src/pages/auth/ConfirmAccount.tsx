@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/auth/useAuth";
+import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 import { useEffect, useRef } from "react";
 
 
 export default function ConfirmAccountPage() {
 
     const { token } = useParams();
-    const { confirmAccountMutation, verifyTokenMutation } = useAuth();
+    const { confirmAccountMutation, verifyTokenMutation } = useAuthMutations();
     const hasVerified = useRef(false);
 
     useEffect(() => {

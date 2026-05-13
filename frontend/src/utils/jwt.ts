@@ -13,10 +13,3 @@ export const decodeJWT = (token: string): { id: string; role: string } | null =>
         return null;
     }
 };
-
-export const getRoleFromToken = (): string | null => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    const decoded = decodeJWT(token);
-    return decoded?.role || null;
-};
