@@ -1,4 +1,4 @@
-import { useAuth } from "../../hooks/auth/useAuth";
+import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../shared/ErrorMessage";
 
@@ -7,7 +7,7 @@ type FormData = {
 }
 
 export default function ResendConfirmationEmailForm() {
-    const { resendConfirmationEmailMutation } = useAuth();
+    const { resendConfirmationEmailMutation } = useAuthMutations();
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
     const handleOnSubmit = (data: FormData) => {

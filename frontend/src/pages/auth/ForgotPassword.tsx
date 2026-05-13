@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../../components/shared/ErrorMessage";
-import { useAuth } from "../../hooks/auth/useAuth";
+import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 
 type ForgotPasswordForm = {
     email: string;
@@ -14,7 +14,7 @@ const initialValues: ForgotPasswordForm = {
 export default function ForgotPasswordPage() {
     const { register, handleSubmit, formState: { errors } } = useForm<ForgotPasswordForm>({ defaultValues: initialValues });
 
-    const { forgotPasswordMutation } = useAuth();
+    const { forgotPasswordMutation } = useAuthMutations();
 
     const handleOnSubmit = (data: ForgotPasswordForm) => {
         forgotPasswordMutation.mutate(data);

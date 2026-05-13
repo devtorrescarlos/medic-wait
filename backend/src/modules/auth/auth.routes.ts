@@ -18,7 +18,7 @@ router.post("/register",
     body("password")
         .isLength({ min: 6 })
         .withMessage("Password debe tener al menos 6 caracteres"),
-    body("fullName")
+    body("full_name")
         .isLength({ min: 3 })
         .withMessage("Nombre debe tener al menos 3 caracteres"),
     handleInputErrors,
@@ -75,5 +75,8 @@ router.post("/resend-confirmation-email",
     AuthController.resendConfirmationEmail)
 
 router.get('/user', authenticate, AuthController.getUser)
+
+router.get('/role', authenticate, AuthController.getRole)
+
 // TODO: UPDATE PASSWORD WHEN USER IS LOGGED IN
 export default router;

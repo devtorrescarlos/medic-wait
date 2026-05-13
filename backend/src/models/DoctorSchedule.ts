@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, ForeignKey, PrimaryKey, HasMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, PrimaryKey, HasMany, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 import User from './User';
 import Slot from './Slot';
@@ -29,11 +29,16 @@ export default class DoctorSchedule extends Model {
     @Column(DataType.TIME)
     end_time!: string;
 
-    @Column(DataType.INTEGER)
-    slot_duration!: number;
-
     @Column({ type: DataType.BOOLEAN, defaultValue: true })
     is_active!: boolean;
+
+    @CreatedAt
+    @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+    declare created_at: Date;
+
+    @UpdatedAt
+    @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+    declare updated_at: Date;
 
     @HasMany(() => Slot)
     declare slots: Slot[];

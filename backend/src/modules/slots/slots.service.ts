@@ -1,13 +1,9 @@
 import Slot from "../../models/Slot";
-import redisClient from "../../config/ioredis";
-import { parse } from "date-fns";
-import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 import DoctorSchedule from "../../models/DoctorSchedule";
+import redisClient from "../../config/ioredis";
+import { parseTimeString } from "../../utils";
+import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 
-
-const parseTimeString = (timeStr: string, referenceDate: Date): Date => {
-    return parse(timeStr, "HH:mm", referenceDate);
-};
 
 
 export const getAvailableSlots = async (doctorId: string, page: number, limit: number) => {
@@ -18,8 +14,12 @@ export const getAvailableSlots = async (doctorId: string, page: number, limit: n
     }
 
     const { count, rows } = await Slot.findAndCountAll({
+        include: [{
+            model: DoctorSchedule,
+            where: { doctor_id: doctorId },
+            attributes: ['doctor_id']
+        }],
         where: {
-            doctor_id: doctorId,
             is_active: true,
             is_available: true
         },
@@ -52,22 +52,23 @@ export const getSlots = async (doctorId: string, page: number, limit: number, da
         return JSON.parse(cachedSlots);
     }
 
-    const whereClause: any = { doctor_id: doctorId, is_active: true };
+    const scheduleInclude: any = {
+        model: DoctorSchedule,
+        where: { doctor_id: doctorId },
+        attributes: ['day_of_week', 'doctor_id']
+    };
+    if (day) {
+        scheduleInclude.where = { ...scheduleInclude.where, day_of_week: day };
+    }
+
+    const whereClause: any = { is_active: true };
     if (date) {
         whereClause.date = date;
     }
 
-    const includeClause: any = {
-        model: DoctorSchedule,
-        attributes: ['day_of_week']
-    };
-    if (day) {
-        includeClause.where = { day_of_week: day };
-    }
-
     const { count, rows } = await Slot.findAndCountAll({
         where: whereClause,
-        include: [includeClause],
+        include: [scheduleInclude],
         limit,
         offset: (page - 1) * limit,
         order: [['start_time', 'ASC']]
@@ -97,22 +98,17 @@ export const getSlots = async (doctorId: string, page: number, limit: number, da
 
 export const deleteSlot = async (slotId: string, doctorId: string) => {
     const slot = await Slot.findOne({
-        where: {
-            id: slotId,
-            doctor_id: doctorId
-        }
+        where: { id: slotId },
+        include: [{
+            model: DoctorSchedule,
+            where: { doctor_id: doctorId },
+            attributes: ['doctor_id', 'id']
+        }]
     });
     if (!slot) {
         throw {
             status: 404,
             message: "No se encontro el slot"
-        }
-    }
-
-    if (slot.doctor_id !== doctorId) {
-        throw {
-            status: 403,
-            message: "No tienes permiso para eliminar este slot"
         }
     }
 
@@ -134,8 +130,8 @@ export const deleteSlot = async (slotId: string, doctorId: string) => {
 
     const remainingSlots = await Slot.count({
         where: {
-            doctor_id: doctorId,
-            schedule_id: slot.schedule_id
+            schedule_id: slot.schedule_id,
+            is_active: true
         }
     });
 
@@ -156,22 +152,17 @@ export const deleteSlot = async (slotId: string, doctorId: string) => {
 
 export const updateSlot = async (slotId: string, doctorId: string, start_time: string, end_time: string) => {
     const slot = await Slot.findOne({
-        where: {
-            id: slotId,
-            doctor_id: doctorId
-        }
+        where: { id: slotId },
+        include: [{
+            model: DoctorSchedule,
+            where: { doctor_id: doctorId },
+            attributes: ['doctor_id', 'id']
+        }]
     });
     if (!slot) {
         throw {
             status: 404,
             message: "No se encontro el slot"
-        }
-    }
-
-    if (slot.doctor_id !== doctorId) {
-        throw {
-            status: 403,
-            message: "No tienes permiso para actualizar este slot"
         }
     }
 
@@ -197,6 +188,6 @@ export const updateSlot = async (slotId: string, doctorId: string, start_time: s
     slot.end_time = newEndTime;
     await slot.save();
 
-    await invalidateDoctorSlotsCache(slot.doctor_id);
+    await invalidateDoctorSlotsCache(doctorId);
     return slot;
-}   
+}

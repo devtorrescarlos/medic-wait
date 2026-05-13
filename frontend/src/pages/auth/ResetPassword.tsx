@@ -1,12 +1,12 @@
 import ResetPasswordForm from "../../components/auth/ResetPasswordForm";
 import { useParams } from "react-router-dom";
 import { useEffect, useRef } from "react";
-import { useAuth } from "../../hooks/auth/useAuth";
+import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 
 
 export default function ResetPasswordPage() {
     const { token } = useParams();
-    const { verifyTokenMutation } = useAuth();
+    const { verifyTokenMutation } = useAuthMutations();
 
     const hasVerified = useRef(false);
 

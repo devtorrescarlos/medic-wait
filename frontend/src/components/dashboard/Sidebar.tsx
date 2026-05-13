@@ -1,17 +1,15 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { ChevronsLeft, Heart } from "lucide-react";
 import { Calendar, House, Clock4, User2, CalendarArrowUp } from "lucide-react"
-import type { User } from "../../types";
-
+import { useAuth } from "../../hooks/auth/useAuth";
 
 type SidebarProps = {
-    user: User;
     isSidebarCollapsed: boolean;
     setIsSidebarCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function Sidebar({ user, isSidebarCollapsed, setIsSidebarCollapsed }: SidebarProps) {
-
+export default function Sidebar({ isSidebarCollapsed, setIsSidebarCollapsed }: SidebarProps) {
+    const { role } = useAuth();
     const pathname = useLocation();
 
     const ADMIN_LINKS = [
@@ -35,7 +33,7 @@ export default function Sidebar({ user, isSidebarCollapsed, setIsSidebarCollapse
         { to: "/dashboard/patient/history", label: "Historial", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
     ];
 
-    const links = user.role === "admin" ? ADMIN_LINKS : user.role === "doctor" ? DOCTOR_LINKS : PATIENT_LINKS;
+    const links = role === "admin" ? ADMIN_LINKS : role === "doctor" ? DOCTOR_LINKS : PATIENT_LINKS;
 
     return (
         <aside className={`

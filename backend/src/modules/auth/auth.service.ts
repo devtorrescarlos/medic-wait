@@ -1,12 +1,15 @@
-import User, { UserRole } from "../../models/User"
-import type { RegisterData, LoginData } from "../../types/auth.types"
+import User from "../../models/User";
+import Role from "../../models/Role";
+import UserRole from "../../models/UserRole";
+import type { RegisterData, LoginData } from "../../types/auth.types";
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
 import { sendVerificationEmail, sendForgotPasswordEmail } from "../../emails";
 import { generateJWT, generateVerificationJWT, verifyVerificationJWT } from "../../utils/jwt";
+import { getUserRole } from "../../utils";
 
 
 export const register = async (userData: RegisterData) => {
-    const { email, password, fullName, role, specialty } = userData;
+    const { email, password, full_name, role, specialty_id } = userData;
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
@@ -21,13 +24,29 @@ export const register = async (userData: RegisterData) => {
     const user = await User.create({
         email,
         password: hashedPassword,
-        fullName,
-        role,
-        specialty
-    })
+        full_name,
+        specialty_id: specialty_id || null
+    });
+
+    if (role) {
+        const roleRecord = await Role.findOne({ where: { name: role } });
+        if (roleRecord) {
+            await UserRole.create({
+                user_id: user.id,
+                role_id: roleRecord.id
+            });
+        }
+    } else {
+        const defaultRole = await Role.findOne({ where: { name: "patient" } });
+        if (defaultRole) {
+            await UserRole.create({
+                user_id: user.id,
+                role_id: defaultRole.id
+            });
+        }
+    }
 
     const token = generateVerificationJWT(user.id);
-
     await sendVerificationEmail(email, token);
 
     return token;
@@ -61,14 +80,16 @@ export const login = async (userData: LoginData) => {
         }
     }
 
-    if (user.role === UserRole.DOCTOR && !user.is_approved_by_admin) {
+    const userRole = await getUserRole(user.id);
+
+    if (userRole === "doctor" && !user.is_approved_by_admin) {
         throw {
             status: 403,
             message: "El Doctor no ha sido aprobado por el administrador"
         }
     }
 
-    const token = generateJWT(user.id, user.role);
+    const token = generateJWT(user.id, userRole || "patient");
 
     return token;
 }
@@ -92,7 +113,6 @@ export const resendConfirmationEmail = async (email: string) => {
 }
 
 export const confirmAccount = async (token: string) => {
-
     const decoded = verifyVerificationJWT(token);
     const user = await User.findByPk(decoded.id);
 
@@ -157,4 +177,17 @@ export const resetPasswordWithToken = async (token: string, password: string) =>
     await user.save();
 
     return;
+}
+
+export const getRole = async (userId: string) => {
+    const userRole = await UserRole.findOne({ where: { user_id: userId } });
+
+    if (!userRole) {
+        throw {
+            status: 404,
+            message: "Rol no encontrado"
+        }
+    }
+    const role = await Role.findByPk(userRole.role_id);
+    return role;
 }

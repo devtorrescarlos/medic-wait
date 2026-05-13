@@ -48,3 +48,10 @@ export const getUser = async () => {
     const response = await api.get(url);
     return response.data;
 }
+
+export const getRole = async () => {
+    const url = `${import.meta.env.VITE_API_URL}/auth/role`;
+    const response = await api.get(url);
+    return response.data.role;
+
+} 

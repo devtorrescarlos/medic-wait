@@ -29,13 +29,14 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     try {
         const decoded = jwt.verify(token, process.env.SUPER_SECRET as string) as { id: string };
 
-        const user = await User.findByPk(decoded.id, {
-            attributes: ["id", "fullName", "email", "role", "is_approved_by_admin"]
-        })
-
+        const user = await User.findByPk(decoded.id);
 
         if (!user) {
             return res.status(401).json({ error: "Usuario no encontrado" });
+        }
+
+        if (!user.is_email_verified) {
+            return res.status(401).json({ error: "Usuario no verificado" });
         }
 
         req.user = user;

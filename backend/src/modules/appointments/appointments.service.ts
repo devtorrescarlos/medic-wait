@@ -1,6 +1,7 @@
 import Appointment from "../../models/Appointment"
 import User from "../../models/User"
 import Slot from "../../models/Slot"
+import DoctorSchedule from "../../models/DoctorSchedule"
 import { redlock } from "../../config/redlock"
 import redisClient from "../../config/ioredis";
 import { notifyAppointmentChange } from "../../config/websocket";
@@ -11,7 +12,6 @@ import { differenceInMinutes } from "date-fns";
 
 export const createAppointment = async (patientId: string, doctorId: string, reason: string, slotId: string) => {
 
-    // REDIS DISTRIBUTED LOCK
     const resource = `locks:appointment:${slotId}`;
     const ttl = 5000;
     let lock: any;
@@ -19,10 +19,15 @@ export const createAppointment = async (patientId: string, doctorId: string, rea
     try {
         lock = await redlock.acquire([resource], ttl);
 
-        const patient = await User.findOne({
-            where: {
-                id: patientId,
+        if (patientId === doctorId) {
+            throw {
+                status: 409,
+                message: "No puedes agendar una cita contigo mismo"
             }
+        }
+
+        const patient = await User.findOne({
+            where: { id: patientId }
         })
 
         if (!patient) {
@@ -49,10 +54,15 @@ export const createAppointment = async (patientId: string, doctorId: string, rea
 
         const slot = await Slot.findOne({
             where: {
-                doctor_id: doctorId,
                 id: slotId,
                 is_available: true,
-            }
+                is_active: true
+            },
+            include: [{
+                model: DoctorSchedule,
+                where: { doctor_id: doctorId },
+                attributes: ['doctor_id']
+            }]
         })
 
         if (!slot) {
@@ -70,11 +80,6 @@ export const createAppointment = async (patientId: string, doctorId: string, rea
             doctor_id: doctorId,
             slot_id: slotId,
             reason,
-            patient_fullName: patient.fullName,
-            patient_email: patient.email,
-            date: slot.date,
-            end_time: slot.end_time,
-            start_time: slot.start_time,
             status: "pending"
         })
 
@@ -266,6 +271,23 @@ export const getAppointmentById = async (appointmentId: string) => {
     return appointment;
 }
 
+export const getAppointmentWithDetails = async (appointmentId: string) => {
+    const appointment = await Appointment.findOne({
+        where: { id: appointmentId },
+        include: [
+            { model: User, as: 'patient', attributes: ['id', 'full_name', 'email'] },
+            { model: User, as: 'doctor', attributes: ['id', 'full_name'] },
+            { model: Slot }
+        ]
+    })
+
+    if (!appointment) {
+        throw { status: 404, message: "La cita no existe" };
+    }
+
+    return appointment;
+}
+
 export const getAppointmentsByDoctorId = async (doctorId: string, page: number, limit: number) => {
 
     const cacheKey = `appointments:${doctorId}:${page}:${limit}`;
@@ -279,6 +301,10 @@ export const getAppointmentsByDoctorId = async (doctorId: string, page: number, 
         where: {
             doctor_id: doctorId,
         },
+        include: [
+            { model: User, as: 'patient', attributes: ['id', 'full_name', 'email'] },
+            { model: Slot }
+        ],
         limit,
         offset: (page - 1) * limit,
         order: [['created_at', 'DESC']]
@@ -318,6 +344,10 @@ export const getAppointmentsByPatientId = async (patientId: string, page: number
         where: {
             patient_id: patientId,
         },
+        include: [
+            { model: User, as: 'doctor', attributes: ['id', 'full_name'] },
+            { model: Slot }
+        ],
         limit,
         offset: (page - 1) * limit,
         order: [['created_at', 'DESC']]
@@ -355,9 +385,6 @@ export const getAllAppointments = async (page: number, limit: number, patient: s
     }
 
     const whereClause: any = {};
-    if (patient) {
-        whereClause.patient_fullName = { [Op.iLike]: `%${patient}%` };
-    }
     if (date) {
         whereClause.date = date;
     }
@@ -365,8 +392,19 @@ export const getAllAppointments = async (page: number, limit: number, patient: s
         whereClause.status = status;
     }
 
+    const includeClause: any[] = [
+        { model: User, as: 'patient', attributes: ['id', 'full_name', 'email'] },
+        { model: User, as: 'doctor', attributes: ['id', 'full_name'] },
+        { model: Slot }
+    ];
+
+    if (patient) {
+        includeClause[0].where = { full_name: { [Op.iLike]: `%${patient}%` } };
+    }
+
     const { count, rows } = await Appointment.findAndCountAll({
         where: whereClause,
+        include: includeClause,
         limit,
         offset: (page - 1) * limit,
         order: [['created_at', 'DESC']]

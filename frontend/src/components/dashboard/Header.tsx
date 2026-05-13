@@ -1,12 +1,8 @@
 import { Bell } from "lucide-react";
-import type { User } from "../../types";
+import { useAuth } from "../../hooks/auth/useAuth";
 
-type HeaderProps = {
-    user: User
-}
-
-export default function Header({ user }: HeaderProps) {
-
+export default function Header() {
+    const { user, role } = useAuth();
 
     const getInitials = (name: string) => {
         return name
@@ -21,9 +17,9 @@ export default function Header({ user }: HeaderProps) {
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6">
             <div className="flex items-center gap-4">
                 <h1 className="text-xl font-semibold text-gray-800">
-                    {user.role === "admin" && "Panel de Administración"}
-                    {user.role === "doctor" && "Panel de Doctor"}
-                    {user.role === "patient" && "Mis Citas"}
+                    {role === "admin" && "Panel de Administración"}
+                    {role === "doctor" && "Panel de Doctor"}
+                    {role === "patient" && "Mis Citas"}
                 </h1>
             </div>
 
@@ -36,14 +32,14 @@ export default function Header({ user }: HeaderProps) {
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-linear-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                            {user.fullName ? getInitials(user.fullName) : "U"}
+                            {user?.fullName ? getInitials(user.fullName) : "U"}
                         </div>
                         <div className="hidden md:flex flex-col">
                             <span className="text-sm font-medium text-gray-800">
                                 {user?.fullName || "Usuario"}
                             </span>
                             <span className="text-xs text-gray-500">
-                                {user.role.toUpperCase()}
+                                {role.toUpperCase()}
                             </span>
                         </div>
                     </div>
