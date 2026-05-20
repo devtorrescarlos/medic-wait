@@ -50,6 +50,7 @@ export const useAppointmentsFilters = () => {
         dateFilter,
         statusFilter,
         page,
+        setPage,
         limit,
         handleDateFilter,
         handleStatusFilter,

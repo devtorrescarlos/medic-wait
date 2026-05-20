@@ -16,7 +16,8 @@ export type LoginForm = {
 export type User = {
     email: string;
     id: string;
-    fullName: string;
+    full_name: string;
+    specialty_id?: string;
     is_approved_by_admin: boolean;
 }
 
@@ -26,10 +27,10 @@ export type Slot = {
     end_time: string;
     date: string;
     is_available: boolean;
-    schedule: {
-        day_of_week: string;
-    }
-    createdAt: string;
+    is_active: boolean;
+    schedule: ScheduleData;
+    created_at: string;
+    updated_at: string;
 }
 
 export type SlotsData = {
@@ -67,16 +68,17 @@ export type Role = {
 
 export type Appointment = {
     id: string;
-    patient_fullName: string;
-    patient_email: string;
     reason: string;
     status: string;
-    date: string;
-    created_at: string;
-    start_time: string;
-    end_time: string;
     doctor_id: string;
     patient_id: string;
+    cancellation_reason: string;
+    slot_id: string;
+    created_at: string;
+    updated_at: string;
+    slot: Slot;
+    doctor: Pick<User, 'full_name' | 'id'>;
+    patient: Pick<User, 'full_name' | 'id' | 'email'>;
 }
 
 export type AppointmentsData = {

@@ -1,7 +1,8 @@
-import { Calendar, Clock, User, Mail, FileText, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Calendar, Clock, User, Mail, FileText, XCircle, CheckCircle } from "lucide-react";
 import type { Appointment } from "../../../types";
 import { getInitials } from "../../../utils/getInitials";
-import { formatTime } from "../../../utils/formatDayAndDates";
+import { formatDate, formatTime } from "../../../utils/formatDayAndDates";
+import { statusConfig } from "../../../constants";
 
 interface AppointmentDetailCardProps {
     appointment: Appointment;
@@ -11,12 +12,7 @@ interface AppointmentDetailCardProps {
 
 export default function AppointmentDetailCard({ appointment, handleCancelModal, handleCompleteModal }: AppointmentDetailCardProps) {
 
-    const statusConfig = {
-        pending: { label: "Pendiente", bg: "bg-yellow-50", text: "text-yellow-700", border: "border-yellow-200", icon: AlertCircle },
-        confirmed: { label: "Confirmada", bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", icon: CheckCircle },
-        cancelled: { label: "Cancelada", bg: "bg-red-50", text: "text-red-700", border: "border-red-200", icon: XCircle },
-        completed: { label: "Completada", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", icon: CheckCircle },
-    };
+
 
     const status = statusConfig[appointment.status as keyof typeof statusConfig] || statusConfig.pending;
     const StatusIcon = status.icon;
@@ -36,7 +32,7 @@ export default function AppointmentDetailCard({ appointment, handleCancelModal, 
                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                         <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                             <span className="text-emerald-700 font-semibold text-lg">
-                                {getInitials(appointment.patient_fullName)}
+                                {getInitials(appointment.patient.full_name)}
                             </span>
                         </div>
                         <div>
@@ -44,7 +40,7 @@ export default function AppointmentDetailCard({ appointment, handleCancelModal, 
                                 <User className="w-4 h-4" />
                                 <span className="text-xs uppercase tracking-wide">Paciente</span>
                             </div>
-                            <p className="font-semibold text-gray-800">{appointment.patient_fullName}</p>
+                            <p className="font-semibold text-gray-800">{appointment.patient.full_name}</p>
                         </div>
                     </div>
 
@@ -57,7 +53,7 @@ export default function AppointmentDetailCard({ appointment, handleCancelModal, 
                                 <Mail className="w-4 h-4" />
                                 <span className="text-xs uppercase tracking-wide">Correo</span>
                             </div>
-                            <p className="font-medium text-gray-700">{appointment.patient_email}</p>
+                            <p className="font-medium text-gray-700">{appointment.patient.email}</p>
                         </div>
                     </div>
 
@@ -70,7 +66,7 @@ export default function AppointmentDetailCard({ appointment, handleCancelModal, 
                                 <Calendar className="w-4 h-4" />
                                 <span className="text-xs uppercase tracking-wide">Fecha</span>
                             </div>
-                            <p className="font-medium text-gray-700">{appointment.date}</p>
+                            <p className="font-medium text-gray-700">{appointment.slot.date}</p>
                         </div>
                     </div>
 
@@ -84,7 +80,7 @@ export default function AppointmentDetailCard({ appointment, handleCancelModal, 
                                 <span className="text-xs uppercase tracking-wide">Horario</span>
                             </div>
                             <p className="font-medium text-gray-700">
-                                {formatTime(appointment.start_time)} - {formatTime(appointment.end_time)}
+                                {formatTime(appointment.slot.start_time)} - {formatTime(appointment.slot.end_time)}
                             </p>
                         </div>
                     </div>
@@ -104,7 +100,7 @@ export default function AppointmentDetailCard({ appointment, handleCancelModal, 
 
                 <div className="mt-6 pt-6 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
                     <div className="text-sm text-gray-500">
-                        <p>Creada el: {appointment.created_at}</p>
+                        <p>Creada el: {formatDate(appointment.created_at)}</p>
                         <p>ID: {appointment.id}</p>
                     </div>
 

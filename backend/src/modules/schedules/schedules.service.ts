@@ -163,6 +163,7 @@ export const updateSchedule = async (doctorId: string, scheduleId: string, sched
             where: {
                 schedule_id: scheduleId,
                 is_available: false,
+                is_active: true,
                 date: { [Op.gte]: today }
             }
         });
@@ -170,7 +171,7 @@ export const updateSchedule = async (doctorId: string, scheduleId: string, sched
         if (occupiedSlotsCount > 0) {
             throw {
                 status: 409,
-                message: `No puedes modificar el horario porque ya tienes citas agendadas ese día. Cancélalas primero.`
+                message: "No puedes modificar el horario porque ya tienes citas agendadas ese día. Cancélalas primero."
             };
         }
     }
@@ -218,7 +219,9 @@ export const deleteScheduleAndSlots = async (doctorId: string, scheduleId: strin
         };
     }
 
-    await schedule.destroy();
+    await schedule.update({
+        is_active: false
+    });
 
     await Slot.update({
         is_active: false

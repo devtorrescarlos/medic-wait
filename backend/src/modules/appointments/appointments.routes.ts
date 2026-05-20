@@ -78,7 +78,7 @@ router.post("/:appointmentId/confirm",
     appointmentController.confirmAppointment
 )
 
-router.get("/all", authenticate, appointmentController.getAllAppointments)
+router.get("/all", authenticate, verifyDoctorApproved, appointmentController.getAllAppointments)
 
 router.get("/doctor/:doctorId", authenticate, doctorIdValidation, verifyPatient, appointmentController.getAppointmentsByDoctorId)
 

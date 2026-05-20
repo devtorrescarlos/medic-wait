@@ -178,16 +178,3 @@ export const resetPasswordWithToken = async (token: string, password: string) =>
 
     return;
 }
-
-export const getRole = async (userId: string) => {
-    const userRole = await UserRole.findOne({ where: { user_id: userId } });
-
-    if (!userRole) {
-        throw {
-            status: 404,
-            message: "Rol no encontrado"
-        }
-    }
-    const role = await Role.findByPk(userRole.role_id);
-    return role;
-}

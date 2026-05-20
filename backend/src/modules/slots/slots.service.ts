@@ -1,5 +1,6 @@
 import Slot from "../../models/Slot";
 import DoctorSchedule from "../../models/DoctorSchedule";
+import db from "../../config/database";
 import redisClient from "../../config/ioredis";
 import { parseTimeString } from "../../utils";
 import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
@@ -71,7 +72,17 @@ export const getSlots = async (doctorId: string, page: number, limit: number, da
         include: [scheduleInclude],
         limit,
         offset: (page - 1) * limit,
-        order: [['start_time', 'ASC']]
+        order: [[db.literal(`CASE 
+        WHEN "schedule"."day_of_week" = 'monday' THEN 1
+        WHEN "schedule"."day_of_week" = 'tuesday' THEN 2
+        WHEN "schedule"."day_of_week" = 'wednesday' THEN 3
+        WHEN "schedule"."day_of_week" = 'thursday' THEN 4
+        WHEN "schedule"."day_of_week" = 'friday' THEN 5
+        WHEN "schedule"."day_of_week" = 'saturday' THEN 6
+        WHEN "schedule"."day_of_week" = 'sunday' THEN 7
+        ELSE 8
+    END`), 'ASC'],
+        ['start_time', 'ASC']]
     });
 
     if (rows.length === 0) {
