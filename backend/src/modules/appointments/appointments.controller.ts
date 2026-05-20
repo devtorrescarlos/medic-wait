@@ -117,7 +117,8 @@ export const getAllAppointments = async (req: Request, res: Response) => {
         const patient = req.query.patient as string;
         const date = req.query.date as string;
         const status = req.query.status as string;
-        const appointments = await appointmentService.getAllAppointments(page, limit, patient, date, status);
+        const doctorId = req.doctorId;
+        const appointments = await appointmentService.getAllAppointments(page, limit, patient, date, status, doctorId as string);
         return res.status(200).json(appointments);
     } catch (error: any) {
         if (error.status) {

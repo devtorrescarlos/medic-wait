@@ -76,7 +76,5 @@ router.post("/resend-confirmation-email",
 
 router.get('/user', authenticate, AuthController.getUser)
 
-router.get('/role', authenticate, AuthController.getRole)
-
 // TODO: UPDATE PASSWORD WHEN USER IS LOGGED IN
 export default router;

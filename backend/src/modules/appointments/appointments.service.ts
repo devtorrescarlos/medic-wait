@@ -258,7 +258,12 @@ export const getAppointmentById = async (appointmentId: string) => {
     const appointment = await Appointment.findOne({
         where: {
             id: appointmentId,
-        }
+        },
+        include: [
+            { model: User, as: 'patient', attributes: ['id', 'full_name', 'email'] },
+            { model: User, as: 'doctor', attributes: ['id', 'full_name'] },
+            { model: Slot }
+        ]
     })
 
     if (!appointment) {
@@ -375,7 +380,7 @@ export const getAppointmentsByPatientId = async (patientId: string, page: number
 
 }
 
-export const getAllAppointments = async (page: number, limit: number, patient: string, date: string, status: string) => {
+export const getAllAppointments = async (page: number, limit: number, patient: string, date: string, status: string, doctorId: string) => {
 
     const cacheKey = `appointments:all:${page}:${limit}:p:${patient}:d:${date}:s:${status}`;
     const cachedAppointments = await redisClient.get(cacheKey);
@@ -403,7 +408,7 @@ export const getAllAppointments = async (page: number, limit: number, patient: s
     }
 
     const { count, rows } = await Appointment.findAndCountAll({
-        where: whereClause,
+        where: { ...whereClause, doctor_id: doctorId },
         include: includeClause,
         limit,
         offset: (page - 1) * limit,

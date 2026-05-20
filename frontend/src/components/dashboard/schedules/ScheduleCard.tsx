@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Switch } from '@headlessui/react'
 import type { ScheduleData } from "../../../types/index";
-import { Clock, Pencil, Trash2 } from "lucide-react";
+import { Clock, Pencil } from "lucide-react";
 import { format, parse } from "date-fns";
 import { formatDay } from "../../../utils/formatDayAndDates";
 import { useSchedulesMutations } from "../../../hooks/schedules/useSchedules";
@@ -20,7 +20,7 @@ const formatTime = (time: string) => {
 
 export default function ScheduleCard({ schedule }: ScheduleCardProps) {
 
-    const { toggleScheduleMutation, deleteScheduleMutation } = useSchedulesMutations();
+    const { toggleScheduleMutation } = useSchedulesMutations();
 
 
     return (
@@ -60,15 +60,10 @@ export default function ScheduleCard({ schedule }: ScheduleCardProps) {
             <div className="flex flex-col items-center justify-center gap-2">
                 <p className="text-gray-600 font-bold text-sm">Acciones</p>
                 <div className="flex items-center gap-2">
-                    <Link to={`/dashboard/doctor/schedule/edit/${schedule.id}`} className="p-1.5 cursor-pointer text-gray-500 hover:text-cyan-600 hover:bg-red-50 rounded-lg transition-colors">
-                        <Pencil size={24} />
+                    <Link to={`/dashboard/doctor/schedule/edit/${schedule.id}`} className="p-1.5 cursor-pointer flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg transition-colors">
+                        <Pencil size={18} />
+                        Editar
                     </Link>
-                    <button
-                        onClick={() => deleteScheduleMutation.mutate(schedule.id)}
-                        disabled={deleteScheduleMutation.isPending}
-                        className="p-1.5 cursor-pointer text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                        <Trash2 size={24} />
-                    </button>
                 </div>
 
             </div>

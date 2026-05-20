@@ -6,9 +6,11 @@ import AppointmentsCard from "./AppointmentsCard";
 
 type AppointmentsTableProps = {
     data: AppointmentsData;
+    page: number;
+    setPage: (page: number) => void;
 }
 
-export default function AppointmentsTable({ data }: AppointmentsTableProps) {
+export default function AppointmentsTable({ data, page, setPage }: AppointmentsTableProps) {
 
     const { dateFilter, patientInput, statusFilter, handleDateFilter, setPatientInput, handleStatusFilter, handleCleanFilters } = useAppointmentsFilters();
 
@@ -37,10 +39,12 @@ export default function AppointmentsTable({ data }: AppointmentsTableProps) {
         ]
     }]
 
+    console.log(data);
+
     const filteredAppointments = useMemo(() => {
         return data.appointments.filter(appointment => {
-            if (dateFilter && appointment.date !== dateFilter) return false;
-            if (patientInput && !appointment.patient_fullName.toLowerCase().includes(patientInput.toLowerCase())) return false;
+            if (dateFilter && appointment.slot.date !== dateFilter) return false;
+            if (patientInput && !appointment.patient.full_name.toLowerCase().includes(patientInput.toLowerCase())) return false;
             if (statusFilter && appointment.status !== statusFilter) return false;
             return true;
         });
@@ -53,7 +57,7 @@ export default function AppointmentsTable({ data }: AppointmentsTableProps) {
 
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 {data.appointments.length === 0 ? (
-                    <p className="text-center text-gray-500 py-4">No se encontraron registros</p>
+                    <p className="text-center text-gray-500 py-4">No se encontraron registros.</p>
                 ) : (
                     filteredAppointments.map((appointment) => (
                         <AppointmentsCard key={appointment.id} appointment={appointment} />
@@ -69,12 +73,14 @@ export default function AppointmentsTable({ data }: AppointmentsTableProps) {
                 </p>
                 <div className="flex items-center gap-2">
                     <button
-                        disabled={data.currentPage <= 1}
+                        disabled={page <= 1}
+                        onClick={() => setPage(page - 1)}
                         className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                         Anterior
                     </button>
                     <button
-                        disabled={data.currentPage >= data.totalPages}
+                        disabled={page >= data.totalPages}
+                        onClick={() => setPage(page + 1)}
                         className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                         Siguiente
                     </button>

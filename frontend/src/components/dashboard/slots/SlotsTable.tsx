@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import type { Slot, SlotsData } from "../../../types";
 import { Link } from "react-router-dom";
-import { useSlotsMutations } from "../../../hooks/slots/useSlots";
+import { useSlotsMutations } from "../../../hooks/slots/useSlotsMutations";
 import { formatDay, formatDate, formatTime } from "../../../utils/formatDayAndDates";
 import { useSlotsFilters } from "../../../hooks/slots/useSlotsFilters";
 import TableFilters from "../../shared/TableFilters";
@@ -11,13 +11,14 @@ import TableFilters from "../../shared/TableFilters";
 type SlotsTableProps = {
     data: SlotsData,
     page: number
+    handlePageChange: (newPage: number) => void
 }
 
-export default function SlotsTable({ data, page }: SlotsTableProps) {
+export default function SlotsTable({ data, page, handlePageChange }: SlotsTableProps) {
 
     const { deleteSlotMutation } = useSlotsMutations();
 
-    const { statusFilter, dayFilter, dateFilter, handleDayFilterChange, handleDateFilterChange, handleCleanFilters, handlePageChange, handleStatusFilterChange } = useSlotsFilters();
+    const { statusFilter, dayFilter, dateFilter, handleDayFilterChange, handleDateFilterChange, handleCleanFilters, handleStatusFilterChange } = useSlotsFilters();
 
     const filteredSlots: Slot[] = useMemo(() => {
         return data.slots.filter(slot => {
@@ -32,7 +33,7 @@ export default function SlotsTable({ data, page }: SlotsTableProps) {
     const hasNoResults = filteredSlots.length === 0;
 
     const filters = [
-        { label: "Estado", type: "select" as const, value: statusFilter, onChange: handleStatusFilterChange, options: [{ value: "", label: "Todos los estados" }, { value: "available", label: "Disponible" }, { value: "booked", label: "Reservado" }] },
+        { label: "Estado", type: "select" as const, value: statusFilter, onChange: handleStatusFilterChange, options: [{ value: "", label: "Todos los estados" }, { value: "available", label: "Disponible" }, { value: "booked", label: "Ocupado" }] },
         { label: "Fecha", type: "date" as const, value: dateFilter, onChange: handleDateFilterChange },
         { label: "Día", type: "select" as const, value: dayFilter, onChange: handleDayFilterChange, options: [{ value: "", label: "Todos los días" }, { value: "monday", label: "Lunes" }, { value: "tuesday", label: "Martes" }, { value: "wednesday", label: "Miércoles" }, { value: "thursday", label: "Jueves" }, { value: "friday", label: "Viernes" }, { value: "saturday", label: "Sábado" }, { value: "sunday", label: "Domingo" }] }
     ]

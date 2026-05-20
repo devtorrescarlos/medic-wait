@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <BrowserRouter>
           <App />
-          <ToastContainer />
+          <ToastContainer limit={2} />
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>

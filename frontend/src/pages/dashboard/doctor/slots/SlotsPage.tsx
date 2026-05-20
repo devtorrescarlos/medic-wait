@@ -5,8 +5,10 @@ import { useSlotsFilters } from "../../../../hooks/slots/useSlotsFilters";
 
 export default function SlotsPage() {
 
-    const { page, dayFilter, dateFilter, limit } = useSlotsFilters();
+    const { page, dayFilter, dateFilter, limit, handlePageChange } = useSlotsFilters();
     const { data, isLoading, error } = useSlots(page, limit, dayFilter || undefined, dateFilter || undefined);
+
+    console.log(data);
 
     if (isLoading) return <LoadingSpinner />
 
@@ -23,6 +25,7 @@ export default function SlotsPage() {
             <SlotsTable
                 data={data}
                 page={page}
+                handlePageChange={handlePageChange}
             />
         </div>
     )

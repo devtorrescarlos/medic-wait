@@ -24,11 +24,9 @@ export const scheduleInputsValidation = [
         .withMessage("Dia de la semana inválido"),
     body("start_time")
         .notEmpty().withMessage("La hora de inicio es obligatoria")
-        .matches(/^([01]?\d|2[0-3]):([0-5]\d)$/)
         .withMessage("Hora de inicio inválida. Formato esperado: HH:mm"),
     body("end_time")
         .notEmpty().withMessage("La hora de fin es obligatoria")
-        .matches(/^([01]?\d|2[0-3]):([0-5]\d)$/)
         .withMessage("Hora de fin inválida. Formato esperado: HH:mm"),
     body("slot_duration")
         .notEmpty().withMessage("La duracion del slot es obligatoria")

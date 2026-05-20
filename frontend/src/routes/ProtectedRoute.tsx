@@ -8,8 +8,6 @@ export default function ProtectedRoute({ allowedRoles }: { allowedRoles: string[
         return <Navigate to="/auth/login" replace />;
     }
 
-    console.log(role)
-
     if (isLoading) {
         return <div>Cargando...</div>;
     }

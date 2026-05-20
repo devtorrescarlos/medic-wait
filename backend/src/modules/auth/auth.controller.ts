@@ -18,19 +18,6 @@ export const register = async (req: Request, res: Response) => {
     }
 }
 
-export const getRole = async (req: Request, res: Response) => {
-    const userId = req.user!.id;
-    try {
-        const role = await authService.getRole(userId);
-        res.status(200).json({ role });
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
-    }
-}
-
 export const login = async (req: Request, res: Response) => {
     const userData: LoginData = req.body;
     try {
