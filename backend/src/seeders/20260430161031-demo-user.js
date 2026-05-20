@@ -1,5 +1,6 @@
 "use strict";
 
+const bcrypt = require("bcrypt");
 const { v4: uuid } = require("uuid");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -16,41 +17,47 @@ module.exports = {
 
     // Check existing users by email to avoid duplicate key errors
     const existingUsers = await queryInterface.sequelize.query(
-      'SELECT email FROM users WHERE email IN ($1, $2)',
+      "SELECT email FROM users WHERE email IN ($1, $2)",
       {
-        bind: ['correo@correo.com', 'correo2@correo.com'],
-        type: Sequelize.QueryTypes.SELECT
-      }
+        bind: ["correo@correo.com", "correo2@correo.com"],
+        type: Sequelize.QueryTypes.SELECT,
+      },
     );
-    const existingEmails = existingUsers.map(user => user.email);
-    
+    const existingEmails = existingUsers.map((user) => user.email);
+
     // Only insert if neither email exists
     if (existingEmails.length === 0) {
       // First, get necessary IDs from database
       const adminRole = await queryInterface.sequelize.query(
-        'SELECT id FROM roles WHERE name = $1',
+        "SELECT id FROM roles WHERE name = $1",
         {
-          bind: ['admin'],
-          type: Sequelize.QueryTypes.SELECT
-        }
+          bind: ["admin"],
+          type: Sequelize.QueryTypes.SELECT,
+        },
       );
       const doctorRole = await queryInterface.sequelize.query(
-        'SELECT id FROM roles WHERE name = $1',
+        "SELECT id FROM roles WHERE name = $1",
         {
-          bind: ['doctor'],
-          type: Sequelize.QueryTypes.SELECT
-        }
+          bind: ["doctor"],
+          type: Sequelize.QueryTypes.SELECT,
+        },
       );
       const specialty = await queryInterface.sequelize.query(
-        'SELECT id FROM specialties WHERE name = $1',
+        "SELECT id FROM specialties WHERE name = $1",
         {
-          bind: ['general'],
-          type: Sequelize.QueryTypes.SELECT
-        }
+          bind: ["general"],
+          type: Sequelize.QueryTypes.SELECT,
+        },
       );
 
-      if (adminRole.length === 0 || doctorRole.length === 0 || specialty.length === 0) {
-        console.log('Required roles or specialty not found, skipping user seed');
+      if (
+        adminRole.length === 0 ||
+        doctorRole.length === 0 ||
+        specialty.length === 0
+      ) {
+        console.log(
+          "Required roles or specialty not found, skipping user seed",
+        );
         return;
       }
 
@@ -63,7 +70,7 @@ module.exports = {
           id: userId1,
           full_name: "Pedro Perez",
           email: "correo@correo.com",
-          password: "password",
+          password: bcrypt.hashSync("password", 10),
           is_active: true,
           is_email_verified: true,
           is_approved_by_admin: true,
@@ -75,7 +82,7 @@ module.exports = {
           id: userId2,
           full_name: "Maria Lopez",
           email: "correo2@correo.com",
-          password: "password",
+          password: bcrypt.hashSync("password", 10),
           is_active: false,
           is_email_verified: false,
           is_approved_by_admin: false,
