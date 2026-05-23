@@ -1,9 +1,21 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from 'sequelize-typescript';
-import { v4 as uuidv4 } from 'uuid';
-import User from './User';
-import Appointment from './Appointment';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  ForeignKey,
+  BelongsTo,
+  CreatedAt,
+  UpdatedAt,
+  HasMany,
+} from "sequelize-typescript";
+import { v4 as uuidv4 } from "uuid";
+import User from "./User";
+import Appointment from "./Appointment";
+import MedicalRecordAnnexe from "./MedicalRecordAnnexe";
 
-@Table({ tableName: 'medical_records' })
+@Table({ tableName: "medical_records" })
 export default class MedicalRecord extends Model {
   @PrimaryKey
   @Column({ type: DataType.UUID, defaultValue: () => uuidv4() })
@@ -27,12 +39,23 @@ export default class MedicalRecord extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   declare treatment_plan: string;
 
+  @CreatedAt
+  @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+  declare created_at: Date;
+
+  @UpdatedAt
+  @Column({ type: DataType.DATE, defaultValue: () => new Date() })
+  declare updated_at: Date;
+
+  @HasMany(() => MedicalRecordAnnexe)
+  declare annexes: MedicalRecordAnnexe[];
+
   @BelongsTo(() => Appointment)
   declare appointment: Appointment;
 
-  @BelongsTo(() => User, 'patient_id')
+  @BelongsTo(() => User, "patient_id")
   declare patient: User;
 
-  @BelongsTo(() => User, 'doctor_id')
+  @BelongsTo(() => User, "doctor_id")
   declare doctor: User;
 }
