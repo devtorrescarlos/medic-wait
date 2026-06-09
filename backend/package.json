@@ -17,7 +17,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
     "dev:api": "nodemon src/index.ts --api",
-    "test:concurrency": "nodemon test-concurrency.ts"
+    "test:concurrency": "nodemon test-concurrency.ts",
+    "migrate": "sequelize-cli db:migrate",
+    "migrate:undo": "sequelize-cli db:migrate:undo",
+    "seed": "sequelize-cli db:seed:all",
+    "seed:undo": "sequelize-cli db:seed:undo"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

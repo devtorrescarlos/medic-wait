@@ -70,6 +70,7 @@ module.exports = {
           id: userId1,
           full_name: "Pedro Perez",
           email: "correo@correo.com",
+          age: "32",
           password: bcrypt.hashSync("password", 10),
           is_active: true,
           is_email_verified: true,
@@ -82,6 +83,7 @@ module.exports = {
           id: userId2,
           full_name: "Maria Lopez",
           email: "correo2@correo.com",
+          age: "28",
           password: bcrypt.hashSync("password", 10),
           is_active: false,
           is_email_verified: false,
@@ -117,5 +119,9 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
+    await queryInterface.bulkDelete("users", {
+      email: ["correo@correo.com", "correo2@correo.com"],
+    });
+    await queryInterface.bulkDelete("user_roles", {}, {});
   },
 };

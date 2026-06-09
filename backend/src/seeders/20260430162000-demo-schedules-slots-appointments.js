@@ -49,7 +49,7 @@ module.exports = {
     // ── 1. Check if schedules already exist ──
     const existingSchedules = await queryInterface.sequelize.query(
       "SELECT id FROM doctor_schedules LIMIT 1",
-      { type: Sequelize.QueryTypes.SELECT }
+      { type: Sequelize.QueryTypes.SELECT },
     );
 
     if (existingSchedules.length > 0) {
@@ -63,7 +63,7 @@ module.exports = {
        INNER JOIN user_roles ur ON ur.user_id = u.id
        INNER JOIN roles r ON r.id = ur.role_id
        WHERE r.name = 'doctor'`,
-      { type: Sequelize.QueryTypes.SELECT }
+      { type: Sequelize.QueryTypes.SELECT },
     );
 
     if (doctors.length === 0) {
@@ -77,13 +77,13 @@ module.exports = {
        INNER JOIN user_roles ur ON ur.user_id = u.id
        INNER JOIN roles r ON r.id = ur.role_id
        WHERE r.name = 'patient'`,
-      { type: Sequelize.QueryTypes.SELECT }
+      { type: Sequelize.QueryTypes.SELECT },
     );
 
     if (patients.length === 0) {
       const patientRole = await queryInterface.sequelize.query(
         "SELECT id FROM roles WHERE name = 'patient'",
-        { type: Sequelize.QueryTypes.SELECT }
+        { type: Sequelize.QueryTypes.SELECT },
       );
 
       if (patientRole.length === 0) {
@@ -94,9 +94,24 @@ module.exports = {
       const hashedPassword = await bcrypt.hash("password", 10);
 
       const newPatients = [
-        { id: uuid(), full_name: "Juan Pérez", email: "juan@correo.com" },
-        { id: uuid(), full_name: "Ana García", email: "ana@correo.com" },
-        { id: uuid(), full_name: "Luis Martínez", email: "luis@correo.com" },
+        {
+          id: uuid(),
+          full_name: "Juan Pérez",
+          email: "juan@correo.com",
+          age: "25",
+        },
+        {
+          id: uuid(),
+          full_name: "Ana García",
+          email: "ana@correo.com",
+          age: "28",
+        },
+        {
+          id: uuid(),
+          full_name: "Luis Martínez",
+          email: "luis@correo.com",
+          age: "12",
+        },
       ];
 
       const patientEmails = newPatients.map((p) => p.email);
@@ -108,11 +123,11 @@ module.exports = {
         {
           bind: patientEmails,
           type: Sequelize.QueryTypes.SELECT,
-        }
+        },
       );
       const existingEmailSet = new Set(existingEmails.map((e) => e.email));
       const patientsToInsert = newPatients.filter(
-        (p) => !existingEmailSet.has(p.email)
+        (p) => !existingEmailSet.has(p.email),
       );
 
       if (patientsToInsert.length > 0) {
@@ -127,9 +142,10 @@ module.exports = {
             is_email_verified: true,
             is_approved_by_admin: true,
             specialty_id: null,
+            age: p.age,
             created_at: new Date(),
             updated_at: new Date(),
-          }))
+          })),
         );
 
         await queryInterface.bulkInsert(
@@ -139,7 +155,7 @@ module.exports = {
             role_id: patientRole[0].id,
             createdAt: new Date(),
             updatedAt: new Date(),
-          }))
+          })),
         );
 
         patients = patientsToInsert.map((p) => ({ id: p.id }));
@@ -176,12 +192,9 @@ module.exports = {
           if (currentDayName === tmpl.day_of_week) {
             let slotStart = addMinutes(
               startOfDay(currentDay),
-              startH * 60 + startM
+              startH * 60 + startM,
             );
-            const dayEnd = addMinutes(
-              startOfDay(currentDay),
-              endH * 60 + endM
-            );
+            const dayEnd = addMinutes(startOfDay(currentDay), endH * 60 + endM);
 
             while (slotStart < dayEnd) {
               const slotEnd = addMinutes(slotStart, SLOT_DURATION);
@@ -230,15 +243,13 @@ module.exports = {
       await queryInterface.bulkInsert("slots", bookedSlots);
     }
     console.log(
-      `Inserted ${slotRecords.length} slots (${availableSlots.length} available, ${bookedSlots.length} booked)`
+      `Inserted ${slotRecords.length} slots (${availableSlots.length} available, ${bookedSlots.length} booked)`,
     );
 
     // ── 8. Create appointments for booked slots ──
     if (bookedSlots.length > 0 && patients.length > 0) {
       const appointmentRecords = slotsToBook.map((slot) => {
-        const schedule = scheduleRecords.find(
-          (s) => s.id === slot.schedule_id
-        );
+        const schedule = scheduleRecords.find((s) => s.id === slot.schedule_id);
         const patient = patients[Math.floor(Math.random() * patients.length)];
 
         return {
@@ -263,6 +274,6 @@ module.exports = {
     await queryInterface.bulkDelete("appointments", null, {});
     await queryInterface.bulkDelete("slots", null, {});
     await queryInterface.bulkDelete("doctor_schedules", null, {});
-    console.log("Reverted schedules, slots, and appointments seeder");
+    await queryInterface.bulkDelete("users", null, {});
   },
 };
