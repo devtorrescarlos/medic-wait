@@ -6,31 +6,31 @@ import { useAuth } from "../hooks/auth/useAuth";
 import LoadingSpinner from "../components/shared/LoadingSpinner";
 
 export default function DashboardLayout() {
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-    const { user, isLoading } = useAuth();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const { user, isLoading } = useAuth();
 
-    if (isLoading) {
-        return <LoadingSpinner />;
-    }
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
-    if (!user) {
-        return <Navigate to="/auth/login" replace />;
-    }
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex">
-            <Sidebar
-                isSidebarCollapsed={isSidebarCollapsed}
-                setIsSidebarCollapsed={setIsSidebarCollapsed}
-            />
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+      />
 
-            <div className="flex-1 flex flex-col transition-all duration-300">
-                <Header />
+      <div className="flex-1 flex flex-col transition-all duration-300">
+        <Header />
 
-                <main className="flex-1 p-4 lg:p-6 overflow-auto">
-                    <Outlet />
-                </main>
-            </div>
-        </div>
-    );
+        <main className="flex-1 p-4 lg:p-6 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }

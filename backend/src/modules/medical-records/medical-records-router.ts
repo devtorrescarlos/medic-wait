@@ -6,18 +6,16 @@ import {
   getPatients,
   createMedicalRecordAnnexe,
   getMedicalRecordById,
+  getMedicalRecordAnnexeById,
 } from "./medical-records.controller";
 import { authenticate } from "../../middlewares/auth";
 import { verifyDoctorApproved } from "../../middlewares/verifyRole";
 
 const router = Router();
 
-// TODO: IMPLEMENT AI SDK TO SUMMARIZE MEDICAL RECORDS AND TO GENERATE TREATMENT PLAN BY DOCTOR KNOWLEDGE,
-// BUT NPM IS GETTING IN TROUBLE
-
 router.get("/patients", authenticate, verifyDoctorApproved, getPatients);
 
-router.get("/patients/:id", authenticate, verifyDoctorApproved, getPatientById); // TODO: MODIFY THIS ENDPOINT TO INCLUDE MORE DATA ABOUT THE PATIENT LIKE COMPLETED APPOINTMENTS ETC
+router.get("/patients/:id", authenticate, verifyDoctorApproved, getPatientById);
 
 router.post(
   "/",
@@ -52,5 +50,12 @@ router.get(
   authenticate,
   verifyDoctorApproved,
   getMedicalRecordById,
+);
+
+router.get(
+  "/annexe/:annexeId",
+  authenticate,
+  verifyDoctorApproved,
+  getMedicalRecordAnnexeById,
 );
 export default router;

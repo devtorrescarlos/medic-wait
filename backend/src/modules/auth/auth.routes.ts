@@ -9,72 +9,82 @@ const router = Router();
 
 router.use(limiter);
 
-router.post("/register",
-    body("email")
-        .notEmpty()
-        .withMessage("E-Mail es requerido")
-        .isEmail()
-        .withMessage("E-Mail inválido"),
-    body("password")
-        .isLength({ min: 6 })
-        .withMessage("Password debe tener al menos 6 caracteres"),
-    body("full_name")
-        .isLength({ min: 3 })
-        .withMessage("Nombre debe tener al menos 3 caracteres"),
-    handleInputErrors,
-    AuthController.register);
+router.post(
+  "/register",
+  body("email")
+    .notEmpty()
+    .withMessage("E-Mail es requerido")
+    .isEmail()
+    .withMessage("E-Mail inválido"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password debe tener al menos 6 caracteres"),
+  body("full_name")
+    .isLength({ min: 3 })
+    .withMessage("Nombre debe tener al menos 3 caracteres"),
+  body("age")
+    .notEmpty()
+    .withMessage("La edad es requerida")
+    .isString()
+    .withMessage("Edad inválida"),
+  handleInputErrors,
+  AuthController.register,
+);
 
-router.post("/login",
-    body("email")
-        .notEmpty()
-        .withMessage("E-Mail es requerido")
-        .isEmail()
-        .withMessage("E-Mail inválido"),
-    body("password")
-        .isLength({ min: 6 })
-        .withMessage("Password debe tener al menos 6 caracteres"),
-    handleInputErrors,
-    AuthController.login);
+router.post(
+  "/login",
+  body("email")
+    .notEmpty()
+    .withMessage("E-Mail es requerido")
+    .isEmail()
+    .withMessage("E-Mail inválido"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password debe tener al menos 6 caracteres"),
+  handleInputErrors,
+  AuthController.login,
+);
 
-router.post("/confirm-account/:token",
-    param("token")
-        .notEmpty()
-        .withMessage("El Token no puede ir vacío"),
-    handleInputErrors,
-    AuthController.confirmAccount);
+router.post(
+  "/confirm-account/:token",
+  param("token").notEmpty().withMessage("El Token no puede ir vacío"),
+  handleInputErrors,
+  AuthController.confirmAccount,
+);
 
-router.post("/verify-token/:token",
-    param("token")
-        .notEmpty()
-        .withMessage("El Token no puede ir vacío"),
-    handleInputErrors,
-    AuthController.verifyToken);
+router.post(
+  "/verify-token/:token",
+  param("token").notEmpty().withMessage("El Token no puede ir vacío"),
+  handleInputErrors,
+  AuthController.verifyToken,
+);
 
-router.post('/forgot-password',
-    body("email")
-        .isEmail()
-        .withMessage("E-Mail no válido"),
-    handleInputErrors,
-    AuthController.forgotPassword)
+router.post(
+  "/forgot-password",
+  body("email").isEmail().withMessage("E-Mail no válido"),
+  handleInputErrors,
+  AuthController.forgotPassword,
+);
 
-router.post('/reset-password/:token',
-    param("token")
-        .notEmpty()
-        .withMessage("El Token no puede ir vacío"),
-    body("password")
-        .isLength({ min: 6 })
-        .withMessage("Password debe tener al menos 6 caracteres"),
-    handleInputErrors,
-    AuthController.resetPasswordWithToken)
+router.post(
+  "/reset-password/:token",
+  param("token").notEmpty().withMessage("El Token no puede ir vacío"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password debe tener al menos 6 caracteres"),
+  handleInputErrors,
+  AuthController.resetPasswordWithToken,
+);
 
-router.post("/resend-confirmation-email",
-    body("email")
-        .isEmail()
-        .withMessage("E-Mail no válido"),
-    handleInputErrors,
-    AuthController.resendConfirmationEmail)
+router.post(
+  "/resend-confirmation-email",
+  body("email").isEmail().withMessage("E-Mail no válido"),
+  handleInputErrors,
+  AuthController.resendConfirmationEmail,
+);
 
-router.get('/user', authenticate, AuthController.getUser)
+router.get("/user", authenticate, AuthController.getUser);
 
-// TODO: UPDATE PASSWORD WHEN USER IS LOGGED IN
+router.get("/specialties", AuthController.getSpecialties);
+
 export default router;

@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import Appointment from "../../models/Appointment";
 import User from "../../models/User";
 import redisClient from "../../config/ioredis";
@@ -9,11 +10,13 @@ import {
 import MedicalRecordAnnexe from "../../models/MedicalRecordAnnexe";
 
 export const getPatients = async (
+  doctorId: string,
   page: number,
   limit: number,
-  doctorId: string,
+  name: string,
+  email: string,
 ) => {
-  const cacheKey = `patients:${doctorId}:${page}:${limit}`;
+  const cacheKey = `patients:${doctorId}:${page}:${limit}:${name}:${email}`;
   const cacheValue = await redisClient.get(cacheKey);
 
   if (cacheValue) {
@@ -21,7 +24,7 @@ export const getPatients = async (
   }
 
   const patient_ids = await Appointment.findAll({
-    where: { doctor_id: doctorId },
+    where: { doctor_id: doctorId, status: "completed" },
     attributes: ["patient_id"],
   });
 
@@ -30,6 +33,18 @@ export const getPatients = async (
       id: patient_ids.map(
         (patient: { patient_id: string }) => patient.patient_id,
       ),
+      [Op.and]: [
+        {
+          full_name: {
+            [Op.iLike]: `%${name}%`,
+          },
+        },
+        {
+          email: {
+            [Op.iLike]: `%${email}%`,
+          },
+        },
+      ],
     },
     limit,
     offset: (page - 1) * limit,
@@ -49,7 +64,7 @@ export const getPatients = async (
 
 export const getPatientById = async (patientId: string) => {
   const patient = await User.findByPk(patientId, {
-    attributes: ["id", "full_name", "email"],
+    attributes: ["id", "full_name", "email", "age"],
   });
 
   if (!patient) {
@@ -59,7 +74,28 @@ export const getPatientById = async (patientId: string) => {
     };
   }
 
-  return patient;
+  const medicalRecords = await MedicalRecord.findAll({
+    where: { patient_id: patientId },
+    include: [
+      {
+        model: MedicalRecordAnnexe,
+        as: "annexes",
+        attributes: ["id", "type", "content", "created_at"],
+      },
+      {
+        model: Appointment,
+        as: "appointment",
+        attributes: ["id", "status", "created_at"],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+
+  const appointmentsCount = await Appointment.count({
+    where: { patient_id: patientId, status: "completed" },
+  });
+
+  return { patient, medicalRecords, appointmentsCount };
 };
 
 export const createMedicalRecord = async (
@@ -87,14 +123,21 @@ export const createMedicalRecord = async (
     };
   }
 
-  const existingMedicalRecord = await MedicalRecord.findOne({
-    where: { appointment_id: appointmentId },
-  });
-
-  if (existingMedicalRecord) {
+  if (appointment.status !== "completed") {
     throw {
       status: 409,
-      message: "Ya existe una historia médica en esta cita",
+      message: "La cita no ha sido completada",
+    };
+  }
+
+  const patientHasMedicalRecord = await MedicalRecord.findOne({
+    where: { patient_id: appointment.patient_id },
+  });
+
+  if (patientHasMedicalRecord) {
+    throw {
+      status: 409,
+      message: "El paciente ya tiene una historia médica. Agrega un anexo.",
     };
   }
 
@@ -151,7 +194,12 @@ export const getMedicalRecordById = async (medicalRecordId: string) => {
       {
         model: MedicalRecordAnnexe,
         as: "annexes",
-        attributes: ["id", "type", "content"],
+        attributes: ["id", "type", "content", "created_at"],
+      },
+      {
+        model: User,
+        as: "patient",
+        attributes: ["id", "full_name", "email", "age"],
       },
     ],
   });
@@ -164,4 +212,33 @@ export const getMedicalRecordById = async (medicalRecordId: string) => {
   }
 
   return medicalRecord;
+};
+
+export const getMedicalRecordAnnexeById = async (annexeId: string) => {
+  const medicalRecordAnnexe = await MedicalRecordAnnexe.findOne({
+    where: { id: annexeId },
+    include: [
+      {
+        model: MedicalRecord,
+        as: "medicalRecord",
+        attributes: ["patient_id"],
+        include: [
+          {
+            model: User,
+            as: "patient",
+            attributes: ["id", "full_name", "email", "age"],
+          },
+        ],
+      },
+    ],
+  });
+
+  if (!medicalRecordAnnexe) {
+    throw {
+      status: 404,
+      message: "El anexo no existe",
+    };
+  }
+
+  return medicalRecordAnnexe;
 };

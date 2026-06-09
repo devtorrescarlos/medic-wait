@@ -4,12 +4,16 @@ import * as medicalRecordService from "./medical-records.service";
 export const getPatients = async (req: Request, res: Response) => {
   try {
     const doctorId = req.doctorId as string;
-    const page = Number(req.query.page as string) || 1;
-    const limit = Number(req.query.limit as string) || 10;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const name = req.query.name as string;
+    const email = req.query.email as string;
     const patients = await medicalRecordService.getPatients(
+      doctorId,
       page,
       limit,
-      doctorId,
+      name,
+      email,
     );
     return res.status(200).json(patients);
   } catch (error: any) {
@@ -86,6 +90,24 @@ export const getMedicalRecordById = async (req: Request, res: Response) => {
       medicalRecordId as string,
     );
     return res.status(200).json(medicalRecord);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getMedicalRecordAnnexeById = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const annexeId = req.params.annexeId;
+    const annexe = await medicalRecordService.getMedicalRecordAnnexeById(
+      annexeId as string,
+    );
+    return res.status(200).json(annexe);
   } catch (error: any) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });
