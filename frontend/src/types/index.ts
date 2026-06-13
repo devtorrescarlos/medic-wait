@@ -92,13 +92,8 @@ export type AppointmentsData = {
 export type Patient = {
   id: string;
   email: string;
-  password: string;
   full_name: string;
-  specialty_id?: string;
   age: string;
-  is_active: boolean;
-  is_email_verified: boolean;
-  is_approved_by_admin: boolean;
 };
 
 export type PatientResponse = {
@@ -135,7 +130,7 @@ export type MedicalRecord = {
 export type PatientByIdResponse = {
   patient: Patient;
   medicalRecords: MedicalRecord[];
-  appointment: Pick<Appointment, "id" | "status" | "created_at">;
+  lastAppointment: Appointment | null;
   appointmentsCount: number;
 };
 
@@ -152,4 +147,17 @@ export type MedicalRecordAnnexeData = {
   id?: string;
   type: string;
   content: string;
+};
+
+export type AIGenerateInput = {
+  mode: "initial_diagnosis" | "treatment_plan" | "annexe" | "custom";
+  context: {
+    patientName?: string;
+    patientAge?: string;
+    appointmentReason?: string;
+    annexeType?: string;
+    existingDiagnosis?: string;
+    existingTreatment?: string;
+  };
+  customPrompt?: string;
 };

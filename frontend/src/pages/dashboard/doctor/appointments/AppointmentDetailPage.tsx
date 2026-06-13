@@ -6,7 +6,7 @@ import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
 import GoBackButton from "../../../../components/shared/GoBackButton";
 import AppointmentDetailCard from "../../../../components/dashboard/appointments/AppointmentDetailCard";
 import Modal from "../../../../components/shared/Modal";
-import { InfoIcon, Plus } from "lucide-react";
+import { InfoIcon, Plus, FileText } from "lucide-react";
 import { useAppointmentById } from "../../../../hooks/appointments/useAppointmentById";
 
 export default function AppointmentDetailPage() {
@@ -75,6 +75,13 @@ export default function AppointmentDetailPage() {
                 <Plus className="w-4 h-4" /> Añadir historia médica
               </Link>
             )}
+            <Link
+              to={`/dashboard/doctor/patients/${data.patient.id}`}
+              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer px-4 py-2 rounded-lg transition-colors"
+            >
+              <FileText className="w-4 h-4" /> Ver historias médicas del
+              paciente
+            </Link>
           </div>
         </div>
 

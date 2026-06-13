@@ -1,16 +1,11 @@
 import { useParams } from "react-router-dom";
 import { Stethoscope, FileText } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import type { MedicalRecordFormData } from "../../../types";
 import ErrorMessage from "../../shared/ErrorMessage";
 import { useMedicalRecordsMutations } from "../../../hooks/medical-records/useMedicalRecordsMutations";
 
 export default function MedicalRecordForm() {
-  const initialValues = {
-    initial_diagnosis: "",
-    treatment_plan: "",
-  };
-
   const { createMedicalRecordMutation } = useMedicalRecordsMutations();
   const { id: appointmentId } = useParams();
 
@@ -18,9 +13,7 @@ export default function MedicalRecordForm() {
     formState: { errors },
     register,
     handleSubmit,
-  } = useForm<MedicalRecordFormData>({
-    defaultValues: initialValues,
-  });
+  } = useFormContext<MedicalRecordFormData>();
 
   const handleOnSubmit = (data: MedicalRecordFormData) => {
     if (!appointmentId) return;

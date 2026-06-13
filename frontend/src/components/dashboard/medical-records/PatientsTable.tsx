@@ -4,6 +4,7 @@ import TableFilters from "../../shared/TableFilters";
 import type { PatientResponse } from "../../../types";
 import { usePatientsFilters } from "../../../hooks/medical-records/usePatientsFilters";
 import UserInitialts from "../../shared/UserInitialts";
+import { Link } from "react-router-dom";
 
 type PatientsTableProps = {
   data: PatientResponse;
@@ -25,9 +26,6 @@ export default function PatientsTable({
     setEmailInput,
     handleCleanFilters,
   } = usePatientsFilters();
-
-  console.log(data);
-  console.log(page);
 
   const filteredPatients = useMemo(() => {
     return data.patients.filter((patient) => {
@@ -94,10 +92,10 @@ export default function PatientsTable({
                 </tr>
               )}
 
-              {filteredPatients.map((patient, index) => {
+              {filteredPatients.map((patient) => {
                 return (
                   <tr
-                    key={index}
+                    key={patient.id}
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-4 py-3">
@@ -113,13 +111,13 @@ export default function PatientsTable({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center">
-                        <a
-                          href={`/dashboard/doctor/patients/${patient.id}`}
+                        <Link
+                          to={`/dashboard/doctor/patients/${patient.id}`}
                           className="px-3 py-1.5 text-sm flex items-center gap-2 font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer"
                         >
                           <Eye className="w-4 h-4" />
                           Ver detalles
-                        </a>
+                        </Link>
                       </div>
                     </td>
                   </tr>

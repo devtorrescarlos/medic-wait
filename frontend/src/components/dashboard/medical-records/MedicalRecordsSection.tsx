@@ -7,10 +7,12 @@ import EmptyMedicalRecords from "./EmptyMedicalRecords";
 
 type MedicalRecordsSectionProps = {
   medicalRecords: MedicalRecord[];
+  citaId: string;
 };
 
 export default function MedicalRecordsSection({
   medicalRecords,
+  citaId,
 }: MedicalRecordsSectionProps) {
   return (
     <div className="p-6">
@@ -22,17 +24,19 @@ export default function MedicalRecordsSection({
           </h3>
         </div>
 
-        <Link
-          to={`/dashboard/doctor/medical-records/annexe/create/${medicalRecords?.[0].id}`}
-          className="flex cursor-pointer items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Nuevo Anexo
-        </Link>
+        {medicalRecords.length > 0 && (
+          <Link
+            to={`/dashboard/doctor/medical-records/annexe/create/${medicalRecords?.[0].id}`}
+            className="flex cursor-pointer items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Nuevo Anexo
+          </Link>
+        )}
       </div>
 
       {medicalRecords.length === 0 ? (
-        <EmptyMedicalRecords />
+        <EmptyMedicalRecords citaId={citaId} />
       ) : (
         <>
           <div className="border border-gray-200 rounded-lg overflow-hidden">
