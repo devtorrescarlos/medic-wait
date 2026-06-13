@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Calendar, Clock, Eye, FileText } from "lucide-react";
 import type { Appointment } from "../../../types";
 import { formatTime } from "../../../utils/formatDayAndDates";
@@ -68,13 +69,13 @@ export default function AppointmentsCard({
       </div>
 
       <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-2">
-        <a
-          href={`/dashboard/doctor/appointments/${appointment.id}`}
+        <Link
+          to={`/dashboard/doctor/appointments/${appointment.id}`}
           className="px-3 py-1.5 text-sm flex items-center gap-2 font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer"
         >
           <Eye className="w-4 h-4" />
           Ver detalles
-        </a>
+        </Link>
       </div>
     </div>
   );

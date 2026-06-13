@@ -8,6 +8,7 @@ import {
   MedicalRecordAnnexData,
 } from "../../types/medical-records.types";
 import MedicalRecordAnnexe from "../../models/MedicalRecordAnnexe";
+import Slot from "../../models/Slot";
 
 export const getPatients = async (
   doctorId: string,
@@ -29,6 +30,7 @@ export const getPatients = async (
   });
 
   const { count, rows: patients } = await User.findAndCountAll({
+    attributes: ["id", "full_name", "email", "age"],
     where: {
       id: patient_ids.map(
         (patient: { patient_id: string }) => patient.patient_id,
@@ -91,11 +93,23 @@ export const getPatientById = async (patientId: string) => {
     order: [["created_at", "DESC"]],
   });
 
+  const lastAppointment = await Appointment.findOne({
+    where: { patient_id: patientId, status: "completed" },
+    include: [
+      {
+        model: Slot,
+        as: "slot",
+        attributes: ["id", "date", "start_time", "end_time"],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+
   const appointmentsCount = await Appointment.count({
     where: { patient_id: patientId, status: "completed" },
   });
 
-  return { patient, medicalRecords, appointmentsCount };
+  return { patient, medicalRecords, appointmentsCount, lastAppointment };
 };
 
 export const createMedicalRecord = async (

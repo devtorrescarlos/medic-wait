@@ -10,6 +10,7 @@ import {
 } from "./medical-records.controller";
 import { authenticate } from "../../middlewares/auth";
 import { verifyDoctorApproved } from "../../middlewares/verifyRole";
+import { generateWithAI } from "./ai.controller";
 
 const router = Router();
 
@@ -58,4 +59,6 @@ router.get(
   verifyDoctorApproved,
   getMedicalRecordAnnexeById,
 );
+
+router.post("/ai/generate", authenticate, verifyDoctorApproved, generateWithAI);
 export default router;

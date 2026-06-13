@@ -39,7 +39,10 @@ export default function PatientsDetailPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-        <MedicalRecordsSection medicalRecords={data.medicalRecords} />
+        <MedicalRecordsSection
+          medicalRecords={data.medicalRecords}
+          citaId={data.lastAppointment?.id!}
+        />
       </div>
     </div>
   );
