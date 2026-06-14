@@ -1,6 +1,6 @@
 import { User } from "lucide-react";
 import GoBackButton from "../../../../components/shared/GoBackButton";
-import UserInitialts from "../../../../components/shared/UserInitialts";
+import UserInitialts from "../../../../components/shared/UserInitials";
 import MedicalRecordAnnexeDetailCard from "../../../../components/dashboard/medical-records/MedicalRecordAnnexeDetailCard";
 import { Navigate, useParams } from "react-router-dom";
 import { useGetMedicalRecordAnnexById } from "../../../../hooks/medical-records/useGetMedicalRecordAnnexeById";

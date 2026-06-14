@@ -25,7 +25,7 @@ router.post(
   body("age")
     .notEmpty()
     .withMessage("La edad es requerida")
-    .isString()
+    .isInt()
     .withMessage("Edad inválida"),
   handleInputErrors,
   AuthController.register,

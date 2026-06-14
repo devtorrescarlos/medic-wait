@@ -5,14 +5,25 @@ import { useAppointmentsFilters } from "../../../../hooks/appointments/useAppoin
 import ErrorMessage from "../../../../components/shared/ErrorMessage";
 
 export default function AppointmentsPage() {
-  const { page, setPage, dateFilter, patientInput, statusFilter, limit } =
-    useAppointmentsFilters();
+  const {
+    page,
+    limit,
+    patientFilter,
+    patientInput,
+    setPatientInput,
+    dateFilter,
+    statusFilter,
+    handleDateFilter,
+    handleStatusFilter,
+    handleCleanFilters,
+    handlePageChange,
+  } = useAppointmentsFilters();
   const { data, isLoading, error } = useAppointments(
     page,
     limit,
-    dateFilter,
-    patientInput,
-    statusFilter,
+    patientFilter || undefined,
+    dateFilter || undefined,
+    statusFilter || undefined,
   );
 
   if (isLoading) return <LoadingSpinner />;
@@ -27,7 +38,18 @@ export default function AppointmentsPage() {
         </p>
       </div>
 
-      <AppointmentsTable data={data} page={page} setPage={setPage} />
+      <AppointmentsTable
+        data={data}
+        page={page}
+        dateFilter={dateFilter}
+        handleDateFilterChange={handleDateFilter}
+        patientInput={patientInput}
+        setPatientInput={setPatientInput}
+        statusFilter={statusFilter}
+        handleStatusFilterChange={handleStatusFilter}
+        handleCleanFilters={handleCleanFilters}
+        handlePageChange={handlePageChange}
+      />
     </div>
   );
 }

@@ -30,8 +30,8 @@ export default class User extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   declare full_name: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare age: string;
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  declare age: number;
 
   @ForeignKey(() => Specialty)
   @Column({ type: DataType.UUID, allowNull: true })

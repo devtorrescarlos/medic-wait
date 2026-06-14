@@ -1,6 +1,6 @@
 import { Paperclip, User } from "lucide-react";
 import GoBackButton from "../../../../components/shared/GoBackButton";
-import UserInitialts from "../../../../components/shared/UserInitialts";
+import UserInitialts from "../../../../components/shared/UserInitials";
 import MedicalRecordDetailCard from "../../../../components/dashboard/medical-records/MedicalRecordDetailCard";
 import { Navigate, useParams } from "react-router-dom";
 import { useGetMedicalRecordById } from "../../../../hooks/medical-records/useGetMedicalRecordById";

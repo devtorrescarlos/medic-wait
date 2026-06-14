@@ -8,25 +8,25 @@ import appointmentsRoutes from "./modules/appointments/appointments.routes";
 import medicalRecordsRoutes from "./modules/medical-records/medical-records-router";
 import { limiter } from "./config/limiter";
 
-
 const connectDB = async () => {
-    try {
-        await db.authenticate();
-        await db.sync();
-        console.log("Database connected");
-    } catch (error) {
-        console.log(error);
-    }
-}
+  try {
+    await db.authenticate();
+    console.log("Database connected");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 connectDB();
 
 const app = express();
 
-app.use(cors({
+app.use(
+  cors({
     origin: process.env.CLIENT_URL,
-    credentials: true
-}));
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
@@ -39,7 +39,7 @@ app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/medical-records", medicalRecordsRoutes);
 
 app.get("/", (req, res) => {
-    res.json("OK!")
-})
+  res.json("OK!");
+});
 
 export default app;

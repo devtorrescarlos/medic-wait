@@ -15,6 +15,8 @@ export default function PatientsDetailPage() {
 
   if (error) return <ErrorMessage message={error.message} />;
 
+  console.log(data);
+
   return (
     <div className="p-4 lg:p-6 space-y-6">
       <div className="flex items-center justify-between">

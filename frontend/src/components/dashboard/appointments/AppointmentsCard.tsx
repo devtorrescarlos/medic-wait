@@ -3,7 +3,7 @@ import { Calendar, Clock, Eye, FileText } from "lucide-react";
 import type { Appointment } from "../../../types";
 import { formatTime } from "../../../utils/formatDayAndDates";
 import { statusConfig } from "../../../constants";
-import UserInitialts from "../../shared/UserInitialts";
+import UserInitialts from "../../shared/UserInitials";
 
 export default function AppointmentsCard({
   appointment,

@@ -1,5 +1,5 @@
 import { Mail } from "lucide-react";
-import UserInitialts from "../../../components/shared/UserInitialts";
+import UserInitialts from "../../shared/UserInitials";
 import type { PatientByIdResponse } from "../../../types";
 import { formatDate, formatTime } from "../../../utils/formatDayAndDates";
 
@@ -25,11 +25,11 @@ export default function PatientInfoCard({
             Edad: {data.patient.age} años
           </span>
 
-          {data.lastAppointment ? (
+          {data.lastAppointment && data.lastAppointment.slot ? (
             <span className="mt-1.5 text-gray-500 text-sm">
-              Ultima cita: {formatDate(data.lastAppointment.slot?.date)} -{" "}
-              {formatTime(data.lastAppointment.slot?.start_time)} -{" "}
-              {formatTime(data.lastAppointment.slot?.end_time)}
+              Ultima cita: {formatDate(data.lastAppointment.slot.date)} -{" "}
+              {formatTime(data.lastAppointment.slot.start_time)} -{" "}
+              {formatTime(data.lastAppointment.slot.end_time)}
             </span>
           ) : (
             <span className="mt-1.5 text-gray-500 text-sm">No tiene citas</span>

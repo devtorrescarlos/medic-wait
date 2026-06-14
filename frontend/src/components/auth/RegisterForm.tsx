@@ -118,6 +118,14 @@ export default function RegisterForm() {
               placeholder="Edad"
               {...register("age", {
                 required: "La edad es requerida",
+                min: {
+                  value: 1,
+                  message: "La edad debe ser mayor a 0",
+                },
+                max: {
+                  value: 100,
+                  message: "La edad debe ser menor a 100",
+                },
               })}
             />
           </div>

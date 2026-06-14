@@ -4,7 +4,7 @@ import type { MedicalRecord } from "../../types";
 
 export const useGetMedicalRecordById = (id: string) => {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["medicalRecord"],
+    queryKey: ["medicalRecord", id],
     queryFn: () => getMedicalRecordById(id),
   });
 

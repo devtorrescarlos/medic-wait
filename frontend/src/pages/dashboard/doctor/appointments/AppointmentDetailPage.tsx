@@ -29,7 +29,7 @@ export default function AppointmentDetailPage() {
   const { data, isLoading, error } = useAppointmentById(id);
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <p>Error al cargar la cita</p>;
+  if (error) return <p>{error.message}</p>;
 
   const handleCancelModal = () => {
     setCancelModal(true);

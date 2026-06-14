@@ -12,9 +12,9 @@ module.exports = {
     const table = await queryInterface.describeTable("users");
     if (!table.age) {
       await queryInterface.addColumn("users", "age", {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: true,
-        defaultValue: "",
+        type: Sequelize.DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       });
     }
   },

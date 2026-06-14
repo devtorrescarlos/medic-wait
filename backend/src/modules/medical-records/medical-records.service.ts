@@ -25,29 +25,21 @@ export const getPatients = async (
   }
 
   const patient_ids = await Appointment.findAll({
-    where: { doctor_id: doctorId, status: "completed" },
+    where: { doctor_id: doctorId, status: ["completed", "confirmed"] },
     attributes: ["patient_id"],
   });
 
+  const whereClause: any = {
+    id: patient_ids.map(
+      (patient: { patient_id: string }) => patient.patient_id,
+    ),
+  };
+  if (name) whereClause.full_name = { [Op.iLike]: `%${name}%` };
+  if (email) whereClause.email = { [Op.iLike]: `%${email}%` };
+
   const { count, rows: patients } = await User.findAndCountAll({
     attributes: ["id", "full_name", "email", "age"],
-    where: {
-      id: patient_ids.map(
-        (patient: { patient_id: string }) => patient.patient_id,
-      ),
-      [Op.and]: [
-        {
-          full_name: {
-            [Op.iLike]: `%${name}%`,
-          },
-        },
-        {
-          email: {
-            [Op.iLike]: `%${email}%`,
-          },
-        },
-      ],
-    },
+    where: whereClause,
     limit,
     offset: (page - 1) * limit,
   });
@@ -94,7 +86,7 @@ export const getPatientById = async (patientId: string) => {
   });
 
   const lastAppointment = await Appointment.findOne({
-    where: { patient_id: patientId, status: "completed" },
+    where: { patient_id: patientId, status: ["completed"] },
     include: [
       {
         model: Slot,
