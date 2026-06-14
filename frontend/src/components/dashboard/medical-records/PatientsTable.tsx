@@ -1,44 +1,30 @@
-import { useMemo } from "react";
 import { Eye } from "lucide-react";
 import TableFilters from "../../shared/TableFilters";
 import type { PatientResponse } from "../../../types";
-import { usePatientsFilters } from "../../../hooks/medical-records/usePatientsFilters";
-import UserInitialts from "../../shared/UserInitialts";
+import UserInitialts from "../../shared/UserInitials";
 import { Link } from "react-router-dom";
 
 type PatientsTableProps = {
   data: PatientResponse;
   page: number;
-  setPage: (page: number) => void;
+  nameInput: string;
+  emailInput: string;
+  setNameInput: (value: string) => void;
+  setEmailInput: (value: string) => void;
+  handleCleanFilters: () => void;
+  handlePageChange: (newPage: number) => void;
 };
 
 export default function PatientsTable({
   data,
   page,
-  setPage,
+  nameInput,
+  emailInput,
+  setNameInput,
+  setEmailInput,
+  handleCleanFilters,
+  handlePageChange,
 }: PatientsTableProps) {
-  const {
-    nameFilter,
-    emailFilter,
-    nameInput,
-    emailInput,
-    setNameInput,
-    setEmailInput,
-    handleCleanFilters,
-  } = usePatientsFilters();
-
-  const filteredPatients = useMemo(() => {
-    return data.patients.filter((patient) => {
-      const nameMatch =
-        !nameFilter ||
-        patient.full_name.toLowerCase().includes(nameFilter.toLowerCase());
-      const emailMatch =
-        !emailFilter ||
-        patient.email.toLowerCase().includes(emailFilter.toLowerCase());
-      return nameMatch && emailMatch;
-    });
-  }, [data.patients, nameFilter, emailFilter]);
-
   const filters = [
     {
       label: "Paciente",
@@ -81,7 +67,7 @@ export default function PatientsTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredPatients.length === 0 && (
+              {data.patients.length === 0 && (
                 <tr>
                   <td
                     colSpan={3}
@@ -92,7 +78,7 @@ export default function PatientsTable({
                 </tr>
               )}
 
-              {filteredPatients.map((patient) => {
+              {data.patients.map((patient) => {
                 return (
                   <tr
                     key={patient.id}
@@ -130,7 +116,7 @@ export default function PatientsTable({
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-sm text-gray-500">
-          Total: {filteredPatients.length} paciente(s)
+          Total: {data.totalItems} paciente(s)
           <span className="ml-2">
             Página {page} de {data.totalPages}
           </span>
@@ -138,15 +124,15 @@ export default function PatientsTable({
         <div className="flex items-center gap-1.5">
           <button
             disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-3 py-1.5 text-sm text-gray-400 border border-gray-200 rounded-lg cursor-pointer"
+            onClick={() => handlePageChange(page - 1)}
+            className="px-3 py-1.5 text-sm text-gray-400 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Anterior
           </button>
           <button
-            disabled={page === data.totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            disabled={page >= data.totalPages}
+            onClick={() => handlePageChange(page + 1)}
+            className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Siguiente
           </button>

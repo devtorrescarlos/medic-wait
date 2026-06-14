@@ -10,7 +10,7 @@ import {
 import type { Appointment } from "../../../types";
 import { formatDate, formatTime } from "../../../utils/formatDayAndDates";
 import { statusConfig } from "../../../constants";
-import UserInitialts from "../../shared/UserInitialts";
+import UserInitialts from "../../shared/UserInitials";
 import AppointmentCardItems from "./AppointmentCardItems";
 
 interface AppointmentDetailCardProps {

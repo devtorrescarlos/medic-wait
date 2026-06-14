@@ -6,8 +6,18 @@ import ErrorMessage from "../../../../components/shared/ErrorMessage";
 import { usePatientsFilters } from "../../../../hooks/medical-records/usePatientsFilters";
 
 export default function PatientsPage() {
-  const { nameFilter, emailFilter, limit, page, setPage } =
-    usePatientsFilters();
+  const {
+    nameFilter,
+    emailFilter,
+    nameInput,
+    emailInput,
+    setNameInput,
+    setEmailInput,
+    handleCleanFilters,
+    handlePageChange,
+    limit,
+    page,
+  } = usePatientsFilters();
 
   const { data, isLoading, error } = useGetPatients(
     page,
@@ -34,7 +44,16 @@ export default function PatientsPage() {
         </div>
       </div>
 
-      <PatientsTable data={data} page={page} setPage={setPage} />
+      <PatientsTable
+        data={data}
+        page={page}
+        nameInput={nameInput}
+        emailInput={emailInput}
+        setNameInput={setNameInput}
+        setEmailInput={setEmailInput}
+        handleCleanFilters={handleCleanFilters}
+        handlePageChange={handlePageChange}
+      />
     </div>
   );
 }

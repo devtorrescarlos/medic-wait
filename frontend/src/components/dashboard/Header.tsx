@@ -1,6 +1,6 @@
 import { Bell } from "lucide-react";
 import { useAuth } from "../../hooks/auth/useAuth";
-import UserInitialts from "../shared/UserInitialts";
+import UserInitialts from "../shared/UserInitials";
 
 export default function Header() {
   const { user, role } = useAuth();

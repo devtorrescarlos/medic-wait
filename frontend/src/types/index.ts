@@ -22,6 +22,11 @@ export type User = {
   is_approved_by_admin: boolean;
 };
 
+export type SlotFormData = {
+  start_time: string;
+  end_time: string;
+};
+
 export type Slot = {
   id: string;
   start_time: string;
@@ -135,10 +140,6 @@ export type PatientByIdResponse = {
 };
 
 export type MedicalRecordFormData = {
-  id?: string;
-  appointment_id: string;
-  patient_id: string;
-  doctor_id: string;
   initial_diagnosis: string;
   treatment_plan: string;
 };

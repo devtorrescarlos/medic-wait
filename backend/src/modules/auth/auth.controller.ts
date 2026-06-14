@@ -105,7 +105,14 @@ export const resetPasswordWithToken = async (req: Request, res: Response) => {
 };
 
 export const getUser = async (req: Request, res: Response) => {
-  res.json(req.user);
+  res.json({
+    id: req.user!.id,
+    email: req.user!.email,
+    full_name: req.user!.full_name,
+    age: req.user!.age,
+    specialty_id: req.user!.specialty_id,
+    is_approved_by_admin: req.user!.is_approved_by_admin,
+  });
 };
 
 export const getSpecialties = async (req: Request, res: Response) => {

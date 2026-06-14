@@ -1,4 +1,5 @@
 import Appointment from "../../models/Appointment";
+import db from "../../config/database";
 import User from "../../models/User";
 import Slot from "../../models/Slot";
 import DoctorSchedule from "../../models/DoctorSchedule";
@@ -81,21 +82,23 @@ export const createAppointment = async (
       };
     }
 
-    await slot.update({ is_available: false });
-
-    const newAppointment = await Appointment.create({
-      patient_id: patientId,
-      doctor_id: doctorId,
-      slot_id: slotId,
-      reason,
-      status: "pending",
+    const newAppointment = await db.transaction(async (t) => {
+      await slot.update({ is_available: false }, { transaction: t });
+      return Appointment.create(
+        {
+          patient_id: patientId,
+          doctor_id: doctorId,
+          slot_id: slotId,
+          reason,
+          status: "pending",
+        },
+        { transaction: t },
+      );
     });
 
     await notifyAppointmentChange(newAppointment, "created", patientId);
     await invalidateDoctorSlotsCache(doctorId);
     await invalidateAppointmentCache([patientId, doctorId]);
-
-    return newAppointment;
   } catch (error) {
     if (error instanceof Error && error.name === "ExecutionError") {
       throw {
@@ -148,7 +151,7 @@ export const confirmAppointment = async (
   await appointment.update({ status: "confirmed" });
 
   await notifyAppointmentChange(appointment, "confirmed", patientId);
-  await invalidateAppointmentCache([patientId]);
+  await invalidateAppointmentCache([patientId, appointment.doctor_id]);
 
   return appointment;
 };
@@ -278,15 +281,19 @@ export const completeAppointment = async (
   await notifyAppointmentChange(appointment, "completed", doctorId);
   await invalidatePatientsCache(doctorId);
   await invalidateDoctorSlotsCache(doctorId);
-  await invalidateAppointmentCache([doctorId]);
+  await invalidateAppointmentCache([doctorId, appointment.patient_id]);
 
   return appointment;
 };
 
-export const getAppointmentById = async (appointmentId: string) => {
+export const getAppointmentById = async (
+  appointmentId: string,
+  userId: string,
+) => {
   const appointment = await Appointment.findOne({
     where: {
       id: appointmentId,
+      [Op.or]: [{ patient_id: userId }, { doctor_id: userId }],
     },
     include: [
       {
@@ -438,17 +445,19 @@ export const getAllAppointments = async (
   }
 
   const whereClause: any = {};
-  if (date) {
-    whereClause.date = date;
-  }
   if (status) {
     whereClause.status = status;
+  }
+
+  const slotInclude: any = { model: Slot };
+  if (date) {
+    slotInclude.where = { date };
   }
 
   const includeClause: any[] = [
     { model: User, as: "patient", attributes: ["id", "full_name", "email"] },
     { model: User, as: "doctor", attributes: ["id", "full_name"] },
-    { model: Slot },
+    slotInclude,
   ];
 
   if (patient) {

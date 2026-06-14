@@ -10,6 +10,7 @@ export const usePatientsFilters = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      setPage(1);
       setNameFilter(nameInput);
       setEmailFilter(emailInput);
     }, 800);
@@ -21,6 +22,11 @@ export const usePatientsFilters = () => {
     setEmailInput("");
     setNameFilter("");
     setEmailFilter("");
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
   return {
@@ -31,6 +37,7 @@ export const usePatientsFilters = () => {
     setNameInput,
     setEmailInput,
     handleCleanFilters,
+    handlePageChange,
     limit,
     page,
     setPage,

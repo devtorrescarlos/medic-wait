@@ -1,129 +1,168 @@
 import { Request, Response } from "express";
 import * as appointmentService from "./appointments.service";
 
-
 export const createAppointment = async (req: Request, res: Response) => {
-    try {
-        const { reason, slotId } = req.body;
-        const patientId = req.patientId;
-        const doctorId = req.query.doctorId as string;
+  try {
+    const { reason, slotId } = req.body;
+    const patientId = req.patientId;
+    const doctorId = req.query.doctorId as string;
 
-        const appointment = await appointmentService.createAppointment(patientId as string, doctorId, reason, slotId);
+    const appointment = await appointmentService.createAppointment(
+      patientId as string,
+      doctorId,
+      reason,
+      slotId,
+    );
 
-        return res.status(201).json(appointment);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+    return res.status(201).json(appointment);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const confirmAppointment = async (req: Request, res: Response) => {
-    try {
-        const appointmentId = req.params.appointmentId;
-        const patientId = req.patientId;
-        const appointment = await appointmentService.confirmAppointment(appointmentId as string, patientId as string);
+  try {
+    const appointmentId = req.params.appointmentId;
+    const patientId = req.patientId;
+    const appointment = await appointmentService.confirmAppointment(
+      appointmentId as string,
+      patientId as string,
+    );
 
-        return res.status(200).json(appointment);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+    return res.status(200).json(appointment);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const cancelAppointment = async (req: Request, res: Response) => {
-    try {
-        const appointmentId = req.params.appointmentId;
-        const cancellationReason = req.body.cancellation_reason;
-        const user = req.user?.id;
+  try {
+    const appointmentId = req.params.appointmentId;
+    const cancellationReason = req.body.cancellation_reason;
+    const user = req.user?.id;
 
-        const appointment = await appointmentService.cancelAppointment(appointmentId as string, cancellationReason, user as string);
+    const appointment = await appointmentService.cancelAppointment(
+      appointmentId as string,
+      cancellationReason,
+      user as string,
+    );
 
-        return res.status(200).json(appointment);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+    return res.status(200).json(appointment);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const completeAppointment = async (req: Request, res: Response) => {
-    try {
-        const appointmentId = req.params.appointmentId;
-        const doctorId = req.doctorId;
+  try {
+    const appointmentId = req.params.appointmentId;
+    const doctorId = req.doctorId;
 
-        const appointment = await appointmentService.completeAppointment(appointmentId as string, doctorId as string);
+    const appointment = await appointmentService.completeAppointment(
+      appointmentId as string,
+      doctorId as string,
+    );
 
-        return res.status(200).json(appointment);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+    return res.status(200).json(appointment);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getAppointmentById = async (req: Request, res: Response) => {
-    try {
-        const appointmentId = req.params.appointmentId;
-        const appointment = await appointmentService.getAppointmentById(appointmentId as string);
-        return res.status(200).json(appointment);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+  try {
+    const appointmentId = req.params.appointmentId;
+    const userId = req.user?.id || req.patientId;
+    const appointment = await appointmentService.getAppointmentById(
+      appointmentId as string,
+      userId as string,
+    );
+    return res.status(200).json(appointment);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const getAppointmentsByDoctorId = async (req: Request, res: Response) => {
-    try {
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const doctorId = req.doctorId;
-        const appointments = await appointmentService.getAppointmentsByDoctorId(doctorId as string, page, limit);
-        return res.status(200).json(appointments);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+export const getAppointmentsByDoctorId = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const doctorId = req.params.doctorId;
+    const appointments = await appointmentService.getAppointmentsByDoctorId(
+      doctorId as string,
+      page,
+      limit,
+    );
+    return res.status(200).json(appointments);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
-export const getAppointmentsByPatientId = async (req: Request, res: Response) => {
-    try {
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const patientId = req.patientId;
-        const appointments = await appointmentService.getAppointmentsByPatientId(patientId as string, page, limit);
-        return res.status(200).json(appointments);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+export const getAppointmentsByPatientId = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const patientId = req.params.patientId;
+    const appointments = await appointmentService.getAppointmentsByPatientId(
+      patientId as string,
+      page,
+      limit,
+    );
+    return res.status(200).json(appointments);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getAllAppointments = async (req: Request, res: Response) => {
-    try {
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-        const patient = req.query.patient as string;
-        const date = req.query.date as string;
-        const status = req.query.status as string;
-        const doctorId = req.doctorId;
-        const appointments = await appointmentService.getAllAppointments(page, limit, patient, date, status, doctorId as string);
-        return res.status(200).json(appointments);
-    } catch (error: any) {
-        if (error.status) {
-            return res.status(error.status).json({ message: error.message });
-        }
-        res.status(500).json({ message: error.message });
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const patient = req.query.patient as string;
+    const date = req.query.date as string;
+    const status = req.query.status as string;
+    const doctorId = req.doctorId;
+    const appointments = await appointmentService.getAllAppointments(
+      page,
+      limit,
+      patient,
+      date,
+      status,
+      doctorId as string,
+    );
+    return res.status(200).json(appointments);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
     }
-}
+    res.status(500).json({ message: error.message });
+  }
+};

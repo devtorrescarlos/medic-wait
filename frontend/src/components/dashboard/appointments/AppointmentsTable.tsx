@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-import { useAppointmentsFilters } from "../../../hooks/appointments/useAppointmentsFilters";
 import TableFilters from "../../shared/TableFilters";
 import type { AppointmentsData } from "../../../types";
 import AppointmentsCard from "./AppointmentsCard";
@@ -7,30 +5,34 @@ import AppointmentsCard from "./AppointmentsCard";
 type AppointmentsTableProps = {
   data: AppointmentsData;
   page: number;
-  setPage: (page: number) => void;
+  dateFilter: string;
+  patientInput: string;
+  statusFilter: string;
+  handleDateFilterChange: (value: string) => void;
+  setPatientInput: (value: string) => void;
+  handleStatusFilterChange: (value: string) => void;
+  handleCleanFilters: () => void;
+  handlePageChange: (newPage: number) => void;
 };
 
 export default function AppointmentsTable({
   data,
   page,
-  setPage,
+  dateFilter,
+  patientInput,
+  statusFilter,
+  handleDateFilterChange,
+  setPatientInput,
+  handleStatusFilterChange,
+  handleCleanFilters,
+  handlePageChange,
 }: AppointmentsTableProps) {
-  const {
-    dateFilter,
-    patientInput,
-    statusFilter,
-    handleDateFilter,
-    setPatientInput,
-    handleStatusFilter,
-    handleCleanFilters,
-  } = useAppointmentsFilters();
-
   const filters = [
     {
       label: "Fecha",
       type: "date" as const,
       value: dateFilter,
-      onChange: handleDateFilter,
+      onChange: handleDateFilterChange,
     },
     {
       label: "Paciente",
@@ -43,7 +45,7 @@ export default function AppointmentsTable({
       label: "Estado",
       type: "select" as const,
       value: statusFilter,
-      onChange: handleStatusFilter,
+      onChange: handleStatusFilterChange,
       options: [
         { value: "", label: "Todos los estados" },
         { value: "pending", label: "Pendiente" },
@@ -53,21 +55,6 @@ export default function AppointmentsTable({
       ],
     },
   ];
-
-  const filteredAppointments = useMemo(() => {
-    return data.appointments.filter((appointment) => {
-      if (dateFilter && appointment.slot.date !== dateFilter) return false;
-      if (
-        patientInput &&
-        !appointment.patient.full_name
-          .toLowerCase()
-          .includes(patientInput.toLowerCase())
-      )
-        return false;
-      if (statusFilter && appointment.status !== statusFilter) return false;
-      return true;
-    });
-  }, [data.appointments, dateFilter, patientInput, statusFilter]);
 
   return (
     <div className="space-y-4">
@@ -83,7 +70,7 @@ export default function AppointmentsTable({
             No se encontraron registros.
           </p>
         ) : (
-          filteredAppointments.map((appointment) => (
+          data.appointments.map((appointment) => (
             <AppointmentsCard key={appointment.id} appointment={appointment} />
           ))
         )}
@@ -99,14 +86,14 @@ export default function AppointmentsTable({
         <div className="flex items-center gap-2">
           <button
             disabled={page <= 1}
-            onClick={() => setPage(page - 1)}
+            onClick={() => handlePageChange(page - 1)}
             className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Anterior
           </button>
           <button
             disabled={page >= data.totalPages}
-            onClick={() => setPage(page + 1)}
+            onClick={() => handlePageChange(page + 1)}
             className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Siguiente

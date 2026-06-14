@@ -36,7 +36,7 @@ export const register = async (userData: RegisterData) => {
   if (role) {
     const roleRecord = await Role.findOne({ where: { name: role } });
 
-    if (roleRecord && user.age < "21") {
+    if (roleRecord && Number(user.age) < 21) {
       throw {
         status: 400,
         message: "El usuario debe tener al menos 21 años para ser doctor",
