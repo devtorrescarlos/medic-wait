@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import Header from "../components/dashboard/Header";
-import Sidebar from "../components/dashboard/Sidebar";
+import Header from "../components/shared/Header";
+import Sidebar from "../components/shared/Sidebar";
 import { useAuth } from "../hooks/auth/useAuth";
 import LoadingSpinner from "../components/shared/LoadingSpinner";
 

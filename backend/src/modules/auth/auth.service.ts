@@ -15,7 +15,6 @@ import Specialty from "../../models/Specialty";
 export const register = async (userData: RegisterData) => {
   const { email, password, full_name, role, specialty_id, age } = userData;
   const existingUser = await User.findOne({ where: { email } });
-
   if (existingUser) {
     throw {
       status: 400,
@@ -23,8 +22,17 @@ export const register = async (userData: RegisterData) => {
     };
   }
 
-  const hashedPassword = await hashPassword(password);
+  if (role) {
+    const roleRecord = await Role.findOne({ where: { name: role } });
+    if (roleRecord && Number(age) < 21) {
+      throw {
+        status: 400,
+        message: "El usuario debe tener al menos 21 años para ser doctor",
+      };
+    }
+  }
 
+  const hashedPassword = await hashPassword(password);
   const user = await User.create({
     email,
     password: hashedPassword,
@@ -35,33 +43,17 @@ export const register = async (userData: RegisterData) => {
 
   if (role) {
     const roleRecord = await Role.findOne({ where: { name: role } });
-
-    if (roleRecord && Number(user.age) < 21) {
-      throw {
-        status: 400,
-        message: "El usuario debe tener al menos 21 años para ser doctor",
-      };
-    }
-
     if (roleRecord) {
-      await UserRole.create({
-        user_id: user.id,
-        role_id: roleRecord.id,
-      });
+      await UserRole.create({ user_id: user.id, role_id: roleRecord.id });
     }
   } else {
     const defaultRole = await Role.findOne({ where: { name: "patient" } });
     if (defaultRole) {
-      await UserRole.create({
-        user_id: user.id,
-        role_id: defaultRole.id,
-      });
+      await UserRole.create({ user_id: user.id, role_id: defaultRole.id });
     }
   }
-
   const token = generateVerificationJWT(user.id);
   await sendVerificationEmail(email, token);
-
   return token;
 };
 

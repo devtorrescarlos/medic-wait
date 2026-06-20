@@ -3,11 +3,11 @@ import * as appointmentController from "./appointments.controller";
 import {
   verifyDoctorApproved,
   verifyPatient,
+  verifyDoctorOrPatient,
 } from "../../middlewares/verifyRole";
 import { authenticate } from "../../middlewares/auth";
 import { body, param, query } from "express-validator";
 import { handleInputErrors } from "../../middlewares/validation";
-import { doctorIdValidation } from "../../middlewares/slotsAndScheduleValidation";
 
 const router = Router();
 
@@ -89,29 +89,8 @@ router.post(
 router.get(
   "/all",
   authenticate,
-  verifyDoctorApproved,
+  verifyDoctorOrPatient,
   appointmentController.getAllAppointments,
-);
-
-router.get(
-  "/doctor/:doctorId",
-  authenticate,
-  doctorIdValidation,
-  verifyPatient,
-  appointmentController.getAppointmentsByDoctorId,
-);
-
-router.get(
-  "/patient/:patientId",
-  authenticate,
-  param("patientId")
-    .isUUID()
-    .withMessage("El id del paciente debe ser un uuid")
-    .notEmpty()
-    .withMessage("El id del paciente es obligatorio"),
-  handleInputErrors,
-  verifyDoctorApproved,
-  appointmentController.getAppointmentsByPatientId,
 );
 
 router.get(

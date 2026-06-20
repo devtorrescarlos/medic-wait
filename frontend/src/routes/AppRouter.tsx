@@ -23,6 +23,11 @@ import MedicalRecordCreatePage from "../pages/dashboard/doctor/medical-records/M
 import MedicalRecordAnnexeCreatePage from "../pages/dashboard/doctor/medical-records/MedicalRecordAnnexeCreatePage";
 import MedicalRecordDetailPage from "../pages/dashboard/doctor/medical-records/MedicalRecordDetailPage";
 import MedicalRecordAnnexeDetailPage from "../pages/dashboard/doctor/medical-records/MedicalRecordAnnexeDetailPage";
+import PatientDashboard from "../pages/dashboard/patient/PatientDashboard";
+import PatientAppointmentsPage from "../pages/dashboard/patient/appointments/PatientAppointmentsPage";
+import DoctorsPage from "../pages/dashboard/patient/doctors/DoctorsPage";
+import DoctorDetailPage from "../pages/dashboard/patient/doctors/DoctorDetailPage";
+import PatientMedicalRecordsPage from "../pages/dashboard/patient/history/PatientMedicalRecordsPage";
 
 function AppRouter() {
   return (
@@ -69,6 +74,16 @@ function AppRouter() {
             path="medical-records/:id"
             element={<MedicalRecordDetailPage />}
           />
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["patient"]} />}>
+        <Route path="dashboard/patient" element={<DashboardLayout />}>
+          <Route index element={<PatientDashboard />} />
+          <Route path="my-appointments" element={<PatientAppointmentsPage />} />
+          <Route path="doctors" element={<DoctorsPage />} />
+          <Route path="doctors/:id" element={<DoctorDetailPage />} />
+          <Route path="history" element={<PatientMedicalRecordsPage />} />
         </Route>
       </Route>
     </Routes>

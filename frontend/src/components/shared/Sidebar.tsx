@@ -1,5 +1,12 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { ChevronsLeft, Heart, LogOut } from "lucide-react";
+import {
+  ChevronsLeft,
+  Clock,
+  Heart,
+  HomeIcon,
+  LogOut,
+  Stethoscope,
+} from "lucide-react";
 import { Calendar, House, Clock4, User2, CalendarArrowUp } from "lucide-react";
 import { useAuth } from "../../hooks/auth/useAuth";
 
@@ -57,18 +64,23 @@ export default function Sidebar({
   const PATIENT_LINKS = [
     {
       to: "/dashboard/patient",
-      label: "Mis Citas",
-      icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+      label: "Home",
+      icon: <HomeIcon />,
     },
     {
-      to: "/dashboard/patient/book",
-      label: "Reservar Cita",
-      icon: "M12 6v6m0 0v6m0-6h6m-6 0H6",
+      to: "/dashboard/patient/my-appointments",
+      label: "Mis Citas",
+      icon: <Calendar />,
+    },
+    {
+      to: "/dashboard/patient/doctors",
+      label: "Doctores",
+      icon: <Stethoscope />,
     },
     {
       to: "/dashboard/patient/history",
       label: "Historial",
-      icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+      icon: <Clock />,
     },
   ];
 
@@ -78,7 +90,6 @@ export default function Sidebar({
       : role === "doctor"
         ? DOCTOR_LINKS
         : PATIENT_LINKS;
-
   return (
     <aside
       className={`
@@ -151,7 +162,7 @@ export default function Sidebar({
         >
           <ChevronsLeft />
           {!isSidebarCollapsed && (
-            <span className="whitespace-nowrap">Colapsar</span>
+            <span className="whitespace-nowrap cursor-pointer">Colapsar</span>
           )}
         </button>
       </div>

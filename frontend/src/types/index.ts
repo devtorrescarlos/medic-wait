@@ -3,7 +3,7 @@ export type RegisterForm = {
   email: string;
   password: string;
   confirmPassword?: string;
-  specialty?: string;
+  specialty_id?: string | null;
   role?: string;
   age: string;
 };
@@ -161,4 +161,24 @@ export type AIGenerateInput = {
     existingTreatment?: string;
   };
   customPrompt?: string;
+};
+
+export type Doctor = {
+  id: string;
+  full_name?: string;
+  email: string;
+  specialty_id: string;
+  specialty?: { id: string; name: string };
+};
+
+export type DoctorsData = {
+  doctors: Doctor[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+};
+
+export type Specialty = {
+  id: string;
+  name: string;
 };

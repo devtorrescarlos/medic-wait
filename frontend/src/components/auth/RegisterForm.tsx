@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../shared/ErrorMessage";
 import type { RegisterForm } from "../../types";
-import { specialties } from "../../constants/specialties";
 import { useAuthMutations } from "../../hooks/auth/useAuthMutations";
 import {
   Mail,
@@ -13,6 +12,7 @@ import {
   ShieldCheck,
   Calendar,
 } from "lucide-react";
+import { useGetSpecialties } from "../../hooks/auth/useGetSpecialties";
 
 const initialValues = {
   full_name: "",
@@ -20,7 +20,7 @@ const initialValues = {
   password: "",
   age: "",
   confirmPassword: "",
-  specialty: "",
+  specialty_id: "",
 };
 
 export default function RegisterForm() {
@@ -31,14 +31,15 @@ export default function RegisterForm() {
     watch,
     formState: { errors },
   } = useForm<RegisterForm>({ defaultValues: initialValues });
+  const { specialties, isLoading, error } = useGetSpecialties();
   const { registerMutation } = useAuthMutations();
 
   const handleOnSubmit = (data: RegisterForm) => {
-    const { confirmPassword, specialty, ...rest } = data;
+    const { confirmPassword, specialty_id, ...rest } = data;
 
     const payload = isDoctor
-      ? { ...rest, role: "doctor", specialty }
-      : { ...rest, role: "patient" };
+      ? { ...rest, role: "doctor", specialty_id }
+      : { ...rest, role: "patient", specialty_id: null };
 
     registerMutation.mutate(payload);
   };
@@ -172,20 +173,30 @@ export default function RegisterForm() {
               <select
                 id="specialty"
                 className="w-full outline-none text-gray-600 appearance-none bg-transparent"
-                {...register("specialty", {
+                {...register("specialty_id", {
                   required: isDoctor ? "La especialidad es requerida" : false,
                 })}
               >
                 <option value="">Selecciona tu especialidad</option>
+                {isLoading && (
+                  <option value="" disabled>
+                    Cargando especialidades...
+                  </option>
+                )}
+                {error && (
+                  <option value="" disabled>
+                    Error al cargar especialidades
+                  </option>
+                )}
                 {specialties.map((specialty) => (
-                  <option key={specialty.value} value={specialty.value}>
-                    {specialty.label}
+                  <option key={specialty.id} value={specialty.id}>
+                    {specialty.name}
                   </option>
                 ))}
               </select>
             </div>
-            {errors.specialty && (
-              <ErrorMessage message={errors.specialty.message as string} />
+            {errors.specialty_id && (
+              <ErrorMessage message={errors.specialty_id.message as string} />
             )}
           </div>
         )}

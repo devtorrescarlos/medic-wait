@@ -28,10 +28,10 @@ export const invalidateAppointmentCache = async (
 ): Promise<void> => {
   const ids = Array.isArray(userIds) ? userIds : [userIds];
 
-  await deleteKeysByPattern(`appointments:all*`);
+  await deleteKeysByPattern(`appointments:*`);
 
   for (const userId of ids) {
-    await deleteKeysByPattern(`appointments:${userId}*`);
+    await deleteKeysByPattern(`appointments:*:${userId}:*`);
   }
 };
 
