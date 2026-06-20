@@ -1,19 +1,26 @@
 import api from "../api/axios";
 
-export const getAppointments = async (page: number, limit: number, patient?: string, date?: string, status?: string) => {
-    const params = new URLSearchParams();
-    params.append('page', String(page));
-    params.append('limit', String(limit));
+export const getAppointments = async (
+  page: number,
+  limit: number,
+  patient?: string,
+  date?: string,
+  status?: string,
+  doctor?: string,
+) => {
+  const params = new URLSearchParams();
+  params.append("page", String(page));
+  params.append("limit", String(limit));
 
-    if (date) params.append('date', String(date));
-    if (patient) params.append('patient', String(patient));
-    if (status) params.append('status', String(status));
+  if (date) params.append("date", String(date));
+  if (patient) params.append("patient", String(patient));
+  if (status) params.append("status", String(status));
+  if (doctor) params.append("doctor", String(doctor));
 
-
-    const url = `${import.meta.env.VITE_API_URL}/appointments/all?${params.toString()}`;
-    const response = await api.get(url);
-    return response.data;
-}
+  const url = `${import.meta.env.VITE_API_URL}/appointments/all?${params.toString()}`;
+  const response = await api.get(url);
+  return response.data;
+};
 
 export const getAppointmentById = async (id: string) => {
     const url = `${import.meta.env.VITE_API_URL}/appointments/${id}`

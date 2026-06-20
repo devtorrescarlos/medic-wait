@@ -1,9 +1,13 @@
+import { Op } from "sequelize";
 import Slot from "../../models/Slot";
 import DoctorSchedule from "../../models/DoctorSchedule";
 import db from "../../config/database";
 import redisClient from "../../config/ioredis";
 import { parseTimeString } from "../../utils";
 import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
+import User from "../../models/User";
+import Role from "../../models/Role";
+import Specialty from "../../models/Specialty";
 
 export const getAvailableSlots = async (
   doctorId: string,
@@ -238,4 +242,69 @@ export const updateSlot = async (
 
   await invalidateDoctorSlotsCache(doctorId);
   return slot;
+};
+
+export const getDoctors = async (
+  page: number,
+  limit: number,
+  name?: string,
+  email?: string,
+  specialty?: string,
+) => {
+  const cacheKey = `doctors:p:${page}:l:${limit}:n:${name || "all"}:e:${email || "all"}:s:${specialty || "all"}`;
+  const cachedDoctors = await redisClient.get(cacheKey);
+  if (cachedDoctors) {
+    return JSON.parse(cachedDoctors);
+  }
+
+  const whereClause: any = { is_approved_by_admin: true };
+  if (name) {
+    whereClause.full_name = { [Op.iLike]: `%${name}%` };
+  }
+  if (email) {
+    whereClause.email = { [Op.iLike]: `%${email}%` };
+  }
+  if (specialty) {
+    whereClause.specialty_id = specialty;
+  }
+
+  const { count, rows } = await User.findAndCountAll({
+    where: whereClause,
+    attributes: ["id", "full_name", "email", "specialty_id"],
+    include: [
+      {
+        model: Role,
+        through: { attributes: [] },
+        where: { name: "doctor" },
+        attributes: [],
+      },
+      {
+        model: Specialty,
+        attributes: ["id", "name"],
+      },
+    ],
+    limit,
+    offset: (page - 1) * limit,
+    order: [["full_name", "ASC"]],
+  });
+
+  if (count === 0) {
+    return {
+      totalItems: 0,
+      totalPages: 0,
+      currentPage: page,
+      doctors: [],
+    };
+  }
+
+  const response = {
+    totalItems: count,
+    totalPages: Math.ceil(count / limit),
+    currentPage: page,
+    doctors: rows,
+  };
+
+  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 3600);
+
+  return response;
 };
