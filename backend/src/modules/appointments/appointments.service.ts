@@ -316,128 +316,17 @@ export const getAppointmentById = async (
   return appointment;
 };
 
-export const getAppointmentWithDetails = async (appointmentId: string) => {
-  const appointment = await Appointment.findOne({
-    where: { id: appointmentId },
-    include: [
-      { model: User, as: "patient", attributes: ["id", "full_name", "email"] },
-      { model: User, as: "doctor", attributes: ["id", "full_name"] },
-      { model: Slot },
-    ],
-  });
-
-  if (!appointment) {
-    throw { status: 404, message: "La cita no existe" };
-  }
-
-  return appointment;
-};
-
-export const getAppointmentsByDoctorId = async (
-  doctorId: string,
-  page: number,
-  limit: number,
-) => {
-  const cacheKey = `appointments:${doctorId}:${page}:${limit}`;
-  const cachedAppointments = await redisClient.get(cacheKey);
-
-  if (cachedAppointments) {
-    return JSON.parse(cachedAppointments);
-  }
-
-  const { count, rows } = await Appointment.findAndCountAll({
-    where: {
-      doctor_id: doctorId,
-    },
-    include: [
-      {
-        model: User,
-        as: "patient",
-        attributes: ["id", "full_name", "email", "age"],
-      },
-      { model: Slot },
-    ],
-    limit,
-    offset: (page - 1) * limit,
-    order: [["created_at", "DESC"]],
-  });
-
-  if (rows.length === 0) {
-    return {
-      totalItems: 0,
-      totalPages: 0,
-      currentPage: page,
-      appointments: [],
-    };
-  }
-
-  const response = {
-    totalItems: count,
-    totalPages: Math.ceil(count / limit),
-    currentPage: page,
-    appointments: rows,
-  };
-
-  await redisClient.setex(cacheKey, 3600, JSON.stringify(response));
-
-  return response;
-};
-
-export const getAppointmentsByPatientId = async (
-  patientId: string,
-  page: number,
-  limit: number,
-) => {
-  const cacheKey = `appointments:${patientId}:${page}:${limit}`;
-  const cachedAppointments = await redisClient.get(cacheKey);
-
-  if (cachedAppointments) {
-    return JSON.parse(cachedAppointments);
-  }
-
-  const { count, rows } = await Appointment.findAndCountAll({
-    where: {
-      patient_id: patientId,
-    },
-    include: [
-      { model: User, as: "doctor", attributes: ["id", "full_name"] },
-      { model: Slot },
-    ],
-    limit,
-    offset: (page - 1) * limit,
-    order: [["created_at", "DESC"]],
-  });
-
-  if (rows.length === 0) {
-    return {
-      totalItems: 0,
-      totalPages: 0,
-      currentPage: page,
-      appointments: [],
-    };
-  }
-
-  const response = {
-    totalItems: count,
-    totalPages: Math.ceil(count / limit),
-    currentPage: page,
-    appointments: rows,
-  };
-
-  await redisClient.setex(cacheKey, 3600, JSON.stringify(response));
-
-  return response;
-};
-
 export const getAllAppointments = async (
   page: number,
   limit: number,
-  patient: string,
-  date: string,
-  status: string,
-  doctorId: string,
+  date: string | undefined,
+  status: string | undefined,
+  userId: string,
+  role: "doctor" | "patient",
+  patient: string | undefined,
+  doctor: string | undefined,
 ) => {
-  const cacheKey = `appointments:all:${page}:${limit}:p:${patient}:d:${date}:s:${status}`;
+  const cacheKey = `appointments:${role}:${userId}:${page}:${limit}:p:${patient}:d:${date}:s:${status}:doc:${doctor}`;
   const cachedAppointments = await redisClient.get(cacheKey);
 
   if (cachedAppointments) {
@@ -445,6 +334,13 @@ export const getAllAppointments = async (
   }
 
   const whereClause: any = {};
+
+  if (role === "doctor") {
+    whereClause.doctor_id = userId;
+  } else {
+    whereClause.patient_id = userId;
+  }
+
   if (status) {
     whereClause.status = status;
   }
@@ -454,19 +350,28 @@ export const getAllAppointments = async (
     slotInclude.where = { date };
   }
 
-  const includeClause: any[] = [
-    { model: User, as: "patient", attributes: ["id", "full_name", "email"] },
-    { model: User, as: "doctor", attributes: ["id", "full_name"] },
-    slotInclude,
-  ];
+  const patientInclude: any = {
+    model: User,
+    as: "patient",
+    attributes: ["id", "full_name", "email", "age"],
+  };
+  const doctorInclude: any = {
+    model: User,
+    as: "doctor",
+    attributes: ["id", "full_name"],
+  };
 
-  if (patient) {
-    includeClause[0].where = { full_name: { [Op.iLike]: `%${patient}%` } };
+  if (role === "doctor" && patient) {
+    patientInclude.where = { full_name: { [Op.iLike]: `%${patient}%` } };
+  }
+
+  if (role === "patient" && doctor) {
+    doctorInclude.where = { full_name: { [Op.iLike]: `%${doctor}%` } };
   }
 
   const { count, rows } = await Appointment.findAndCountAll({
-    where: { ...whereClause, doctor_id: doctorId },
-    include: includeClause,
+    where: whereClause,
+    include: [patientInclude, doctorInclude, slotInclude],
     limit,
     offset: (page - 1) * limit,
     order: [["created_at", "DESC"]],

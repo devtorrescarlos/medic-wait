@@ -98,65 +98,28 @@ export const getAppointmentById = async (req: Request, res: Response) => {
   }
 };
 
-export const getAppointmentsByDoctorId = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
-    const doctorId = req.params.doctorId;
-    const appointments = await appointmentService.getAppointmentsByDoctorId(
-      doctorId as string,
-      page,
-      limit,
-    );
-    return res.status(200).json(appointments);
-  } catch (error: any) {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    }
-    res.status(500).json({ message: error.message });
-  }
-};
 
-export const getAppointmentsByPatientId = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
-    const patientId = req.params.patientId;
-    const appointments = await appointmentService.getAppointmentsByPatientId(
-      patientId as string,
-      page,
-      limit,
-    );
-    return res.status(200).json(appointments);
-  } catch (error: any) {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    }
-    res.status(500).json({ message: error.message });
-  }
-};
 
 export const getAllAppointments = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
-    const patient = req.query.patient as string;
-    const date = req.query.date as string;
-    const status = req.query.status as string;
-    const doctorId = req.doctorId;
+    const patient = req.query.patient as string | undefined;
+    const doctor = req.query.doctor as string | undefined;
+    const date = req.query.date as string | undefined;
+    const status = req.query.status as string | undefined;
+    const userId = (req.doctorId ?? req.patientId) as string;
+    const role = req.doctorId ? "doctor" : "patient";
+
     const appointments = await appointmentService.getAllAppointments(
       page,
       limit,
-      patient,
       date,
       status,
-      doctorId as string,
+      userId,
+      role,
+      patient,
+      doctor,
     );
     return res.status(200).json(appointments);
   } catch (error: any) {
