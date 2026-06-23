@@ -1,4 +1,4 @@
-import { getDoctors } from "../../services/slotsAndSchedulesService";
+import { getDoctors } from "../../services/doctorsService";
 import { useQuery } from "@tanstack/react-query";
 import type { DoctorsData } from "../../types";
 
