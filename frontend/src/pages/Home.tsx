@@ -246,12 +246,6 @@ export default function Home() {
           <p className="text-sm text-gray-400">
             &copy; {new Date().getFullYear()} MedicWait. Todos los derechos reservados.
           </p>
-
-          <div className="flex items-center gap-6 text-sm text-gray-400">
-            <a href="#" className="hover:text-emerald-600 transition-colors">Términos</a>
-            <a href="#" className="hover:text-emerald-600 transition-colors">Privacidad</a>
-            <a href="#" className="hover:text-emerald-600 transition-colors">Contacto</a>
-          </div>
         </div>
       </footer>
     </div>
