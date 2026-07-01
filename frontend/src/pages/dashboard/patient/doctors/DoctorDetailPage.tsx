@@ -1,15 +1,9 @@
-import { Navigate, useParams } from "react-router-dom";
-import {
-  CalendarClock,
-  Clock,
-  Mail,
-  Stethoscope,
-  AlertCircle,
-} from "lucide-react";
+import { Link, Navigate, useParams } from "react-router-dom";
+import { CalendarClock, Mail, Stethoscope, AlertCircle } from "lucide-react";
 import GoBackButton from "../../../../components/shared/GoBackButton";
 import UserInitialts from "../../../../components/shared/UserInitials";
-import { formatTime } from "../../../../utils/formatDayAndDates";
 import { useGetDoctorById } from "../../../../hooks/doctors/useGetDoctorById";
+import DoctorSlotsCard from "../../../../components/dashboard/doctors/DoctorSlotsCard";
 
 export default function DoctorDetailPage() {
   const { id } = useParams();
@@ -17,8 +11,6 @@ export default function DoctorDetailPage() {
   if (!id) return <Navigate to="/dashboard/patient/doctors" />;
 
   const { data, isLoading, error } = useGetDoctorById(id);
-
-  console.log(data);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -61,7 +53,7 @@ export default function DoctorDetailPage() {
         </div>
       </div>
 
-      {data.hasPendingAppointment && (
+      {data.pendingAppointment && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
@@ -76,9 +68,12 @@ export default function DoctorDetailPage() {
               </p>
             </div>
           </div>
-          <button className="px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-300 rounded-lg hover:bg-amber-200 transition-colors cursor-pointer whitespace-nowrap">
+          <Link
+            to={`/dashboard/patient/my-appointments/${data.pendingAppointment.id}`}
+            className="px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-300 rounded-lg hover:bg-amber-200 transition-colors cursor-pointer whitespace-nowrap"
+          >
             Ver Cita
-          </button>
+          </Link>
         </div>
       )}
 
@@ -92,35 +87,16 @@ export default function DoctorDetailPage() {
           </div>
         </div>
         <div className="p-6 space-y-3">
-          {data.availableSlots.map((schedule) => (
-            <div
-              key={schedule.date}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <Clock className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-800">
-                    {schedule.dayName}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {schedule.slots
-                      .map(
-                        (s) =>
-                          `${formatTime(s.start_time)} - ${formatTime(s.end_time)}`,
-                      )
-                      .join(" | ")}
-                  </p>
-                </div>
-              </div>
-              <span className="px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full whitespace-nowrap w-fit">
-                {schedule.slots.length} horario
-                {schedule.slots.length !== 1 ? "s" : ""}
-              </span>
+          {data.availableSlots && data.availableSlots.length > 0 ? (
+            <DoctorSlotsCard
+              availableSlots={data.availableSlots}
+              doctorId={data.doctor.id}
+            />
+          ) : (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-gray-500">No hay horarios disponibles</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
