@@ -38,3 +38,11 @@ export const invalidateAppointmentCache = async (
 export const invalidatePatientsCache = async (doctorId: string) => {
   await deleteKeysByPattern(`patients:${doctorId}*`);
 };
+
+export const invalidateDoctorProfileCache = async (doctorId: string) => {
+  await deleteKeysByPattern(`doctor:profile:${doctorId}:*`);
+};
+
+export const invalidateMyDoctorsCache = async (patientId: string) => {
+  await deleteKeysByPattern(`myDoctors:${patientId}:*`);
+};
