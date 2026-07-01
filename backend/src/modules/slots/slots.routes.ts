@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
-import * as slotsController from "../slots/slots.controller";
+import * as slotsController from "./slots.controller";
 import { authenticate } from "../../middlewares/auth";
 import { handleInputErrors } from "../../middlewares/validation";
 import { verifyDoctorApproved } from "../../middlewares/verifyRole";
