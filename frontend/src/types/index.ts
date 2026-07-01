@@ -185,12 +185,28 @@ export type Specialty = {
 
 export type DoctorByIdResponse = {
   doctor: Doctor;
-  hasPendingAppointment: boolean;
-  availableSlots: {
-    date: string;
-    dayName: string;
-    slots: (Pick<Slot, "start_time" | "end_time" | "id" | "is_active"> & {
-      schedule: Pick<ScheduleData, "day_of_week">;
-    })[];
-  }[];
+  pendingAppointment: Pick<Appointment, "id" | "status">;
+  availableSlots: AvailableSlots[];
+};
+
+export type AvailableSlots = {
+  date: string;
+  dayName: string;
+  slots: (Pick<Slot, "start_time" | "end_time" | "id" | "is_active"> & {
+    schedule: Pick<ScheduleData, "day_of_week">;
+  })[];
+};
+
+export type MyDoctorsResponse = {
+  totalDoctors: number;
+  doctors: Doctor[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+};
+
+export type MyDoctorByIdResponse = {
+  myDoctor: Doctor;
+  medicalRecords: MedicalRecord[];
+  appointmentsCount: number;
 };
