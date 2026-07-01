@@ -108,8 +108,21 @@ export const getDoctorById = async (doctorId: string, patientId: string) => {
       },
     ],
     where: { is_available: true, is_active: true },
-    order: [["date", "ASC"], ["start_time", "ASC"]],
+    order: [
+      ["date", "ASC"],
+      ["start_time", "ASC"],
+    ],
   });
+
+  const dayOrder: Record<string, number> = {
+    monday: 0,
+    tuesday: 1,
+    wednesday: 2,
+    thursday: 3,
+    friday: 4,
+    saturday: 5,
+    sunday: 6,
+  };
 
   const slotsByDate = slots.reduce<
     Record<string, { date: string; dayName: string; slots: Slot[] }>
@@ -126,15 +139,17 @@ export const getDoctorById = async (doctorId: string, patientId: string) => {
     return acc;
   }, {});
 
-  const availableSlots = Object.values(slotsByDate);
+  const availableSlots = Object.values(slotsByDate).sort(
+    (a, b) =>
+      dayOrder[a.dayName] - dayOrder[b.dayName] || a.date.localeCompare(b.date),
+  );
 
   const pendingAppointment = await Appointment.findOne({
     where: { doctor_id: doctorId, patient_id: patientId, status: "pending" },
+    attributes: ["id", "status"],
   });
 
-  const hasPendingAppointment = !!pendingAppointment;
-
-  const response = { doctor, availableSlots, hasPendingAppointment };
+  const response = { doctor, availableSlots, pendingAppointment };
 
   await redisClient.set(cacheKey, JSON.stringify(response), "EX", 3600);
 

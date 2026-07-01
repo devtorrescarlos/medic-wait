@@ -7,7 +7,14 @@ export const getDoctors = async (req: Request, res: Response) => {
     const limit = Number(req.query.limit) || 10;
     const name = req.query.name as string;
     const email = req.query.email as string;
-    const doctors = await doctorsService.getDoctors(page, limit, name, email);
+    const specialty = req.query.specialty as string;
+    const doctors = await doctorsService.getDoctors(
+      page,
+      limit,
+      name,
+      email,
+      specialty,
+    );
     res.status(200).json(doctors);
   } catch (error: any) {
     if (error.status) {
