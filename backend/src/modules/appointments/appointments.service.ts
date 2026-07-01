@@ -11,6 +11,8 @@ import {
   invalidateAppointmentCache,
   invalidateDoctorSlotsCache,
   invalidatePatientsCache,
+  invalidateDoctorProfileCache,
+  invalidateMyDoctorsCache,
 } from "../../utils/invalidateCache";
 import { differenceInMinutes } from "date-fns";
 
@@ -45,11 +47,23 @@ export const createAppointment = async (
       };
     }
 
+    const doctor = await User.findOne({
+      where: { id: doctorId },
+    });
+
+    if (!doctor) {
+      throw {
+        status: 404,
+        message: "El doctor no existe",
+      };
+    }
+
     const existingAppointment = await Appointment.findOne({
       where: {
         doctor_id: doctorId,
         slot_id: slotId,
         patient_id: patientId,
+        status: { [Op.notIn]: ["cancelled", "completed"] },
       },
     });
 
@@ -57,6 +71,21 @@ export const createAppointment = async (
       throw {
         status: 409,
         message: "Ya tienes una cita en ese bloque de horas",
+      };
+    }
+
+    const pendingAppointment = await Appointment.findOne({
+      where: {
+        patient_id: patientId,
+        doctor_id: doctorId,
+        status: "pending",
+      },
+    });
+
+    if (pendingAppointment) {
+      throw {
+        status: 409,
+        message: "Ya tienes una cita pendiente",
       };
     }
 
@@ -99,6 +128,7 @@ export const createAppointment = async (
     await notifyAppointmentChange(newAppointment, "created", patientId);
     await invalidateDoctorSlotsCache(doctorId);
     await invalidateAppointmentCache([patientId, doctorId]);
+    await invalidateDoctorProfileCache(doctorId);
   } catch (error) {
     if (error instanceof Error && error.name === "ExecutionError") {
       throw {
@@ -151,6 +181,7 @@ export const confirmAppointment = async (
   await appointment.update({ status: "confirmed" });
 
   await notifyAppointmentChange(appointment, "confirmed", patientId);
+  await invalidateMyDoctorsCache(patientId);
   await invalidateAppointmentCache([patientId, appointment.doctor_id]);
 
   return appointment;
@@ -225,10 +256,12 @@ export const cancelAppointment = async (
     appointment.patient_id,
   );
   await invalidateDoctorSlotsCache(appointment.doctor_id);
+  await invalidateMyDoctorsCache(appointment.patient_id);
   await invalidateAppointmentCache([
     appointment.patient_id,
     appointment.doctor_id,
   ]);
+  await invalidateDoctorProfileCache(appointment.doctor_id);
 
   return appointment;
 };
@@ -279,9 +312,11 @@ export const completeAppointment = async (
   );
 
   await notifyAppointmentChange(appointment, "completed", doctorId);
+  await invalidateMyDoctorsCache(appointment.patient_id);
   await invalidatePatientsCache(doctorId);
   await invalidateDoctorSlotsCache(doctorId);
   await invalidateAppointmentCache([doctorId, appointment.patient_id]);
+  await invalidateDoctorProfileCache(doctorId);
 
   return appointment;
 };
