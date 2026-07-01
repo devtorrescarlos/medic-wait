@@ -3,9 +3,10 @@ import * as appointmentService from "./appointments.service";
 
 export const createAppointment = async (req: Request, res: Response) => {
   try {
-    const { reason, slotId } = req.body;
+    const { reason } = req.body;
     const patientId = req.patientId;
-    const doctorId = req.query.doctorId as string;
+    const doctorId = req.params.doctorId as string;
+    const slotId = req.params.slotId as string;
 
     const appointment = await appointmentService.createAppointment(
       patientId as string,

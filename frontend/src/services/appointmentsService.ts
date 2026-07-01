@@ -45,3 +45,9 @@ export const cancelAppointmentById = async (id: string, cancellation_reason: str
     const response = await api.post(url, { cancellation_reason });
     return response.data;
 }
+
+export const createAppointment = async (doctorId: string, slotId: string, reason: string) => {
+    const url = `${import.meta.env.VITE_API_URL}/appointments/${doctorId}/${slotId}`;
+    const response = await api.post(url, { reason });
+    return response.data;
+}

@@ -165,10 +165,10 @@ export type AIGenerateInput = {
 
 export type Doctor = {
   id: string;
-  full_name?: string;
+  full_name: string;
   email: string;
   specialty_id: string;
-  specialty?: { id: string; name: string };
+  specialty: { id: string; name: string };
 };
 
 export type DoctorsData = {
@@ -181,4 +181,32 @@ export type DoctorsData = {
 export type Specialty = {
   id: string;
   name: string;
+};
+
+export type DoctorByIdResponse = {
+  doctor: Doctor;
+  pendingAppointment: Pick<Appointment, "id" | "status">;
+  availableSlots: AvailableSlots[];
+};
+
+export type AvailableSlots = {
+  date: string;
+  dayName: string;
+  slots: (Pick<Slot, "start_time" | "end_time" | "id" | "is_active"> & {
+    schedule: Pick<ScheduleData, "day_of_week">;
+  })[];
+};
+
+export type MyDoctorsResponse = {
+  totalDoctors: number;
+  doctors: Doctor[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+};
+
+export type MyDoctorByIdResponse = {
+  myDoctor: Doctor;
+  medicalRecords: MedicalRecord[];
+  appointmentsCount: number;
 };

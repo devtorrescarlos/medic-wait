@@ -3,6 +3,7 @@ import TableFilters from "../../shared/TableFilters";
 import type { PatientResponse } from "../../../types";
 import UserInitialts from "../../shared/UserInitials";
 import { Link } from "react-router-dom";
+import Pagination from "../../shared/Pagination";
 
 type PatientsTableProps = {
   data: PatientResponse;
@@ -114,30 +115,13 @@ export default function PatientsTable({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-500">
-          Total: {data.totalItems} paciente(s)
-          <span className="ml-2">
-            Página {page} de {data.totalPages}
-          </span>
-        </p>
-        <div className="flex items-center gap-1.5">
-          <button
-            disabled={page === 1}
-            onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1.5 text-sm text-gray-400 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Anterior
-          </button>
-          <button
-            disabled={page >= data.totalPages}
-            onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Siguiente
-          </button>
-        </div>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={data.totalPages}
+        handlePageChange={handlePageChange}
+        label="pacientes"
+        totalItems={data.totalItems}
+      />
     </div>
   );
 }

@@ -21,13 +21,18 @@ import PatientsPage from "../pages/dashboard/doctor/medical-records/PatientsPage
 import PatientsDetailPage from "../pages/dashboard/doctor/medical-records/PatientsDetailPage";
 import MedicalRecordCreatePage from "../pages/dashboard/doctor/medical-records/MedicalRecordCreatePage";
 import MedicalRecordAnnexeCreatePage from "../pages/dashboard/doctor/medical-records/MedicalRecordAnnexeCreatePage";
-import MedicalRecordDetailPage from "../pages/dashboard/doctor/medical-records/MedicalRecordDetailPage";
-import MedicalRecordAnnexeDetailPage from "../pages/dashboard/doctor/medical-records/MedicalRecordAnnexeDetailPage";
+import DoctorMedicalRecordDetailPage from "../pages/dashboard/doctor/medical-records/MedicalRecordDetailPage";
+import DoctorMedicalRecordAnnexeDetailPage from "../pages/dashboard/doctor/medical-records/MedicalRecordAnnexeDetailPage";
 import PatientDashboard from "../pages/dashboard/patient/PatientDashboard";
 import PatientAppointmentsPage from "../pages/dashboard/patient/appointments/PatientAppointmentsPage";
 import DoctorsPage from "../pages/dashboard/patient/doctors/DoctorsPage";
 import DoctorDetailPage from "../pages/dashboard/patient/doctors/DoctorDetailPage";
-import PatientMedicalRecordsPage from "../pages/dashboard/patient/history/PatientMedicalRecordsPage";
+import AppointmentBookingPage from "../pages/dashboard/patient/appointments/AppointmentBookingPage";
+import PatientAppointmentPageDetail from "../pages/dashboard/patient/appointments/PatientAppointmentPageDetail";
+import PatientMedicalRecordsDetailPage from "../pages/dashboard/patient/history/PatientMedicalRecordsDetailPage";
+import PatientMedicalRecordDetailPage from "../pages/dashboard/patient/history/MedicalRecordDetailPage";
+import PatientMedicalRecordAnnexeDetailPage from "../pages/dashboard/patient/history/MedicalRecordAnnexeDetailPage";
+import MyDoctorsPage from "../pages/dashboard/patient/history/MyDoctorsPage";
 
 function AppRouter() {
   return (
@@ -68,11 +73,11 @@ function AppRouter() {
           />
           <Route
             path="medical-records/annexe/:id"
-            element={<MedicalRecordAnnexeDetailPage />}
+            element={<DoctorMedicalRecordAnnexeDetailPage />}
           />
           <Route
             path="medical-records/:id"
-            element={<MedicalRecordDetailPage />}
+            element={<DoctorMedicalRecordDetailPage />}
           />
         </Route>
       </Route>
@@ -81,9 +86,29 @@ function AppRouter() {
         <Route path="dashboard/patient" element={<DashboardLayout />}>
           <Route index element={<PatientDashboard />} />
           <Route path="my-appointments" element={<PatientAppointmentsPage />} />
+          <Route
+            path="my-appointments/:id"
+            element={<PatientAppointmentPageDetail />}
+          />
           <Route path="doctors" element={<DoctorsPage />} />
           <Route path="doctors/:id" element={<DoctorDetailPage />} />
-          <Route path="history" element={<PatientMedicalRecordsPage />} />
+          <Route path="history" element={<MyDoctorsPage />} />
+          <Route
+            path="history/:id"
+            element={<PatientMedicalRecordsDetailPage />}
+          />
+          <Route
+            path="history/records/:id"
+            element={<PatientMedicalRecordDetailPage />}
+          />
+          <Route
+            path="history/annexe/:id"
+            element={<PatientMedicalRecordAnnexeDetailPage />}
+          />
+          <Route
+            path="appointment/:doctorId/:slotId"
+            element={<AppointmentBookingPage />}
+          />
         </Route>
       </Route>
     </Routes>

@@ -19,7 +19,7 @@ export default function MedicalRecordDetailCard({
           <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-2">
             Diagnóstico Inicial
           </p>
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
             {medicalRecord.initial_diagnosis}
           </p>
         </div>

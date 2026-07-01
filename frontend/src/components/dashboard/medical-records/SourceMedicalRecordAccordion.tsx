@@ -6,10 +6,12 @@ import { Link } from "react-router-dom";
 
 type SourceMedicalRecordAccordionProps = {
   medicalRecord: MedicalRecord;
+  detailRoute?: string;
 };
 
 export default function SourceMedicalRecordAccordion({
   medicalRecord,
+  detailRoute,
 }: SourceMedicalRecordAccordionProps) {
   const [openSourceRecord, setOpenSourceRecord] = useState(false);
 
@@ -59,7 +61,7 @@ export default function SourceMedicalRecordAccordion({
 
           <div className="flex justify-end">
             <Link
-              to={`/dashboard/doctor/medical-records/${medicalRecord.id}`}
+              to={detailRoute ?? `/dashboard/doctor/medical-records/${medicalRecord.id}`}
               className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer"
             >
               <Eye className="w-4 h-4" />

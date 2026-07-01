@@ -37,7 +37,7 @@ export default class User extends Model {
   @Column({ type: DataType.UUID, allowNull: true })
   declare specialty_id: string;
 
-  @BelongsTo(() => Specialty)
+  @BelongsTo(() => Specialty, "specialty_id")
   declare specialty: Specialty;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: true })

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getAppointments } from "../../services/appointmentsService";
 import type { AppointmentsData } from "../../types";
 
@@ -11,8 +11,9 @@ export const usePatientAppointments = (
 ) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["patientAppointments", page, limit, doctor, date, status],
-    queryFn: () => getAppointments(page, limit, undefined, date, status, doctor),
-    refetchInterval: 3000,
+    queryFn: () =>
+      getAppointments(page, limit, undefined, date, status, doctor),
+    placeholderData: keepPreviousData,
   });
 
   return {

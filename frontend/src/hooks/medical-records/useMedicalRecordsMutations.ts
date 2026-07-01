@@ -31,6 +31,7 @@ export const useMedicalRecordsMutations = () => {
     },
     onSuccess: () => {
       toast.success("Registro médico creado exitosamente");
+      navigate(`/dashboard/doctor/patients`);
     },
   });
 

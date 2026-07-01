@@ -12,39 +12,6 @@ import { handleInputErrors } from "../../middlewares/validation";
 const router = Router();
 
 router.post(
-  "/",
-  query("doctorId")
-    .isUUID()
-    .withMessage("El id del doctor debe ser un uuid")
-    .notEmpty()
-    .withMessage("El id del doctor es obligatorio"),
-  body("reason")
-    .isString()
-    .withMessage("La razon debe ser un string")
-    .notEmpty()
-    .withMessage("La razon es obligatoria"),
-  body("slotId")
-    .isUUID()
-    .withMessage("El id del slot debe ser un uuid")
-    .notEmpty()
-    .withMessage("El id del slot es obligatorio"),
-  body("patientName")
-    .isString()
-    .withMessage("El nombre del paciente debe ser un string")
-    .notEmpty()
-    .withMessage("El nombre del paciente es obligatorio"),
-  body("patientEmail")
-    .isEmail()
-    .withMessage("El email del paciente debe ser un email")
-    .notEmpty()
-    .withMessage("El email del paciente es obligatorio"),
-  authenticate,
-  verifyPatient,
-  handleInputErrors,
-  appointmentController.createAppointment,
-);
-
-router.post(
   "/:appointmentId/cancel",
   authenticate,
   param("appointmentId")
@@ -85,6 +52,31 @@ router.post(
   handleInputErrors,
   appointmentController.confirmAppointment,
 );
+
+router.post(
+  "/:doctorId/:slotId",
+  authenticate,
+  param("doctorId")
+    .isUUID()
+    .withMessage("El id del doctor debe ser un uuid")
+    .notEmpty()
+    .withMessage("El id del doctor es obligatorio"),
+  body("reason")
+    .isString()
+    .withMessage("La razon debe ser un string")
+    .notEmpty()
+    .withMessage("La razon es obligatoria"),
+  param("slotId")
+    .isUUID()
+    .withMessage("El id del slot debe ser un uuid")
+    .notEmpty()
+    .withMessage("El id del slot es obligatorio"),
+  verifyPatient,
+  handleInputErrors,
+  appointmentController.createAppointment,
+);
+
+
 
 router.get(
   "/all",

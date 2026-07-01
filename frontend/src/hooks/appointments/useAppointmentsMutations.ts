@@ -1,10 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { cancelAppointmentById, confirmAppointmentById, completeAppointmentById } from "../../services/appointmentsService";
+import { cancelAppointmentById, confirmAppointmentById, completeAppointmentById, createAppointment } from "../../services/appointmentsService";
+import { useNavigate } from "react-router-dom";
 
 export const useAppointmentsMutations = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const completeAppointment = useMutation({
         mutationFn: (id: string) => completeAppointmentById(id),
@@ -42,9 +44,24 @@ export const useAppointmentsMutations = () => {
         }
     });
 
+    const bookAppointment = useMutation({
+        mutationFn: ({ doctorId, slotId, reason }: { doctorId: string, slotId: string, reason: string }) => createAppointment(doctorId, slotId, reason),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["appointments"] });
+            queryClient.invalidateQueries({ queryKey: ["doctors"] });
+            toast.success("Cita creada");
+            navigate('/dashboard/patient/my-appointments');
+        },
+        onError: (error: any) => {
+            const message = error.response?.data?.message || "Error al crear la cita";
+            toast.error(message);
+        }
+    })
+
     return {
         completeAppointment,
         cancelAppointment,
-        confirmAppointment
+        confirmAppointment,
+        bookAppointment
     }
 }

@@ -26,6 +26,31 @@ export const getPatientById = async (id: string) => {
   return response.data;
 };
 
+export const getMyDoctors = async (
+  page: number,
+  limit: number,
+  name?: string,
+  email?: string,
+  specialty?: string,
+) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+  if (name) params.append("name", name);
+  if (email) params.append("email", email);
+  if (specialty) params.append("specialty", specialty);
+  const url = `${import.meta.env.VITE_API_URL}/medical-records/doctors?${params.toString()}`;
+  const response = await api.get(url);
+  return response.data;
+};
+
+export const getMyDoctorById = async (id: string) => {
+  const url = `${import.meta.env.VITE_API_URL}/medical-records/doctors/${id}`;
+  const response = await api.get(url);
+  return response.data;
+};
+
 export const createMedicalRecord = async (
   appointmentId: string,
   data: MedicalRecordFormData,

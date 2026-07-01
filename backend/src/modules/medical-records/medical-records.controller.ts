@@ -27,10 +27,54 @@ export const getPatients = async (req: Request, res: Response) => {
 export const getPatientById = async (req: Request, res: Response) => {
   try {
     const patientId = req.params.id;
+    const doctorId = req.doctorId as string;
     const patient = await medicalRecordService.getPatientById(
       patientId as string,
+      doctorId,
     );
     return res.status(200).json(patient);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getMyDoctors = async (req: Request, res: Response) => {
+  try {
+    const patientId = req.patientId as string;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const name = req.query.name as string;
+    const specialty = req.query.specialty as string;
+    const email = req.query.email as string;
+    const doctors = await medicalRecordService.getMyDoctors(
+      patientId,
+      page,
+      limit,
+      name,
+      specialty,
+      email,
+    );
+    return res.status(200).json(doctors);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getMyDoctorById = async (req: Request, res: Response) => {
+  try {
+    const doctorId = req.params.doctorId;
+    const patientId = req.patientId as string;
+    const doctor = await medicalRecordService.getMyDoctorById(
+      doctorId as string,
+      patientId,
+    );
+    return res.status(200).json(doctor);
   } catch (error: any) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });
