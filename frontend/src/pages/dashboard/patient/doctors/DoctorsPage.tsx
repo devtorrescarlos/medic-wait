@@ -29,9 +29,6 @@ export default function DoctorsPage() {
     specialty,
   );
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error.message} />;
-
   return (
     <div className="p-4 lg:p-6 space-y-6">
       <div className="flex items-center gap-3">
@@ -48,18 +45,24 @@ export default function DoctorsPage() {
         </div>
       </div>
 
-      <DoctorsTable
-        data={data}
-        page={page}
-        inputName={inputName}
-        inputEmail={inputEmail}
-        inputSpecialty={inputSpecialty}
-        handlePageChange={handlePageChange}
-        handleCleanFilters={handleCleanFilters}
-        handleNameFilter={handleNameFilter}
-        handleEmailFilter={handleEmailFilter}
-        handleSpecialtyFilter={handleSpecialtyFilter}
-      />
+      {isLoading && data === undefined ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <ErrorMessage message={error.message} />
+      ) : (
+        <DoctorsTable
+          data={data}
+          page={page}
+          inputName={inputName}
+          inputEmail={inputEmail}
+          inputSpecialty={inputSpecialty}
+          handlePageChange={handlePageChange}
+          handleCleanFilters={handleCleanFilters}
+          handleNameFilter={handleNameFilter}
+          handleEmailFilter={handleEmailFilter}
+          handleSpecialtyFilter={handleSpecialtyFilter}
+        />
+      )}
     </div>
   );
 }

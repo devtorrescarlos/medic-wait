@@ -26,30 +26,31 @@ export default function PatientAppointmentsPage() {
     statusFilter || undefined,
   );
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error.message} />;
-
   return (
     <div className="p-4 lg:p-6 space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-800">Mis Citas</h2>
-        <p className="text-gray-500 mt-1">
-          Visualiza tus citas agendadas
-        </p>
+        <p className="text-gray-500 mt-1">Visualiza tus citas agendadas</p>
       </div>
 
-      <PatientAppointmentsTable
-        data={data}
-        page={page}
-        dateFilter={dateFilter}
-        handleDateFilterChange={handleDateFilter}
-        doctorInput={patientInput}
-        setDoctorInput={setPatientInput}
-        statusFilter={statusFilter}
-        handleStatusFilterChange={handleStatusFilter}
-        handleCleanFilters={handleCleanFilters}
-        handlePageChange={handlePageChange}
-      />
+      {isLoading && data === undefined ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <ErrorMessage message={error.message} />
+      ) : (
+        <PatientAppointmentsTable
+          data={data}
+          page={page}
+          dateFilter={dateFilter}
+          handleDateFilterChange={handleDateFilter}
+          doctorInput={patientInput}
+          setDoctorInput={setPatientInput}
+          statusFilter={statusFilter}
+          handleStatusFilterChange={handleStatusFilter}
+          handleCleanFilters={handleCleanFilters}
+          handlePageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }
