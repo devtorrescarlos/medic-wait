@@ -5,10 +5,12 @@ import type { MedicalRecordAnnexe } from "../../../types";
 
 type AnexxedMedicalRecordsAccordionProps = {
   annexes: MedicalRecordAnnexe[];
+  detailRoutePrefix?: string;
 };
 
 export default function AnexxedMedicalRecordsAccordion({
   annexes,
+  detailRoutePrefix,
 }: AnexxedMedicalRecordsAccordionProps) {
   const [openAnnexes, setOpenAnnexes] = useState(false);
 
@@ -43,7 +45,11 @@ export default function AnexxedMedicalRecordsAccordion({
       {openAnnexes && (
         <div className="px-5 py-4 border-t border-gray-200 space-y-3">
           {annexes.map((annexe) => (
-            <AnexxedMedicalRecordItem key={annexe.id} annexe={annexe} />
+            <AnexxedMedicalRecordItem
+              key={annexe.id}
+              annexe={annexe}
+              detailRoute={detailRoutePrefix ? `${detailRoutePrefix}${annexe.id}` : undefined}
+            />
           ))}
         </div>
       )}

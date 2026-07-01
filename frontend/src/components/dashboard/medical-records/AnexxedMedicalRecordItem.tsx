@@ -5,8 +5,10 @@ import { Link } from "react-router-dom";
 
 export default function AnexxedMedicalRecordItem({
   annexe,
+  detailRoute,
 }: {
   annexe: MedicalRecordAnnexe;
+  detailRoute?: string;
 }) {
   return (
     <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -24,7 +26,7 @@ export default function AnexxedMedicalRecordItem({
           </p>
         </div>
         <Link
-          to={`/dashboard/doctor/medical-records/annexe/${annexe.id}`}
+          to={detailRoute ?? `/dashboard/doctor/medical-records/annexe/${annexe.id}`}
           className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer"
         >
           <Eye className="w-3.5 h-3.5" />
