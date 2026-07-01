@@ -1,23 +1,43 @@
 import { Router } from "express";
 import { body, param, query } from "express-validator";
-import {
-  createMedicalRecord,
-  getPatientById,
-  getPatients,
-  createMedicalRecordAnnexe,
-  getMedicalRecordById,
-  getMedicalRecordAnnexeById,
-} from "./medical-records.controller";
+import * as medicalRecordsController from "./medical-records.controller";
 import { authenticate } from "../../middlewares/auth";
-import { verifyDoctorApproved } from "../../middlewares/verifyRole";
+import {
+  verifyDoctorApproved,
+  verifyPatient,
+} from "../../middlewares/verifyRole";
 import { generateWithAI } from "./ai.controller";
 import { handleInputErrors } from "../../middlewares/validation";
 
 const router = Router();
 
-router.get("/patients", authenticate, verifyDoctorApproved, getPatients);
+router.get(
+  "/patients",
+  authenticate,
+  verifyDoctorApproved,
+  medicalRecordsController.getPatients,
+);
 
-router.get("/patients/:id", authenticate, verifyDoctorApproved, getPatientById);
+router.get(
+  "/patients/:id",
+  authenticate,
+  verifyDoctorApproved,
+  medicalRecordsController.getPatientById,
+);
+
+router.get(
+  "/doctors",
+  authenticate,
+  verifyPatient,
+  medicalRecordsController.getMyDoctors,
+);
+
+router.get(
+  "/doctors/:doctorId",
+  authenticate,
+  verifyPatient,
+  medicalRecordsController.getMyDoctorById,
+);
 
 router.post(
   "/",
@@ -33,7 +53,7 @@ router.post(
   authenticate,
   verifyDoctorApproved,
   handleInputErrors,
-  createMedicalRecord,
+  medicalRecordsController.createMedicalRecord,
 );
 
 router.post(
@@ -46,21 +66,19 @@ router.post(
   authenticate,
   verifyDoctorApproved,
   handleInputErrors,
-  createMedicalRecordAnnexe,
+  medicalRecordsController.createMedicalRecordAnnexe,
 );
 
 router.get(
   "/:medicalRecordId",
   authenticate,
-  verifyDoctorApproved,
-  getMedicalRecordById,
+  medicalRecordsController.getMedicalRecordById,
 );
 
 router.get(
   "/annexe/:annexeId",
   authenticate,
-  verifyDoctorApproved,
-  getMedicalRecordAnnexeById,
+  medicalRecordsController.getMedicalRecordAnnexeById,
 );
 
 router.post("/ai/generate", authenticate, verifyDoctorApproved, generateWithAI);

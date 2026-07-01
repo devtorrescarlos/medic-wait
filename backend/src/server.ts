@@ -5,7 +5,7 @@ import authRoutes from "./modules/auth/auth.routes";
 import slotsRoutes from "./modules/slots/slots.routes";
 import scheduleRoutes from "./modules/schedules/schedules.routes";
 import appointmentsRoutes from "./modules/appointments/appointments.routes";
-import medicalRecordsRoutes from "./modules/medical-records/medical-records-router";
+import medicalRecordsRoutes from "./modules/medical-records/medical-records-routes";
 import doctorsRoutes from "./modules/doctors/doctors.routes";
 import { limiter } from "./config/limiter";
 

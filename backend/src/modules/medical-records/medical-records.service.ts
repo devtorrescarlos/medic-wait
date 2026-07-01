@@ -3,6 +3,7 @@ import Appointment from "../../models/Appointment";
 import User from "../../models/User";
 import redisClient from "../../config/ioredis";
 import MedicalRecord from "../../models/MedicalRecord";
+import Specialty from "../../models/Specialty";
 import {
   MedicalRecordData,
   MedicalRecordAnnexData,
@@ -25,7 +26,7 @@ export const getPatients = async (
   }
 
   const patient_ids = await Appointment.findAll({
-    where: { doctor_id: doctorId, status: ["completed", "confirmed"] },
+    where: { doctor_id: doctorId, status: ["completed"] },
     attributes: ["patient_id"],
   });
 
@@ -56,7 +57,7 @@ export const getPatients = async (
   return response;
 };
 
-export const getPatientById = async (patientId: string) => {
+export const getPatientById = async (patientId: string, doctorId: string) => {
   const patient = await User.findByPk(patientId, {
     attributes: ["id", "full_name", "email", "age"],
   });
@@ -69,7 +70,7 @@ export const getPatientById = async (patientId: string) => {
   }
 
   const medicalRecords = await MedicalRecord.findAll({
-    where: { patient_id: patientId },
+    where: { patient_id: patientId, doctor_id: doctorId },
     include: [
       {
         model: MedicalRecordAnnexe,
@@ -86,7 +87,11 @@ export const getPatientById = async (patientId: string) => {
   });
 
   const lastAppointment = await Appointment.findOne({
-    where: { patient_id: patientId, status: ["completed"] },
+    where: {
+      doctor_id: doctorId,
+      patient_id: patientId,
+      status: ["completed"],
+    },
     include: [
       {
         model: Slot,
@@ -98,10 +103,115 @@ export const getPatientById = async (patientId: string) => {
   });
 
   const appointmentsCount = await Appointment.count({
-    where: { patient_id: patientId, status: "completed" },
+    where: { doctor_id: doctorId, patient_id: patientId, status: "completed" },
   });
 
   return { patient, medicalRecords, appointmentsCount, lastAppointment };
+};
+
+export const getMyDoctors = async (
+  patientId: string,
+  page: number,
+  limit: number,
+  name: string,
+  specialty: string,
+  email: string,
+) => {
+  const cacheKey = `myDoctors:${patientId}:${page}:${limit}:${name}:${specialty}:${email}`;
+  const cacheValue = await redisClient.get(cacheKey);
+  if (cacheValue) return JSON.parse(cacheValue);
+
+  const doctorIds = await Appointment.findAll({
+    where: { patient_id: patientId, status: ["completed"] },
+    attributes: ["doctor_id"],
+    group: ["doctor_id"],
+  });
+
+  const whereClause: any = {
+    id: doctorIds.map((d) => d.doctor_id),
+  };
+  if (name) whereClause.full_name = { [Op.iLike]: `%${name}%` };
+  if (email) whereClause.email = { [Op.iLike]: `%${email}%` };
+
+  const include: any[] = [
+    {
+      model: Specialty,
+      as: "specialty",
+      attributes: ["id", "name"],
+      required: !!specialty,
+    },
+  ];
+  if (specialty) include[0].where = { name: { [Op.iLike]: `%${specialty}%` } };
+
+  const { count, rows: doctors } = await User.findAndCountAll({
+    attributes: ["id", "full_name", "email", "age", "specialty_id"],
+    where: whereClause,
+    include,
+    limit,
+    offset: (page - 1) * limit,
+  });
+
+  const response = {
+    totalDoctors: count,
+    doctors,
+    currentPage: page,
+    totalPages: Math.ceil(count / limit),
+  };
+
+  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 60 * 60 * 24);
+
+  return response;
+};
+
+export const getMyDoctorById = async (doctorId: string, patientId: string) => {
+  const myDoctor = await User.findOne({
+    where: { id: doctorId },
+    attributes: ["id", "full_name", "email", "age"],
+    include: [
+      {
+        model: Specialty,
+        as: "specialty",
+        attributes: ["id", "name"],
+      },
+    ],
+  });
+
+  if (!myDoctor) {
+    throw {
+      status: 404,
+      message: "El doctor no existe",
+    };
+  }
+
+  const hasAppointment = await Appointment.findOne({
+    where: { patient_id: patientId, doctor_id: doctorId, status: "completed" },
+  });
+  if (!hasAppointment) {
+    throw { status: 404, message: "No tienes citas con este doctor" };
+  }
+
+  const medicalRecords = await MedicalRecord.findAll({
+    where: { doctor_id: doctorId, patient_id: patientId },
+    include: [
+      {
+        model: MedicalRecordAnnexe,
+        as: "annexes",
+        attributes: ["id", "type", "content", "created_at"],
+      },
+      {
+        model: Appointment,
+        as: "appointment",
+        attributes: ["id", "status", "created_at"],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+
+  const appointmentsCount = await Appointment.count({
+    where: { patient_id: patientId, doctor_id: doctorId, status: "completed" },
+  });
+
+  return { myDoctor, medicalRecords, appointmentsCount };
 };
 
 export const createMedicalRecord = async (
