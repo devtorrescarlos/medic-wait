@@ -1,6 +1,7 @@
 import TableFilters from "../../shared/TableFilters";
 import type { AppointmentsData } from "../../../types";
 import AppointmentsCard from "./AppointmentsCard";
+import Pagination from "../../shared/Pagination";
 
 type AppointmentsTableProps = {
   data: AppointmentsData;
@@ -76,30 +77,13 @@ export default function AppointmentsTable({
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
-          {`Total: ${data.totalItems} cita(s)`}
-          <span className="ml-2">
-            Página {data.currentPage} de {data.totalPages || 1}
-          </span>
-        </p>
-        <div className="flex items-center gap-2">
-          <button
-            disabled={page <= 1}
-            onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Anterior
-          </button>
-          <button
-            disabled={page >= data.totalPages}
-            onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Siguiente
-          </button>
-        </div>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={data.totalPages}
+        handlePageChange={handlePageChange}
+        label="citas"
+        totalItems={data.totalItems}
+      />
     </div>
   );
 }

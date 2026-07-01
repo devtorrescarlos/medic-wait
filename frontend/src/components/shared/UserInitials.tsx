@@ -1,6 +1,6 @@
 import { getInitials } from "../../utils/getInitials";
 
-export default function UserInitialts({
+export default function UserInitials({
   name,
   size,
 }: {
