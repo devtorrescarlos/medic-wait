@@ -91,8 +91,7 @@ export default function AppointmentDetailPage() {
           handleCompleteModal={handleCompleteModal}
         />
 
-        {cancelModal && (
-          <Modal label="Cancelar" isOpen={cancelModal}>
+        <Modal label="Cancelar" isOpen={cancelModal} onClose={() => setCancelModal(false)}>
             <div className="flex flex-col items-center gap-2 mt-5">
               <InfoIcon className="w-12 h-12 text-gray-500" />
               <p className="text-gray-600">
@@ -136,10 +135,8 @@ export default function AppointmentDetailPage() {
               </form>
             </div>
           </Modal>
-        )}
 
-        {completeModal && (
-          <Modal label="Confirmar" isOpen={completeModal}>
+        <Modal label="Confirmar" isOpen={completeModal} onClose={() => setCompleteModal(false)}>
             <div className="flex flex-col items-center gap-2 mt-5">
               <InfoIcon className="w-12 h-12 text-gray-500" />
               <p className="text-gray-600">
@@ -162,7 +159,6 @@ export default function AppointmentDetailPage() {
               </button>
             </div>
           </Modal>
-        )}
       </div>
     );
 }
