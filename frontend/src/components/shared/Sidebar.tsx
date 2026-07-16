@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   ChevronsLeft,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 import { Calendar, House, Clock4, User2, CalendarArrowUp } from "lucide-react";
 import { useAuth } from "../../hooks/auth/useAuth";
+import LogOutModal from "./LogOutModal";
 
 type SidebarProps = {
   isSidebarCollapsed: boolean;
@@ -21,6 +23,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const { role, logout } = useAuth();
   const pathname = useLocation();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const ADMIN_LINKS = [
     {
@@ -97,6 +100,11 @@ export default function Sidebar({
             ${isSidebarCollapsed ? "w-15" : "w-50"}
         `}
     >
+      <LogOutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={logout}
+      />
       <div
         className={`
                 h-16 flex items-center border-b border-gray-200
@@ -141,7 +149,7 @@ export default function Sidebar({
 
       <div className="absolute bottom-0 left-0 right-0 p-2  border-gray-200">
         <button
-          onClick={logout}
+          onClick={() => setIsLogoutModalOpen(true)}
           className={`hover:cursor-pointer
                     flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-all duration-200
                     ${isSidebarCollapsed ? "justify-center" : ""}
