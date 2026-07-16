@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, CalendarDays } from "lucide-react";
+import { ChevronDown, CalendarDays } from "lucide-react";
 import type { AvailableSlots } from "../../../types";
 import DoctorAccordionItem from "./DoctorAccordionItem";
 
@@ -37,17 +37,15 @@ export default function DoctorAccordion({ availableSlots, doctorId }: DoctorAcco
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
                 {schedule.slots.length} disponibles
               </span>
-              {openIndex === index ? (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
-              ) : (
-                <ChevronRight className="w-5 h-5 text-gray-400" />
-              )}
+              <ChevronDown
+                className={`w-5 h-5 text-gray-400 transition-transform ${openIndex === index ? "rotate-0" : "-rotate-90"}`}
+              />
             </div>
           </button>
           {openIndex === index && (
             <div className="px-4 py-3 border-t border-gray-100 space-y-2">
               {schedule.slots.map((slot) => (
-                <DoctorAccordionItem key={slot.id} slot={slot} doctorId={doctorId}/>
+                <DoctorAccordionItem key={slot.id} slot={slot} doctorId={doctorId} />
               ))}
             </div>
           )}

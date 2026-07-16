@@ -1,7 +1,7 @@
 import { Mail } from "lucide-react";
 import UserInitialts from "../../shared/UserInitials";
 import type { PatientByIdResponse } from "../../../types";
-import { formatDate, formatTime } from "../../../utils/formatDayAndDates";
+import { formatDate, formatTime } from "../../../utils/datesAndTimeUtilities";
 
 export default function PatientInfoCard({
   data,

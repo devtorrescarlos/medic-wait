@@ -2,6 +2,7 @@ import TableFilters from "../../shared/TableFilters";
 import type { AppointmentsData } from "../../../types";
 import PatientAppointmentsCard from "./PatientAppointmentsCard";
 import Pagination from "../../shared/Pagination";
+import { APPOINTMENT_STATUS_FILTER } from "../../../constants";
 
 type PatientAppointmentsTableProps = {
   data: AppointmentsData;
@@ -47,13 +48,7 @@ export default function PatientAppointmentsTable({
       type: "select" as const,
       value: statusFilter,
       onChange: handleStatusFilterChange,
-      options: [
-        { value: "", label: "Todos los estados" },
-        { value: "pending", label: "Pendiente" },
-        { value: "confirmed", label: "Confirmada" },
-        { value: "cancelled", label: "Cancelada" },
-        { value: "completed", label: "Completada" },
-      ],
+      options: APPOINTMENT_STATUS_FILTER,
     },
   ];
 

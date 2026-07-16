@@ -8,7 +8,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import type { Appointment } from "../../../types";
-import { formatDate, formatTime } from "../../../utils/formatDayAndDates";
+import { formatDate, formatTime } from "../../../utils/datesAndTimeUtilities";
 import { statusConfig } from "../../../constants";
 import UserInitialts from "../../shared/UserInitials";
 import AppointmentCardItems from "./AppointmentCardItems";

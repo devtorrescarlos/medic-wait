@@ -9,6 +9,7 @@ import {
   Plus,
   ChevronDown,
 } from "lucide-react";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { useAIGeneration } from "../../../hooks/medical-records/useAIGeneration";
 
 type MedicalRecordChatbotProps = {
@@ -40,8 +41,7 @@ export default function MedicalRecordChatbot({
   const [annexeContent, setAnnexeContent] = useState("");
   const [diagnosisNotes, setDiagnosisNotes] = useState("");
   const [treatmentNotes, setTreatmentNotes] = useState("");
-  const [showDiagnosisNotes, setShowDiagnosisNotes] = useState(false);
-  const [showTreatmentNotes, setShowTreatmentNotes] = useState(false);
+
 
   const cleanContext = {
     ...(context?.patientName && { patientName: context.patientName }),
@@ -127,20 +127,16 @@ export default function MedicalRecordChatbot({
       <div className="space-y-4">
         {mode === "create" && (
           <>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => setShowDiagnosisNotes(!showDiagnosisNotes)}
-                className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors"
-              >
+            <Disclosure as="div" className="space-y-2">
+              <DisclosureButton className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer">
                 <div className="flex items-center gap-2">
                   <Stethoscope className="w-4 h-4" />
                   Notas para diagnóstico
                 </div>
-                <ChevronDown className={`w-4 h-4 transition-transform ${showDiagnosisNotes ? "rotate-180" : ""}`} />
-              </button>
+                <ChevronDown className="w-4 h-4 transition-transform ui-open:rotate-180" />
+              </DisclosureButton>
 
-              {showDiagnosisNotes && (
+              <DisclosurePanel>
                 <textarea
                   value={diagnosisNotes}
                   onChange={(e) => setDiagnosisNotes(e.target.value)}
@@ -148,7 +144,7 @@ export default function MedicalRecordChatbot({
                   rows={3}
                   className="w-full outline-none px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all resize-none placeholder:text-gray-400"
                 />
-              )}
+              </DisclosurePanel>
 
               <button
                 type="button"
@@ -163,7 +159,7 @@ export default function MedicalRecordChatbot({
                 )}
                 Generar diagnóstico inicial
               </button>
-            </div>
+            </Disclosure>
 
             {diagnosis && (
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -183,20 +179,16 @@ export default function MedicalRecordChatbot({
               </div>
             )}
 
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => setShowTreatmentNotes(!showTreatmentNotes)}
-                className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors"
-              >
+            <Disclosure as="div" className="space-y-2">
+              <DisclosureButton className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer">
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4" />
                   Notas para tratamiento
                 </div>
-                <ChevronDown className={`w-4 h-4 transition-transform ${showTreatmentNotes ? "rotate-180" : ""}`} />
-              </button>
+                <ChevronDown className="w-4 h-4 transition-transform ui-open:rotate-180" />
+              </DisclosureButton>
 
-              {showTreatmentNotes && (
+              <DisclosurePanel>
                 <textarea
                   value={treatmentNotes}
                   onChange={(e) => setTreatmentNotes(e.target.value)}
@@ -204,7 +196,7 @@ export default function MedicalRecordChatbot({
                   rows={3}
                   className="w-full outline-none px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all resize-none placeholder:text-gray-400"
                 />
-              )}
+              </DisclosurePanel>
 
               <button
                 type="button"
@@ -219,7 +211,7 @@ export default function MedicalRecordChatbot({
                 )}
                 Generar plan de tratamiento
               </button>
-            </div>
+            </Disclosure>
 
             {treatment && (
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">

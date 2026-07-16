@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './context/AuthProvider.tsx'
+import { NotificationProvider } from './context/NotificationProvider.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -13,10 +14,12 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <NotificationProvider>
         <BrowserRouter>
           <App />
           <ToastContainer limit={2} />
         </BrowserRouter>
+        </NotificationProvider>
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,

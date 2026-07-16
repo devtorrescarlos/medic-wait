@@ -7,10 +7,11 @@ import {
   formatDay,
   formatDate,
   formatTime,
-} from "../../../utils/formatDayAndDates";
+} from "../../../utils/datesAndTimeUtilities";
 import { useSlotsFilters } from "../../../hooks/slots/useSlotsFilters";
 import TableFilters from "../../shared/TableFilters";
 import Pagination from "../../shared/Pagination";
+import { daysOfWeek, SLOT_STATUS_FILTER } from "../../../constants";
 
 type SlotsTableProps = {
   data: SlotsData;
@@ -53,11 +54,7 @@ export default function SlotsTable({
       type: "select" as const,
       value: statusFilter,
       onChange: handleStatusFilterChange,
-      options: [
-        { value: "", label: "Todos los estados" },
-        { value: "available", label: "Disponible" },
-        { value: "booked", label: "Ocupado" },
-      ],
+      options: SLOT_STATUS_FILTER,
     },
     {
       label: "Fecha",
@@ -72,13 +69,7 @@ export default function SlotsTable({
       onChange: handleDayFilterChange,
       options: [
         { value: "", label: "Todos los días" },
-        { value: "monday", label: "Lunes" },
-        { value: "tuesday", label: "Martes" },
-        { value: "wednesday", label: "Miércoles" },
-        { value: "thursday", label: "Jueves" },
-        { value: "friday", label: "Viernes" },
-        { value: "saturday", label: "Sábado" },
-        { value: "sunday", label: "Domingo" },
+        ...daysOfWeek,
       ],
     },
   ];

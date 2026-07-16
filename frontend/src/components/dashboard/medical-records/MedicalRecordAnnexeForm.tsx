@@ -6,6 +6,7 @@ import MedicalRecordChatbot from "./MedicalRecordChatbot";
 import { useMedicalRecordsMutations } from "../../../hooks/medical-records/useMedicalRecordsMutations";
 import { useGetMedicalRecordById } from "../../../hooks/medical-records/useGetMedicalRecordById";
 import type { MedicalRecordAnnexeData } from "../../../types";
+import { ANNEXE_TYPES } from "../../../constants";
 
 export default function MedicalRecordAnnexeForm() {
   const { createMedicalRecordAnnexeMutation } = useMedicalRecordsMutations();
@@ -37,11 +38,7 @@ export default function MedicalRecordAnnexeForm() {
     reset();
   };
 
-  const annexeTypes = [
-    { value: "evolution", label: "Evolución" },
-    { value: "lab_result", label: "Resultado de Laboratorio" },
-    { value: "correction", label: "Corrección" },
-  ];
+  const annexeTypes = ANNEXE_TYPES;
 
   const context = medicalRecord
     ? {

@@ -210,3 +210,22 @@ export type MyDoctorByIdResponse = {
   medicalRecords: MedicalRecord[];
   appointmentsCount: number;
 };
+
+export type Notification = {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  reference_id: string | null;
+  reference_type: string | null;
+  is_read: boolean;
+  created_at: string;
+};
+
+export type NotificationsData = {
+  notifications: Notification[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+};

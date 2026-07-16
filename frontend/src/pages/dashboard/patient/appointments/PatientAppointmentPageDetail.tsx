@@ -78,8 +78,7 @@ export default function PatientAppointmentPageDetail() {
           handleConfirmModal={handleConfirmModal}
         />
 
-        {cancelModal && (
-          <Modal label="Cancelar" isOpen={cancelModal}>
+        <Modal label="Cancelar" isOpen={cancelModal} onClose={() => setCancelModal(false)}>
             <div className="flex flex-col items-center gap-2 mt-5">
               <InfoIcon className="w-12 h-12 text-gray-500" />
               <p className="text-gray-600">
@@ -123,10 +122,8 @@ export default function PatientAppointmentPageDetail() {
               </form>
             </div>
           </Modal>
-        )}
 
-        {confirmModal && (
-          <Modal label="Confirmar" isOpen={confirmModal}>
+        <Modal label="Confirmar" isOpen={confirmModal} onClose={() => setConfirmModal(false)}>
             <div className="flex flex-col items-center gap-2 mt-5">
               <InfoIcon className="w-12 h-12 text-emerald-600" />
               <p className="text-gray-600 text-center">
@@ -149,7 +146,6 @@ export default function PatientAppointmentPageDetail() {
               </button>
             </div>
           </Modal>
-        )}
       </div>
     );
 }
