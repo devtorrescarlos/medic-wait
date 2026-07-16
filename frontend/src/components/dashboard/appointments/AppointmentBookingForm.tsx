@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Stethoscope, User, Calendar, Clock, FileText } from "lucide-react";
 import type { DoctorByIdResponse } from "../../../types/index";
-import { formatTime } from "../../../utils/formatDayAndDates";
+import { formatTime } from "../../../utils/datesAndTimeUtilities";
 import { Navigate } from "react-router-dom";
 import ErrorMessage from "../../shared/ErrorMessage";
 import { useAppointmentsMutations } from "../../../hooks/appointments/useAppointmentsMutations";

@@ -6,7 +6,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { useGetMedicalRecordById } from "../../../../hooks/medical-records/useGetMedicalRecordById";
 import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
 import ErrorMessage from "../../../../components/shared/ErrorMessage";
-import { formatDate } from "../../../../utils/formatDayAndDates";
+import { formatDate } from "../../../../utils/datesAndTimeUtilities";
 
 const TYPE_CONFIG: Record<string, { label: string; styles: string }> = {
   lab_result: {

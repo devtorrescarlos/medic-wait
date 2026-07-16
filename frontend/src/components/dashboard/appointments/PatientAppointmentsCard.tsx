@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Calendar, Clock, Eye, FileText } from "lucide-react";
 import type { Appointment } from "../../../types";
-import { formatTime } from "../../../utils/formatDayAndDates";
+import { formatTime } from "../../../utils/datesAndTimeUtilities";
 import { statusConfig } from "../../../constants";
 import UserInitialts from "../../shared/UserInitials";
 

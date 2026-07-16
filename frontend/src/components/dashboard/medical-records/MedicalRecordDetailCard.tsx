@@ -1,6 +1,6 @@
 import { Calendar } from "lucide-react";
 import type { MedicalRecord } from "../../../types";
-import { formatDate } from "../../../utils/formatDayAndDates";
+import { formatDate } from "../../../utils/datesAndTimeUtilities";
 
 type MedicalRecordDetailCardProps = {
   medicalRecord: MedicalRecord;
