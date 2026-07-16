@@ -250,11 +250,7 @@ export const cancelAppointment = async (
 
   await assignedSlot.update({ is_available: true });
 
-  await notifyAppointmentChange(
-    appointment,
-    "cancelled",
-    appointment.patient_id,
-  );
+  await notifyAppointmentChange(appointment, "cancelled", userId);
   await invalidateDoctorSlotsCache(appointment.doctor_id);
   await invalidateMyDoctorsCache(appointment.patient_id);
   await invalidateAppointmentCache([

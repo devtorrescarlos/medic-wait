@@ -7,6 +7,7 @@ import scheduleRoutes from "./modules/schedules/schedules.routes";
 import appointmentsRoutes from "./modules/appointments/appointments.routes";
 import medicalRecordsRoutes from "./modules/medical-records/medical-records-routes";
 import doctorsRoutes from "./modules/doctors/doctors.routes";
+import notificationsRoutes from "./modules/notifications/notifications.routes";
 import { limiter } from "./config/limiter";
 
 const connectDB = async () => {
@@ -39,6 +40,7 @@ app.use("/api/schedules", scheduleRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/medical-records", medicalRecordsRoutes);
 app.use("/api/doctors", doctorsRoutes);
+app.use("/api/notifications", notificationsRoutes);
 
 app.get("/", (req, res) => {
   res.json("OK!");
