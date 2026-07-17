@@ -20,7 +20,7 @@ async function deleteKeysByPattern(pattern: string): Promise<void> {
 export const invalidateDoctorSlotsCache = async (
   doctorId: string,
 ): Promise<void> => {
-  await deleteKeysByPattern(`slots*:${doctorId}*`);
+  await deleteKeysByPattern(`slots:${doctorId}:*`);
 };
 
 export const invalidateAppointmentCache = async (
@@ -28,19 +28,17 @@ export const invalidateAppointmentCache = async (
 ): Promise<void> => {
   const ids = Array.isArray(userIds) ? userIds : [userIds];
 
-  await deleteKeysByPattern(`appointments:*`);
-
   for (const userId of ids) {
     await deleteKeysByPattern(`appointments:*:${userId}:*`);
   }
 };
 
 export const invalidatePatientsCache = async (doctorId: string) => {
-  await deleteKeysByPattern(`patients:${doctorId}*`);
+  await deleteKeysByPattern(`patients:${doctorId}:*`);
 };
 
 export const invalidateDoctorProfileCache = async (doctorId: string) => {
-  await deleteKeysByPattern(`doctor:profile:${doctorId}:*`);
+  await deleteKeysByPattern(`doctor:profile:${doctorId}*`);
 };
 
 export const invalidateMyDoctorsCache = async (patientId: string) => {
