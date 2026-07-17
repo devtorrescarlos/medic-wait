@@ -9,16 +9,26 @@ export default function ProtectedRoute({
 }) {
   const { user, isLoading, isAuthenticated, role } = useAuth();
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" replace />;
   }
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   if (!user || !allowedRoles.includes(role)) {
-    return <Navigate to="/" replace />;
+    return (
+      <Navigate
+        to={
+          role === "doctor"
+            ? "/dashboard/doctor"
+            : role === "patient"
+              ? "/dashboard/patient"
+              : "/"
+        }
+        replace
+      />
+    );
   }
 
   return <Outlet />;
