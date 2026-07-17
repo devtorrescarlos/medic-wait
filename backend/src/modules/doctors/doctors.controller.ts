@@ -3,8 +3,10 @@ import * as doctorsService from "./doctors.service";
 
 export const getDoctors = async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const rawPage = Number(req.query.page) || 1;
+    const page = Math.max(rawPage, 1);
+    const rawLimit = Number(req.query.limit) || 10;
+    const limit = Math.min(rawLimit, 100);
     const name = req.query.name as string;
     const email = req.query.email as string;
     const specialty = req.query.specialty as string;

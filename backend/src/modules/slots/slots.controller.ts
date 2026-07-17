@@ -4,8 +4,10 @@ import * as slotsService from "./slots.service";
 export const getSlots = async (req: Request, res: Response) => {
   try {
     const doctorId = req.doctorId;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const rawPage = Number(req.query.page) || 1;
+    const page = Math.max(rawPage, 1);
+    const rawLimit = Number(req.query.limit) || 10;
+    const limit = Math.min(rawLimit, 100);
     const day = req.query.day as string;
     const date = req.query.date as string;
     const status = req.query.status as string;
@@ -29,8 +31,10 @@ export const getSlots = async (req: Request, res: Response) => {
 export const getAvailableSlots = async (req: Request, res: Response) => {
   try {
     const doctorId = req.params.doctorId;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const rawPage = Number(req.query.page) || 1;
+    const page = Math.max(rawPage, 1);
+    const rawLimit = Number(req.query.limit) || 10;
+    const limit = Math.min(rawLimit, 100);
     const availableSlots = await slotsService.getAvailableSlots(
       doctorId as string,
       page,
