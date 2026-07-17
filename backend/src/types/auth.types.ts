@@ -2,7 +2,7 @@ export type RegisterData = {
   email: string;
   password: string;
   full_name: string;
-  age: string;
+  age: number;
   role?: "admin" | "doctor" | "patient";
   specialty_id?: string;
 };

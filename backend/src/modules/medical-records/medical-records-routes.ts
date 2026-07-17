@@ -62,7 +62,9 @@ router.post(
   param("medicalRecordId")
     .isUUID()
     .withMessage("El id del medical record debe ser un UUID"),
-  body("type").notEmpty().withMessage("El tipo no puede ir vacío"),
+  body("type")
+    .isIn(["evolution", "lab_result", "correction"])
+    .withMessage("El tipo debe ser: evolution, lab_result o correction"),
   authenticate,
   verifyDoctorApproved,
   handleInputErrors,

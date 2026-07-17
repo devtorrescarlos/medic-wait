@@ -10,7 +10,7 @@ import doctorsRoutes from "./modules/doctors/doctors.routes";
 import notificationsRoutes from "./modules/notifications/notifications.routes";
 import { limiter } from "./config/limiter";
 
-const connectDB = async () => {
+export const connectDB = async () => {
   try {
     await db.authenticate();
     console.log("Database connected");
@@ -18,8 +18,6 @@ const connectDB = async () => {
     console.log(error);
   }
 };
-
-connectDB();
 
 const app = express();
 
