@@ -39,10 +39,6 @@ export const getAvailableSlots = async (
     order: [["start_time", "ASC"]],
   });
 
-  if (count === 0) {
-    throw { status: 404, message: "No se encontraron slots disponibles" };
-  }
-
   const response = {
     totalItems: count,
     totalPages: Math.ceil(count / limit),
