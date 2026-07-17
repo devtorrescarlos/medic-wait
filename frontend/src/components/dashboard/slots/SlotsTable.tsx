@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Trash2, Pencil } from "lucide-react";
 import type { Slot, SlotsData } from "../../../types";
 import { Link } from "react-router-dom";
@@ -8,7 +7,6 @@ import {
   formatDate,
   formatTime,
 } from "../../../utils/datesAndTimeUtilities";
-import { useSlotsFilters } from "../../../hooks/slots/useSlotsFilters";
 import TableFilters from "../../shared/TableFilters";
 import Pagination from "../../shared/Pagination";
 import { daysOfWeek, SLOT_STATUS_FILTER } from "../../../constants";
@@ -17,36 +15,28 @@ type SlotsTableProps = {
   data: SlotsData;
   page: number;
   handlePageChange: (newPage: number) => void;
+  statusFilter: string;
+  dayFilter: string;
+  dateFilter: string;
+  handleDayFilterChange: (value: string) => void;
+  handleDateFilterChange: (value: string) => void;
+  handleCleanFilters: () => void;
+  handleStatusFilterChange: (value: string) => void;
 };
 
 export default function SlotsTable({
   data,
   page,
   handlePageChange,
+  statusFilter,
+  dayFilter,
+  dateFilter,
+  handleDayFilterChange,
+  handleDateFilterChange,
+  handleCleanFilters,
+  handleStatusFilterChange,
 }: SlotsTableProps) {
   const { deleteSlotMutation } = useSlotsMutations();
-
-  const {
-    statusFilter,
-    dayFilter,
-    dateFilter,
-    handleDayFilterChange,
-    handleDateFilterChange,
-    handleCleanFilters,
-    handleStatusFilterChange,
-  } = useSlotsFilters();
-
-  const filteredSlots: Slot[] = useMemo(() => {
-    return data.slots.filter((slot) => {
-      if (statusFilter === "available" && !slot.is_available) return false;
-      if (statusFilter === "booked" && slot.is_available) return false;
-      if (dateFilter && slot.date !== dateFilter) return false;
-      if (dayFilter && slot.schedule.day_of_week !== dayFilter) return false;
-      return true;
-    });
-  }, [data.slots, statusFilter, dateFilter, dayFilter]);
-
-  const hasNoResults = filteredSlots.length === 0;
 
   const filters = [
     {
@@ -85,7 +75,7 @@ export default function SlotsTable({
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        {hasNoResults ? (
+        {data.slots.length === 0 ? (
           <p className="text-center text-gray-500 py-4">
             No se encontraron registros
           </p>
@@ -115,7 +105,7 @@ export default function SlotsTable({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredSlots.map((slot) => (
+                {data.slots.map((slot) => (
                   <tr
                     key={slot.id}
                     className="hover:bg-gray-50 transition-colors"

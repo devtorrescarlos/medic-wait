@@ -20,10 +20,6 @@ export const useDoctorFilters = () => {
     return () => clearTimeout(handlerDebounce);
   }, [inputName, inputEmail, inputSpecialty]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [name, email, specialty]);
-
   const handleCleanFilters = () => {
     setInputName("");
     setInputEmail("");

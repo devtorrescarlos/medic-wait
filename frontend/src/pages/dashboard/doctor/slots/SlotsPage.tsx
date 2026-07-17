@@ -4,13 +4,24 @@ import { useSlots } from "../../../../hooks/slots/useSlots";
 import { useSlotsFilters } from "../../../../hooks/slots/useSlotsFilters";
 
 export default function SlotsPage() {
-  const { page, dayFilter, dateFilter, limit, handlePageChange } =
-    useSlotsFilters();
+  const {
+    page,
+    dayFilter,
+    dateFilter,
+    statusFilter,
+    limit,
+    handlePageChange,
+    handleDayFilterChange,
+    handleDateFilterChange,
+    handleCleanFilters,
+    handleStatusFilterChange,
+  } = useSlotsFilters();
   const { data, isLoading, error } = useSlots(
     page,
     limit,
     dayFilter || undefined,
     dateFilter || undefined,
+    statusFilter || undefined,
   );
 
   if (isLoading) return <LoadingSpinner />;
@@ -26,7 +37,18 @@ export default function SlotsPage() {
         </p>
       </div>
 
-      <SlotsTable data={data} page={page} handlePageChange={handlePageChange} />
+      <SlotsTable
+        data={data}
+        page={page}
+        handlePageChange={handlePageChange}
+        statusFilter={statusFilter}
+        dayFilter={dayFilter}
+        dateFilter={dateFilter}
+        handleDayFilterChange={handleDayFilterChange}
+        handleDateFilterChange={handleDateFilterChange}
+        handleCleanFilters={handleCleanFilters}
+        handleStatusFilterChange={handleStatusFilterChange}
+      />
     </div>
   );
 }
