@@ -5,7 +5,6 @@ export const generateWithAI = async (input: {
   context: Record<string, string>;
   customPrompt?: string;
 }) => {
-  const url = `${import.meta.env.VITE_API_URL}/medical-records/ai/generate`;
-  const response = await api.post(url, input);
+  const response = await api.post("/medical-records/ai/generate", input);
   return response.data;
 };

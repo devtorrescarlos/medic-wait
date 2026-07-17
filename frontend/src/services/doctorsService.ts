@@ -14,14 +14,11 @@ export const getDoctors = async (
   if (name) params.append("name", name);
   if (email) params.append("email", email);
   if (specialty) params.append("specialty", specialty);
-  const url = `${import.meta.env.VITE_API_URL}/doctors?${params.toString()}`;
-  const response = await api.get(url);
+  const response = await api.get("/doctors", { params });
   return response.data;
 };
 
 export const getDoctorById = async (id: string) => {
-  const response = await api.get(
-    `${import.meta.env.VITE_API_URL}/doctors/${id}`,
-  );
+  const response = await api.get(`/doctors/${id}`);
   return response.data;
 };
