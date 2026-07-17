@@ -21,7 +21,7 @@ export const sendForgotPasswordEmail = async (email: string, token: string) => {
     subject: "Olvide mi contraseña",
     html: `
             <h1>Olvide mi contraseña</h1>
-            <a href="${process.env.CLIENT_URL}/auth/forgot-password/${token}">Restablecer contraseña</a>
+            <a href="${process.env.CLIENT_URL}/auth/reset-password/${token}">Restablecer contraseña</a>
         `,
   });
 };

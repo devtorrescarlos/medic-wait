@@ -73,10 +73,15 @@ export const getDoctors = async (
 };
 
 export const getDoctorById = async (doctorId: string, patientId: string) => {
-  const cacheKey = `doctor:profile:${doctorId}:${patientId}`;
+  const cacheKey = `doctor:profile:${doctorId}`;
   const cached = await redisClient.get(cacheKey);
   if (cached) {
-    return JSON.parse(cached);
+    const parsed = JSON.parse(cached);
+    const pendingAppointment = await Appointment.findOne({
+      where: { doctor_id: doctorId, patient_id: patientId, status: "pending" },
+      attributes: ["id", "status"],
+    });
+    return { ...parsed, pendingAppointment };
   }
 
   const doctor = await User.findByPk(doctorId, {
@@ -149,9 +154,7 @@ export const getDoctorById = async (doctorId: string, patientId: string) => {
     attributes: ["id", "status"],
   });
 
-  const response = { doctor, availableSlots, pendingAppointment };
+  await redisClient.set(cacheKey, JSON.stringify({ doctor, availableSlots }), "EX", 3600);
 
-  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 3600);
-
-  return response;
+  return { doctor, availableSlots, pendingAppointment };
 };

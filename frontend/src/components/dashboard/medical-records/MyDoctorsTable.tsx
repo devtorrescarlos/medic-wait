@@ -6,6 +6,7 @@ import MyDoctorsCard from "./MyDoctorsCard";
 import { useGetSpecialties } from "../../../hooks/auth/useGetSpecialties";
 import Pagination from "../../shared/Pagination";
 import { Link } from "react-router-dom";
+import { getSpecialtyConfig } from "../../../constants";
 
 type MyDoctorsTableProps = {
   data: MyDoctorsResponse;
@@ -51,7 +52,7 @@ export default function MyDoctorsTable({
         { value: "", label: "Todas las especialidades" },
         ...specialties.map((specialty: Specialty) => ({
           value: specialty.name,
-          label: specialty.name,
+          label: getSpecialtyConfig(specialty.name).label,
         })),
       ],
     },
@@ -123,10 +124,17 @@ export default function MyDoctorsTable({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
-                        <Stethoscope className="w-4 h-4 text-gray-400 shrink-0" />
-                        <span className="text-sm text-gray-600">
-                          {doctor.specialty.name}
-                        </span>
+                        {(() => {
+                          const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(doctor.specialty.name);
+                          return (
+                            <>
+                              <SpecialtyIcon className="w-4 h-4 text-gray-400 shrink-0" />
+                              <span className="text-sm text-gray-600">
+                                {specialtyLabel}
+                              </span>
+                            </>
+                          );
+                        })()}
                       </div>
                     </td>
                     <td className="px-4 py-3">

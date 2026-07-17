@@ -3,8 +3,10 @@ import * as notificationsService from "./notifications.service";
 
 export const listNotifications = async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 7;
+    const rawPage = Number(req.query.page) || 1;
+    const page = Math.max(rawPage, 1);
+    const rawLimit = Number(req.query.limit) || 7;
+    const limit = Math.min(rawLimit, 100);
     const userId = req.user?.id as string;
     const result = await notificationsService.listNotifications(
       page,

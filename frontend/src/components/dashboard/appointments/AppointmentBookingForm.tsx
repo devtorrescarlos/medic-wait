@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
-import { Stethoscope, User, Calendar, Clock, FileText } from "lucide-react";
+import { User, Calendar, Clock, FileText } from "lucide-react";
 import type { DoctorByIdResponse } from "../../../types/index";
 import { formatTime } from "../../../utils/datesAndTimeUtilities";
 import { Navigate } from "react-router-dom";
 import ErrorMessage from "../../shared/ErrorMessage";
 import { useAppointmentsMutations } from "../../../hooks/appointments/useAppointmentsMutations";
+import { getSpecialtyConfig } from "../../../constants";
 
 interface AppointmentBookingFormProps {
   data: DoctorByIdResponse;
@@ -64,14 +65,17 @@ export default function AppointmentBookingForm({
 
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
             <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-              <Stethoscope className="w-6 h-6 text-blue-600" />
+              {(() => {
+                const { icon: SpecialtyIcon } = getSpecialtyConfig(data.doctor.specialty.name);
+                return <SpecialtyIcon className="w-6 h-6 text-blue-600" />;
+              })()}
             </div>
             <div>
               <span className="text-xs uppercase tracking-wide font-semibold text-gray-500">
                 Especialidad
               </span>
               <p className="font-semibold text-gray-700">
-                {data.doctor.specialty.name}
+                {getSpecialtyConfig(data.doctor.specialty.name).label}
               </p>
             </div>
           </div>

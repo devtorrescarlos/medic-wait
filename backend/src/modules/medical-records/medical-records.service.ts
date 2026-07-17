@@ -10,6 +10,10 @@ import {
 } from "../../types/medical-records.types";
 import MedicalRecordAnnexe from "../../models/MedicalRecordAnnexe";
 import Slot from "../../models/Slot";
+import {
+  invalidatePatientsCache,
+  invalidateMyDoctorsCache,
+} from "../../utils/invalidateCache";
 
 export const getPatients = async (
   doctorId: string,
@@ -52,7 +56,7 @@ export const getPatients = async (
     totalPages: Math.ceil(count / limit),
   };
 
-  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 60 * 60 * 24);
+  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 3600);
 
   return response;
 };
@@ -158,7 +162,7 @@ export const getMyDoctors = async (
     totalPages: Math.ceil(count / limit),
   };
 
-  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 60 * 60 * 24);
+  await redisClient.set(cacheKey, JSON.stringify(response), "EX", 3600);
 
   return response;
 };
@@ -247,7 +251,7 @@ export const createMedicalRecord = async (
   }
 
   const patientHasMedicalRecord = await MedicalRecord.findOne({
-    where: { patient_id: appointment.patient_id },
+    where: { patient_id: appointment.patient_id, doctor_id: doctorId },
   });
 
   if (patientHasMedicalRecord) {
@@ -264,6 +268,9 @@ export const createMedicalRecord = async (
     treatment_plan,
     appointment_id: appointmentId,
   });
+
+  await invalidatePatientsCache(doctorId);
+  await invalidateMyDoctorsCache(appointment.patient_id);
 
   return medicalRecord;
 };

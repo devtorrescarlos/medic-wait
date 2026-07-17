@@ -1,4 +1,4 @@
-import { useAppointments } from "../../../../hooks/appointments/useAppointments";
+import { useAppointments } from "../../../../hooks/appointments/useGetAppointments";
 import AppointmentsTable from "../../../../components/dashboard/appointments/AppointmentsTable";
 import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
 import { useAppointmentsFilters } from "../../../../hooks/appointments/useAppointmentsFilters";

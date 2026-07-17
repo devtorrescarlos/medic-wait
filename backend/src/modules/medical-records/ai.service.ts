@@ -58,7 +58,7 @@ export const generateWithAI = async (
   const { system, user } = buildPrompt(input);
 
   const response = await openrouterClient.post("/chat/completions", {
-    model: process.env.OPENROUTER_MODEL ?? "openrouter/free",
+    model: process.env.OPEN_ROUTER_MODEL ?? "openrouter/free",
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },

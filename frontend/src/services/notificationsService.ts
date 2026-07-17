@@ -5,37 +5,26 @@ export const listNotifications = async (page: number, limit: number) => {
     page: String(page),
     limit: String(limit),
   });
-  const url = `${import.meta.env.VITE_API_URL}/notifications?${params.toString()}`;
-
-  const response = await api.get(url);
-
+  const response = await api.get("/notifications", { params });
   return response.data;
 };
 
 export const markAsReadById = async (id: string) => {
-  const url = `${import.meta.env.VITE_API_URL}/notifications/${id}/read`;
-  const response = await api.patch(url);
-
+  const response = await api.patch(`/notifications/${id}/read`);
   return response.data;
 };
 
 export const getUnreadCount = async () => {
-  const url = `${import.meta.env.VITE_API_URL}/notifications/unread-count`;
-  const response = await api.get(url);
-
+  const response = await api.get("/notifications/unread-count");
   return response.data;
 };
 
 export const deleteNotificationById = async (id: string) => {
-  const url = `${import.meta.env.VITE_API_URL}/notifications/${id}`;
-  const response = await api.delete(url);
-
+  const response = await api.delete(`/notifications/${id}`);
   return response.data;
 };
 
 export const markAllAsRead = async () => {
-  const url = `${import.meta.env.VITE_API_URL}/notifications/read-all`;
-  const response = await api.patch(url);
-
+  const response = await api.patch("/notifications/read-all");
   return response.data;
 };

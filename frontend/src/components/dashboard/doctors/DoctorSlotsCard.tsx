@@ -2,13 +2,17 @@ import { useState } from "react";
 import { ChevronDown, CalendarDays } from "lucide-react";
 import type { AvailableSlots } from "../../../types";
 import DoctorAccordionItem from "./DoctorAccordionItem";
+import { formatDay } from "../../../utils/datesAndTimeUtilities";
 
 type DoctorAccordionProps = {
   availableSlots: AvailableSlots[];
   doctorId: string;
 };
 
-export default function DoctorAccordion({ availableSlots, doctorId }: DoctorAccordionProps) {
+export default function DoctorAccordion({
+  availableSlots,
+  doctorId,
+}: DoctorAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
@@ -29,7 +33,9 @@ export default function DoctorAccordion({ availableSlots, doctorId }: DoctorAcco
             <div className="flex items-center gap-3">
               <CalendarDays className="w-5 h-5 text-emerald-600" />
               <div className="text-left">
-                <p className="font-semibold text-gray-800">{schedule.dayName}</p>
+                <p className="font-semibold text-gray-800">
+                  {formatDay(schedule.dayName)}
+                </p>
                 <p className="text-sm text-gray-500">{schedule.date}</p>
               </div>
             </div>
@@ -45,7 +51,11 @@ export default function DoctorAccordion({ availableSlots, doctorId }: DoctorAcco
           {openIndex === index && (
             <div className="px-4 py-3 border-t border-gray-100 space-y-2">
               {schedule.slots.map((slot) => (
-                <DoctorAccordionItem key={slot.id} slot={slot} doctorId={doctorId} />
+                <DoctorAccordionItem
+                  key={slot.id}
+                  slot={slot}
+                  doctorId={doctorId}
+                />
               ))}
             </div>
           )}

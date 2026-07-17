@@ -48,11 +48,10 @@ export const confirmAccount = async (req: Request, res: Response) => {
 export const forgotPassword = async (req: Request, res: Response) => {
   const { email } = req.body;
   try {
-    const token = await authService.forgotPassword(email);
+    await authService.forgotPassword(email);
     res.status(200).json({
       message:
         "Se ha enviado un correo electrónico con las instrucciones para restablecer tu contraseña",
-      token,
     });
   } catch (error: any) {
     if (error.status) {
@@ -65,10 +64,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
 export const resendConfirmationEmail = async (req: Request, res: Response) => {
   const { email } = req.body;
   try {
-    const token = await authService.resendConfirmationEmail(email);
+    await authService.resendConfirmationEmail(email);
     res
       .status(200)
-      .json({ message: "Correo electrónico de confirmación reenviado", token });
+      .json({ message: "Correo electrónico de confirmación reenviado" });
   } catch (error: any) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });

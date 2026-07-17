@@ -15,40 +15,34 @@ export const getSlots = async (
   if (day) params.append("day", day);
   if (date) params.append("date", date);
   if (status) params.append("status", status);
-  const url = `${import.meta.env.VITE_API_URL}/slots?${params.toString()}`;
-  const response = await api.get(url);
+  const response = await api.get("/slots", { params });
   return response.data;
 };
 
 export const deleteSlotById = async (id: string) => {
-  const url = `${import.meta.env.VITE_API_URL}/slots/${id}`;
-  const response = await api.delete(url);
+  const response = await api.delete(`/slots/${id}`);
   return response.data;
 };
 
 export const updateSlotById = async (id: string, slotData: SlotFormData) => {
-  const url = `${import.meta.env.VITE_API_URL}/slots/${id}`;
-  const response = await api.put(url, slotData);
+  const response = await api.put(`/slots/${id}`, slotData);
   return response.data;
 };
 
 export const generateScheduleAndSlots = async (
   scheduleData: ScheduleFormData,
 ) => {
-  const url = `${import.meta.env.VITE_API_URL}/schedules`;
-  const response = await api.post(url, scheduleData);
+  const response = await api.post("/schedules", scheduleData);
   return response.data;
 };
 
 export const getAllSchedules = async () => {
-  const url = `${import.meta.env.VITE_API_URL}/schedules`;
-  const response = await api.get(url);
+  const response = await api.get("/schedules");
   return response.data;
 };
 
 export const toggleSchedule = async (id: string) => {
-  const url = `${import.meta.env.VITE_API_URL}/schedules/${id}/toggle`;
-  const response = await api.patch(url);
+  const response = await api.patch(`/schedules/${id}/toggle`);
   return response.data;
 };
 
@@ -56,13 +50,11 @@ export const updateSchedule = async (
   id: string,
   scheduleData: ScheduleFormData,
 ) => {
-  const url = `${import.meta.env.VITE_API_URL}/schedules/${id}`;
-  const response = await api.put(url, scheduleData);
+  const response = await api.put(`/schedules/${id}`, scheduleData);
   return response.data;
 };
 
 export const deleteScheduleById = async (id: string) => {
-  const url = `${import.meta.env.VITE_API_URL}/schedules/${id}`;
-  const response = await api.delete(url);
+  const response = await api.delete(`/schedules/${id}`);
   return response.data;
 };

@@ -13,6 +13,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useGetSpecialties } from "../../hooks/auth/useGetSpecialties";
+import { getSpecialtyConfig } from "../../constants";
 
 const initialValues = {
   full_name: "",
@@ -190,7 +191,7 @@ export default function RegisterForm() {
                 )}
                 {specialties.map((specialty) => (
                   <option key={specialty.id} value={specialty.id}>
-                    {specialty.name}
+                    {getSpecialtyConfig(specialty.name).label}
                   </option>
                 ))}
               </select>

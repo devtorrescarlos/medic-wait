@@ -4,8 +4,10 @@ import * as medicalRecordService from "./medical-records.service";
 export const getPatients = async (req: Request, res: Response) => {
   try {
     const doctorId = req.doctorId as string;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const rawPage = Number(req.query.page) || 1;
+    const page = Math.max(rawPage, 1);
+    const rawLimit = Number(req.query.limit) || 10;
+    const limit = Math.min(rawLimit, 100);
     const name = req.query.name as string;
     const email = req.query.email as string;
     const patients = await medicalRecordService.getPatients(
@@ -44,8 +46,10 @@ export const getPatientById = async (req: Request, res: Response) => {
 export const getMyDoctors = async (req: Request, res: Response) => {
   try {
     const patientId = req.patientId as string;
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const rawPage = Number(req.query.page) || 1;
+    const page = Math.max(rawPage, 1);
+    const rawLimit = Number(req.query.limit) || 10;
+    const limit = Math.min(rawLimit, 100);
     const name = req.query.name as string;
     const specialty = req.query.specialty as string;
     const email = req.query.email as string;

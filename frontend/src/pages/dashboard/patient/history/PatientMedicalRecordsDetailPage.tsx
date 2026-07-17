@@ -1,4 +1,4 @@
-import { Calendar, Mail, Stethoscope, ClipboardList } from "lucide-react";
+import { Calendar, Mail, ClipboardList } from "lucide-react";
 import GoBackButton from "../../../../components/shared/GoBackButton";
 import UserInitials from "../../../../components/shared/UserInitials";
 import SourceMedicalRecordAccordion from "../../../../components/dashboard/medical-records/SourceMedicalRecordAccordion";
@@ -7,6 +7,7 @@ import { useGetMyDoctorById } from "../../../../hooks/medical-records/useGetMyDo
 import { useParams } from "react-router-dom";
 import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
 import ErrorMessage from "../../../../components/shared/ErrorMessage";
+import { getSpecialtyConfig } from "../../../../constants";
 
 export default function PatientMedicalRecordsDetailPage() {
   const { id } = useParams();
@@ -38,10 +39,17 @@ export default function PatientMedicalRecordsDetailPage() {
                   Dr. {data.myDoctor.full_name}
                 </h3>
                 <div className="flex items-center gap-1.5 text-gray-500">
-                  <Stethoscope className="w-4 h-4" />
-                  <span className="text-sm font-medium text-gray-500">
-                    {data.myDoctor.specialty.name}
-                  </span>
+                  {(() => {
+                    const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(data.myDoctor.specialty.name);
+                    return (
+                      <>
+                        <SpecialtyIcon className="w-4 h-4" />
+                        <span className="text-sm font-medium text-gray-500">
+                          {specialtyLabel}
+                        </span>
+                      </>
+                    );
+                  })()}
                 </div>
                 <div className="flex items-center gap-1.5 text-gray-400">
                   <Mail className="w-3.5 h-3.5" />
