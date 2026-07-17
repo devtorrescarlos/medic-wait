@@ -1,7 +1,8 @@
-import { Eye, Mail, Stethoscope } from "lucide-react";
+import { Eye, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Doctor } from "../../../types";
 import UserInitialts from "../../shared/UserInitials";
+import { getSpecialtyConfig } from "../../../constants";
 
 type DoctorCardProps = {
   doctor: Doctor;
@@ -18,8 +19,15 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
               Dr. {doctor.full_name}
             </h3>
             <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5">
-              <Stethoscope className="w-3.5 h-3.5" />
-              <span>{doctor.specialty?.name}</span>
+              {(() => {
+                const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(doctor.specialty?.name ?? "");
+                return (
+                  <>
+                    <SpecialtyIcon className="w-3.5 h-3.5" />
+                    <span>{specialtyLabel}</span>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>

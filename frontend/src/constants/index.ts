@@ -4,7 +4,17 @@ import {
   AlertCircle,
   Calendar,
   ClipboardCheck,
+  Stethoscope,
+  Heart,
+  Droplets,
+  Baby,
+  Users,
+  Bone,
+  Brain,
+  Smile,
+  HelpCircle,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export const ROLES = {
   DOCTOR: "Doctor",
@@ -72,6 +82,24 @@ export const statusConfig = {
     icon: CheckCircle,
   },
 };
+
+export const SPECIALTY_CONFIG: Record<
+  string,
+  { label: string; icon: LucideIcon }
+> = {
+  general: { label: "Medicina General", icon: Stethoscope },
+  cardiology: { label: "Cardiología", icon: Heart },
+  dermatology: { label: "Dermatología", icon: Droplets },
+  pediatrics: { label: "Pediatría", icon: Baby },
+  gynecology: { label: "Ginecología", icon: Users },
+  orthopedics: { label: "Ortopedia", icon: Bone },
+  neurology: { label: "Neurología", icon: Brain },
+  psychiatry: { label: "Psiquiatría", icon: Smile },
+  other: { label: "Otra", icon: HelpCircle },
+};
+
+export const getSpecialtyConfig = (name: string) =>
+  SPECIALTY_CONFIG[name] ?? { label: name, icon: HelpCircle };
 
 export const NOTIFICATION_ICON: Record<
   string,

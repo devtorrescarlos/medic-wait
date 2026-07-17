@@ -1,7 +1,8 @@
-import { Eye, Mail, Stethoscope } from "lucide-react";
+import { Eye, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Doctor } from "../../../types";
 import UserInitialts from "../../shared/UserInitials";
+import { getSpecialtyConfig } from "../../../constants";
 
 export default function DoctorRow({ doctor }: { doctor: Doctor }) {
   return (
@@ -22,8 +23,15 @@ export default function DoctorRow({ doctor }: { doctor: Doctor }) {
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Stethoscope className="w-4 h-4 text-gray-400 shrink-0" />
-          {doctor.specialty?.name}
+          {(() => {
+            const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(doctor.specialty?.name ?? "");
+            return (
+              <>
+                <SpecialtyIcon className="w-4 h-4 text-gray-400 shrink-0" />
+                {specialtyLabel}
+              </>
+            );
+          })()}
         </div>
       </td>
       <td className="px-4 py-3">

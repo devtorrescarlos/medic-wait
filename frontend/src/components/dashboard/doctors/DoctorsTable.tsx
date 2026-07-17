@@ -1,9 +1,10 @@
-import { useMemo } from "react";
 import { useGetSpecialties } from "../../../hooks/auth/useGetSpecialties";
 import TableFilters from "../../shared/TableFilters";
 import type { DoctorsData } from "../../../types";
 import DoctorRow from "./DoctorRow";
 import DoctorCard from "./DoctorCard";
+import Pagination from "../../shared/Pagination";
+import { getSpecialtyConfig } from "../../../constants";
 
 type DoctorsTableProps = {
   data: DoctorsData;
@@ -32,20 +33,6 @@ export default function DoctorsTable({
 }: DoctorsTableProps) {
   const { specialties, isLoading, error } = useGetSpecialties();
 
-  const filteredDoctors = useMemo(() => {
-    return data.doctors.filter((doctor) => {
-      const matchesSpecialty =
-        !inputSpecialty || doctor.specialty_id === inputSpecialty;
-      const matchesName =
-        !inputName ||
-        doctor.full_name?.toLowerCase().includes(inputName.toLowerCase());
-      const matchesEmail =
-        !inputEmail ||
-        doctor.email.toLowerCase().includes(inputEmail.toLowerCase());
-      return matchesSpecialty && matchesName && matchesEmail;
-    });
-  }, [inputSpecialty, inputName, inputEmail]);
-
   const filters = [
     {
       label: "Especialidad",
@@ -54,7 +41,7 @@ export default function DoctorsTable({
       onChange: handleSpecialtyFilter,
       options: [
         { value: "", label: "Todas las especialidades" },
-        ...specialties.map((s) => ({ value: s.id, label: s.name })),
+        ...specialties.map((s) => ({ value: s.id, label: getSpecialtyConfig(s.name).label })),
       ],
     },
     {
@@ -107,7 +94,7 @@ export default function DoctorsTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredDoctors.length === 0 ? (
+              {data.doctors.length === 0 ? (
                 <tr>
                   <td
                     colSpan={4}
@@ -117,7 +104,7 @@ export default function DoctorsTable({
                   </td>
                 </tr>
               ) : (
-                filteredDoctors.map((doctor) => (
+                data.doctors.map((doctor) => (
                   <DoctorRow key={doctor.id} doctor={doctor} />
                 ))
               )}
@@ -127,38 +114,24 @@ export default function DoctorsTable({
       </div>
 
       <div className="md:hidden space-y-3">
-        {filteredDoctors.length === 0 ? (
+        {data.doctors.length === 0 ? (
           <p className="text-center text-gray-500 py-12">
             No se encontraron doctores que coincidan con la búsqueda.
           </p>
         ) : (
-          filteredDoctors.map((doctor) => (
+          data.doctors.map((doctor) => (
             <DoctorCard key={doctor.id} doctor={doctor} />
           ))
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-500">
-          Total: {filteredDoctors.length} doctor(es)
-        </p>
-        <div className="flex items-center gap-1.5">
-          <button
-            disabled={page === 1}
-            onClick={() => handlePageChange(page - 1)}
-            className="px-3 py-1.5 text-sm text-gray-400 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Anterior
-          </button>
-          <button
-            disabled={page === data.totalPages}
-            onClick={() => handlePageChange(page + 1)}
-            className="px-3 py-1.5 text-sm text-gray-400 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Siguiente
-          </button>
-        </div>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={data.totalPages}
+        handlePageChange={handlePageChange}
+        label="doctores"
+        totalItems={data.totalItems}
+      />
     </div>
   );
 }

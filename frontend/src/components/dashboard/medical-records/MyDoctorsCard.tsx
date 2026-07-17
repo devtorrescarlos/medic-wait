@@ -1,6 +1,8 @@
-import { Eye, Mail, Stethoscope } from "lucide-react";
+import { Eye, Mail } from "lucide-react";
 import UserInitialts from "../../shared/UserInitials";
 import type { Doctor } from "../../../types";
+import { Link } from "react-router-dom";
+import { getSpecialtyConfig } from "../../../constants";
 
 export default function MyDoctorsCard({ doctor }: { doctor: Doctor }) {
   return (
@@ -13,10 +15,17 @@ export default function MyDoctorsCard({ doctor }: { doctor: Doctor }) {
               Dr. {doctor.full_name}
             </h3>
             <div className="flex items-center gap-1 mt-0.5">
-              <Stethoscope className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-              <span className="text-sm text-gray-500 truncate">
-                {doctor.specialty.name}
-              </span>
+              {(() => {
+                const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(doctor.specialty.name);
+                return (
+                  <>
+                    <SpecialtyIcon className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-sm text-gray-500 truncate">
+                      {specialtyLabel}
+                    </span>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -26,10 +35,13 @@ export default function MyDoctorsCard({ doctor }: { doctor: Doctor }) {
         </div>
       </div>
       <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
-        <button className="w-full px-4 py-2 text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer flex items-center justify-center gap-2">
+        <Link
+          to={`/dashboard/patient/history/${doctor.id}`}
+          className="w-full px-4 py-2 text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors cursor-pointer flex items-center justify-center gap-2"
+        >
           <Eye className="w-4 h-4" />
           Ver historias médicas
-        </button>
+        </Link>
       </div>
     </div>
   );

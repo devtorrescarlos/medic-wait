@@ -1,11 +1,11 @@
-import { Calendar, Clock, Users, Bell, Stethoscope, Plus, List, FileText, AlertCircle } from "lucide-react";
+import { Calendar, Users, Bell, Stethoscope, Plus, List, FileText, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import { usePatientDashboard } from "../../../hooks/dashboard/usePatientDashboard";
 import StatCard from "../../../components/dashboard/StatCard";
 import LoadingSpinner from "../../../components/shared/LoadingSpinner";
 import { formatTime, formatDate } from "../../../utils/datesAndTimeUtilities";
-import { statusConfig } from "../../../constants";
+import { statusConfig, getSpecialtyConfig } from "../../../constants";
 import UserInitials from "../../../components/shared/UserInitials";
 
 export default function PatientDashboard() {
@@ -232,9 +232,12 @@ export default function PatientDashboard() {
                       <p className="text-sm font-medium text-gray-800 truncate group-hover:text-emerald-600 transition-colors">
                         Dr. {doctor.full_name}
                       </p>
-                      <p className="text-xs text-gray-500">{doctor.specialty?.name}</p>
+                      <p className="text-xs text-gray-500">{getSpecialtyConfig(doctor.specialty?.name ?? "").label}</p>
                     </div>
-                    <Stethoscope className="w-4 h-4 text-gray-300 group-hover:text-emerald-400 transition-colors shrink-0" />
+                    {(() => {
+                      const { icon: SpecialtyIcon } = getSpecialtyConfig(doctor.specialty?.name ?? "");
+                      return <SpecialtyIcon className="w-4 h-4 text-gray-300 group-hover:text-emerald-400 transition-colors shrink-0" />;
+                    })()}
                   </Link>
                 ))}
               </div>

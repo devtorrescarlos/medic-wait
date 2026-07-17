@@ -1,9 +1,10 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { CalendarClock, Mail, Stethoscope, AlertCircle } from "lucide-react";
+import { CalendarClock, Mail, AlertCircle } from "lucide-react";
 import GoBackButton from "../../../../components/shared/GoBackButton";
 import UserInitialts from "../../../../components/shared/UserInitials";
 import { useGetDoctorById } from "../../../../hooks/doctors/useGetDoctorById";
 import DoctorSlotsCard from "../../../../components/dashboard/doctors/DoctorSlotsCard";
+import { getSpecialtyConfig } from "../../../../constants";
 
 export default function DoctorDetailPage() {
   const { id } = useParams();
@@ -39,8 +40,15 @@ export default function DoctorDetailPage() {
               </h3>
               <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 mt-1">
                 <div className="flex items-center gap-1.5 text-gray-500">
-                  <Stethoscope className="w-4 h-4 shrink-0" />
-                  <span className="text-sm">{data.doctor.specialty.name}</span>
+                  {(() => {
+                    const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(data.doctor.specialty.name);
+                    return (
+                      <>
+                        <SpecialtyIcon className="w-4 h-4 shrink-0" />
+                        <span className="text-sm">{specialtyLabel}</span>
+                      </>
+                    );
+                  })()}
                 </div>
                 <span className="hidden sm:block text-gray-300">|</span>
                 <div className="flex items-center gap-1.5 text-gray-500">
