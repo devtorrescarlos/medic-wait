@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import GoBackButton from "../../../../components/shared/GoBackButton";
 import MedicalRecordForm from "../../../../components/dashboard/medical-records/MedicalRecordForm";
 import MedicalRecordChatbot from "../../../../components/dashboard/medical-records/MedicalRecordChatbot";
-import { useAppointmentById } from "../../../../hooks/appointments/useAppointmentById";
+import { useAppointmentById } from "../../../../hooks/appointments/useGetAppointmentById";
 import type { MedicalRecordFormData } from "../../../../types";
 import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
 
