@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { getSlots } from "../../services/slotsAndSchedulesService";
 import type { SlotsData } from "../../types";
 
@@ -12,6 +12,7 @@ export const useSlots = (
   const { data, isLoading, error } = useQuery({
     queryKey: ["slots", page, limit, day, date, status],
     queryFn: () => getSlots(page, limit, day, date, status),
+    placeholderData: keepPreviousData,
   });
 
   return {
