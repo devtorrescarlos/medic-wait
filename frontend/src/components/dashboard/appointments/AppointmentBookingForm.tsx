@@ -8,15 +8,15 @@ import { useAppointmentsMutations } from "../../../hooks/appointments/useAppoint
 import { getSpecialtyConfig } from "../../../constants";
 
 interface AppointmentBookingFormProps {
-  data: DoctorByIdResponse;
+  doctorData: DoctorByIdResponse;
   slotId: string;
 }
 
 export default function AppointmentBookingForm({
-  data,
+  doctorData,
   slotId,
 }: AppointmentBookingFormProps) {
-  const currentSchedule = data.availableSlots.find((schedule) =>
+  const currentSchedule = doctorData.availableSlots.find((schedule) =>
     schedule.slots.some((slot) => slot.id === slotId),
   );
 
@@ -35,7 +35,7 @@ export default function AppointmentBookingForm({
 
   const handleOnSubmit = ({ reason }: { reason: string }) => {
     bookAppointment.mutate({
-      doctorId: data.doctor.id,
+      doctorId: doctorData.doctor.id,
       slotId: currentSlot.id,
       reason,
     });
@@ -58,7 +58,7 @@ export default function AppointmentBookingForm({
                 Doctor
               </span>
               <p className="font-semibold text-gray-700">
-                Dr. {data.doctor.full_name}
+                Dr. {doctorData.doctor.full_name}
               </p>
             </div>
           </div>
@@ -66,7 +66,7 @@ export default function AppointmentBookingForm({
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
             <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
               {(() => {
-                const { icon: SpecialtyIcon } = getSpecialtyConfig(data.doctor.specialty.name);
+                const { icon: SpecialtyIcon } = getSpecialtyConfig(doctorData.doctor.specialty.name);
                 return <SpecialtyIcon className="w-6 h-6 text-blue-600" />;
               })()}
             </div>
@@ -75,7 +75,7 @@ export default function AppointmentBookingForm({
                 Especialidad
               </span>
               <p className="font-semibold text-gray-700">
-                {getSpecialtyConfig(data.doctor.specialty.name).label}
+                {getSpecialtyConfig(doctorData.doctor.specialty.name).label}
               </p>
             </div>
           </div>

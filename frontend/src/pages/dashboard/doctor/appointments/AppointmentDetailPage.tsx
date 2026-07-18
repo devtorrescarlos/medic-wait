@@ -26,7 +26,7 @@ export default function AppointmentDetailPage() {
   }
 
   const { completeAppointment, cancelAppointment } = useAppointmentsMutations();
-  const { data, isLoading, error } = useAppointmentById(id);
+  const { appointment, isLoading, error } = useAppointmentById(id);
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <p>{error.message}</p>;
@@ -52,7 +52,7 @@ export default function AppointmentDetailPage() {
     setCancelModal(false);
   };
 
-  if (data)
+  if (appointment)
     return (
       <div className="p-4 lg:p-6 space-y-6">
         <div className="flex items-center justify-between">
@@ -67,7 +67,7 @@ export default function AppointmentDetailPage() {
 
           <div className="flex items-center gap-4">
             <GoBackButton to="/dashboard/doctor/appointments" />
-            {data.status === "completed" && (
+            {appointment.status === "completed" && (
               <Link
                 to={`/dashboard/doctor/medical-records/create/${id}`}
                 className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer px-4 py-2 rounded-lg transition-colors"
@@ -76,7 +76,7 @@ export default function AppointmentDetailPage() {
               </Link>
             )}
             <Link
-              to={`/dashboard/doctor/patients/${data.patient.id}`}
+              to={`/dashboard/doctor/patients/${appointment.patient.id}`}
               className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer px-4 py-2 rounded-lg transition-colors"
             >
               <FileText className="w-4 h-4" /> Ver historias médicas del
@@ -86,7 +86,7 @@ export default function AppointmentDetailPage() {
         </div>
 
         <AppointmentDetailCard
-          appointment={data}
+          appointment={appointment}
           handleCancelModal={handleCancelModal}
           handleCompleteModal={handleCompleteModal}
         />

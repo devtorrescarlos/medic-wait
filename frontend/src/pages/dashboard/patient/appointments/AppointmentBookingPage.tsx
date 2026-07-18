@@ -9,7 +9,7 @@ export default function AppointmentBookingPage() {
 
   if (!doctorId || !slotId) return <Navigate to="/dashboard/patient/doctors" />;
 
-  const { data, isLoading, error } = useGetDoctorById(doctorId);
+  const { doctorData, isLoading, error } = useGetDoctorById(doctorId);
 
   return (
     <div className="p-4 lg:p-6 space-y-6">
@@ -23,12 +23,12 @@ export default function AppointmentBookingPage() {
         <GoBackButton to={`/dashboard/patient/doctors/${doctorId}`} />
       </div>
       <div className="max-w-3xl mx-auto mt-2 p-6">
-        {isLoading && data === undefined ? (
+        {isLoading && doctorData === undefined ? (
           <LoadingSpinner />
         ) : error ? (
           <Navigate to="/dashboard/patient/doctors" />
         ) : (
-          data && <AppointmentBookingForm data={data} slotId={slotId} />
+          doctorData && <AppointmentBookingForm doctorData={doctorData} slotId={slotId} />
         )}
       </div>
     </div>

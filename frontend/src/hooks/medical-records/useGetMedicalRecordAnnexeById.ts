@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { MedicalRecordAnnexe } from "../../types";
 
 export const useGetMedicalRecordAnnexById = (id: string) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: medicalRecordAnnex, isLoading, error } = useQuery({
     queryKey: ["medical-record-annexe", id],
     queryFn: () => getMedicalRecordAnnexeById(id),
   });
 
-  return { medicalRecordAnnex: data as MedicalRecordAnnexe, isLoading, error };
+  return { medicalRecordAnnex: medicalRecordAnnex as MedicalRecordAnnexe, isLoading, error };
 };

@@ -7,11 +7,11 @@ const useGetPatients = (
   name: string,
   email: string,
 ) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: patientsData, isLoading, error } = useQuery({
     queryKey: ["patients", page, limit, name, email],
     queryFn: () => getPatients(page, limit, name, email),
   });
-  return { data, isLoading, error };
+  return { patientsData, isLoading, error };
 };
 
 export default useGetPatients;

@@ -5,7 +5,7 @@ import Pagination from "../../shared/Pagination";
 import { APPOINTMENT_STATUS_FILTER } from "../../../constants";
 
 type PatientAppointmentsTableProps = {
-  data: AppointmentsData;
+  appointmentsData: AppointmentsData;
   page: number;
   dateFilter: string;
   doctorInput: string;
@@ -18,7 +18,7 @@ type PatientAppointmentsTableProps = {
 };
 
 export default function PatientAppointmentsTable({
-  data,
+  appointmentsData,
   page,
   dateFilter,
   doctorInput,
@@ -61,12 +61,12 @@ export default function PatientAppointmentsTable({
       />
 
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        {data.appointments.length === 0 ? (
+        {appointmentsData.appointments.length === 0 ? (
           <p className="text-center text-gray-500 py-4">
             No se encontraron registros.
           </p>
         ) : (
-          data.appointments.map((appointment) => (
+          appointmentsData.appointments.map((appointment) => (
             <PatientAppointmentsCard
               key={appointment.id}
               appointment={appointment}
@@ -77,10 +77,10 @@ export default function PatientAppointmentsTable({
 
       <Pagination
         page={page}
-        totalPages={data.totalPages}
+        totalPages={appointmentsData.totalPages}
         handlePageChange={handlePageChange}
         label="citas"
-        totalItems={data.totalItems}
+        totalItems={appointmentsData.totalItems}
       />
     </div>
   );

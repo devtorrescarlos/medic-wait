@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { getSpecialtyConfig } from "../../../constants";
 
 type MyDoctorsTableProps = {
-  data: MyDoctorsResponse;
+  myDoctorsData: MyDoctorsResponse;
   page: number;
   inputName: string;
   inputEmail: string;
@@ -22,7 +22,7 @@ type MyDoctorsTableProps = {
 };
 
 export default function MyDoctorsTable({
-  data,
+  myDoctorsData,
   page,
   inputName,
   inputEmail,
@@ -99,7 +99,7 @@ export default function MyDoctorsTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {data.doctors.length === 0 ? (
+              {myDoctorsData.doctors.length === 0 ? (
                 <tr>
                   <td
                     colSpan={4}
@@ -109,7 +109,7 @@ export default function MyDoctorsTable({
                   </td>
                 </tr>
               ) : (
-                data.doctors.map((doctor: Doctor) => (
+                myDoctorsData.doctors.map((doctor: Doctor) => (
                   <tr
                     key={doctor.id}
                     className="hover:bg-gray-50 transition-colors"
@@ -166,7 +166,7 @@ export default function MyDoctorsTable({
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-4">
-        {data.doctors.length === 0 ? (
+        {myDoctorsData.doctors.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md border border-gray-100 p-12 text-center">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
               <Stethoscope className="w-8 h-8 text-gray-400" />
@@ -179,7 +179,7 @@ export default function MyDoctorsTable({
             </p>
           </div>
         ) : (
-          data.doctors.map((doctor: Doctor) => (
+          myDoctorsData.doctors.map((doctor: Doctor) => (
             <MyDoctorsCard key={doctor.id} doctor={doctor} />
           ))
         )}
@@ -187,10 +187,10 @@ export default function MyDoctorsTable({
 
       <Pagination
         page={page}
-        totalPages={data.totalPages}
+        totalPages={myDoctorsData.totalPages}
         handlePageChange={handlePageChange}
         label="doctores"
-        totalItems={data.totalItems}
+        totalItems={myDoctorsData.totalItems}
       />
     </div>
   );

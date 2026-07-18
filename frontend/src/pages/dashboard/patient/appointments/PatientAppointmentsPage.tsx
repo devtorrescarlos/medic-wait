@@ -18,7 +18,7 @@ export default function PatientAppointmentsPage() {
     handleCleanFilters,
     handlePageChange,
   } = useAppointmentsFilters();
-  const { data, isLoading, error } = usePatientAppointments(
+  const { appointmentsData, isLoading, error } = usePatientAppointments(
     page,
     limit,
     patientFilter || undefined,
@@ -33,13 +33,13 @@ export default function PatientAppointmentsPage() {
         <p className="text-gray-500 mt-1">Visualiza tus citas agendadas</p>
       </div>
 
-      {isLoading && data === undefined ? (
+      {isLoading && appointmentsData === undefined ? (
         <LoadingSpinner />
       ) : error ? (
         <ErrorMessage message={error.message} />
       ) : (
         <PatientAppointmentsTable
-          data={data}
+          appointmentsData={appointmentsData}
           page={page}
           dateFilter={dateFilter}
           handleDateFilterChange={handleDateFilter}

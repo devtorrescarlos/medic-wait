@@ -18,7 +18,7 @@ export const useSlotsMutations = () => {
       queryClient.invalidateQueries({ queryKey: ["slots"] });
       toast.success("Horario eliminado correctamente");
     },
-    onError: (error: any) => {
+    onError: (error) => {
       if (isAxiosError(error) && error.response) {
         toast.error(error.response.data.message);
       }
@@ -33,7 +33,7 @@ export const useSlotsMutations = () => {
       toast.success("Horario actualizado correctamente");
       navigate("/dashboard/doctor/slots");
     },
-    onError: (error: any) => {
+    onError: (error) => {
       if (isAxiosError(error) && error.response) {
         toast.error(error.response.data.message);
       }

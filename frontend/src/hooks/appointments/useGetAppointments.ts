@@ -9,14 +9,14 @@ export const useAppointments = (
   date?: string,
   status?: string,
 ) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: appointmentsData, isLoading, error } = useQuery({
     queryKey: ["appointments", page, limit, patient, date, status],
     queryFn: () => getAppointments(page, limit, patient, date, status),
     refetchInterval: 30000,
   });
 
   return {
-    data: data as AppointmentsData,
+    appointmentsData: appointmentsData as AppointmentsData,
     isLoading,
     error,
   };

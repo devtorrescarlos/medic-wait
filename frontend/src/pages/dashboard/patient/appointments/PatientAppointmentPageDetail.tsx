@@ -22,7 +22,7 @@ export default function PatientAppointmentPageDetail() {
   } = useForm({
     defaultValues: { cancellation_reason: "" },
   });
-  const { data, isLoading, error } = useAppointmentById(id as string);
+  const { appointment, isLoading, error } = useAppointmentById(id as string);
 
   if (!id) {
     return <Navigate to="/dashboard/patient/my-appointments" />;
@@ -71,7 +71,7 @@ export default function PatientAppointmentPageDetail() {
       </div>
 
       <PatientAppointmentDetailCard
-        appointment={data}
+        appointment={appointment}
         handleCancelModal={handleCancelModal}
         handleConfirmModal={handleConfirmModal}
       />

@@ -9,14 +9,14 @@ export const useSlots = (
   date?: string,
   status?: string,
 ) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: slotsData, isLoading, error } = useQuery({
     queryKey: ["slots", page, limit, day, date, status],
     queryFn: () => getSlots(page, limit, day, date, status),
     placeholderData: keepPreviousData,
   });
 
   return {
-    data: data as SlotsData,
+    slotsData: slotsData as SlotsData,
     isLoading,
     error,
   };

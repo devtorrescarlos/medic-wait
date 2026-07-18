@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Pagination from "../../shared/Pagination";
 
 type PatientsTableProps = {
-  data: PatientResponse;
+  patientsData: PatientResponse;
   page: number;
   nameInput: string;
   emailInput: string;
@@ -17,7 +17,7 @@ type PatientsTableProps = {
 };
 
 export default function PatientsTable({
-  data,
+  patientsData,
   page,
   nameInput,
   emailInput,
@@ -68,7 +68,7 @@ export default function PatientsTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {data.patients.length === 0 && (
+              {patientsData.patients.length === 0 && (
                 <tr>
                   <td
                     colSpan={3}
@@ -79,7 +79,7 @@ export default function PatientsTable({
                 </tr>
               )}
 
-              {data.patients.map((patient) => {
+              {patientsData.patients.map((patient) => {
                 return (
                   <tr
                     key={patient.id}
@@ -117,10 +117,10 @@ export default function PatientsTable({
 
       <Pagination
         page={page}
-        totalPages={data.totalPages}
+        totalPages={patientsData.totalPages}
         handlePageChange={handlePageChange}
         label="pacientes"
-        totalItems={data.totalItems}
+        totalItems={patientsData.totalItems}
       />
     </div>
   );

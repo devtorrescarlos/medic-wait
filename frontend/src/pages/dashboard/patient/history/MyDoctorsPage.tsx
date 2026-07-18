@@ -22,7 +22,7 @@ export default function MyDoctorsPage() {
     handleEmailFilter,
     handleSpecialtyFilter,
   } = useDoctorFilters();
-  const { data, isLoading, error } = useGetMyDoctors(
+  const { myDoctorsData, isLoading, error } = useGetMyDoctors(
     page,
     limit,
     name,
@@ -47,14 +47,14 @@ export default function MyDoctorsPage() {
         <GoBackButton to="/dashboard/patient" />
       </div>
 
-      {isLoading && data === undefined ? (
+      {isLoading && myDoctorsData === undefined ? (
         <LoadingSpinner />
       ) : error ? (
         <ErrorMessage message={error.message} />
       ) : (
         <>
           <MyDoctorsTable
-            data={data}
+            myDoctorsData={myDoctorsData}
             page={page}
             inputName={inputName}
             inputEmail={inputEmail}
