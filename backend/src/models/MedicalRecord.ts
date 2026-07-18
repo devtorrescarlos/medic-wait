@@ -33,10 +33,10 @@ export default class MedicalRecord extends Model {
   @Column({ type: DataType.UUID, allowNull: false })
   declare doctor_id: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING(1000), allowNull: false })
   declare initial_diagnosis: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING(1000), allowNull: false })
   declare treatment_plan: string;
 
   @CreatedAt
