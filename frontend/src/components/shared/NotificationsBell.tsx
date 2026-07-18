@@ -12,7 +12,7 @@ export default function NotificationsBell() {
   const [page, setPage] = useState(1);
   const limit = 10;
   const { unreadCount, isLoading: isCountLoading } = useGetUnreadCount();
-  const { data, isLoading, error } = useListNotifications(page, limit);
+  const { notificationsData, isLoading, error } = useListNotifications(page, limit);
   const { markAllAsRead } = useNotificationsMutations();
 
   if (error) return <ErrorMessage message={error.message} />;
@@ -41,18 +41,18 @@ export default function NotificationsBell() {
           </button>
         </div>
 
-        {isLoading && !data ? (
+        {isLoading && !notificationsData ? (
           <div className="flex justify-center py-8">
             <LoadingSpinner />
           </div>
-        ) : data && data.notifications.length === 0 ? (
+        ) : notificationsData && notificationsData.notifications.length === 0 ? (
           <div className="p-6 text-center text-sm text-gray-500">
             No tienes notificaciones pendientes
           </div>
         ) : (
           <>
             <div className="divide-y divide-gray-100 max-h-96 overflow-y-auto">
-              {data.notifications.map((notification) => (
+              {notificationsData.notifications.map((notification) => (
                 <NotificationCard
                   key={notification.id}
                   notification={notification}
@@ -62,17 +62,17 @@ export default function NotificationsBell() {
 
             <div className="flex items-center justify-between px-4 py-2.5 border-t border-gray-100 bg-gray-50/50">
               <button
-                disabled={!data || page <= 1}
+                disabled={!notificationsData || page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="text-xs text-gray-500 font-medium hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
                 ← Anterior
               </button>
               <span className="text-xs text-gray-400">
-                {data?.currentPage || 1} de {data?.totalPages || 1}
+                {notificationsData?.currentPage || 1} de {notificationsData?.totalPages || 1}
               </span>
               <button
-                disabled={!data || page >= (data?.totalPages || 1)}
+                disabled={!notificationsData || page >= (notificationsData?.totalPages || 1)}
                 onClick={() => setPage((p) => p + 1)}
                 className="text-xs text-gray-500 font-medium hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >

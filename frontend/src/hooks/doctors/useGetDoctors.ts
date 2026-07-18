@@ -9,11 +9,11 @@ export const useGetDoctors = (
   email?: string,
   specialty?: string,
 ) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: doctorsData, isLoading, error } = useQuery({
     queryKey: ["doctors", page, limit, name, email, specialty],
     queryFn: () => getDoctors(page, limit, name, email, specialty),
     placeholderData: keepPreviousData,
   });
 
-  return { data: data as DoctorsData, isLoading, error };
+  return { doctorsData: doctorsData as DoctorsData, isLoading, error };
 };

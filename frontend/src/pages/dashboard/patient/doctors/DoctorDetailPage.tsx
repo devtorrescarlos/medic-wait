@@ -11,7 +11,7 @@ export default function DoctorDetailPage() {
 
   if (!id) return <Navigate to="/dashboard/patient/doctors" />;
 
-  const { data, isLoading, error } = useGetDoctorById(id);
+  const { doctorData, isLoading, error } = useGetDoctorById(id);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -33,15 +33,15 @@ export default function DoctorDetailPage() {
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <div className="p-6">
           <div className="flex items-center gap-4">
-            <UserInitialts name={data.doctor.full_name} size="large" />
+            <UserInitialts name={doctorData.doctor.full_name} size="large" />
             <div className="flex-1 min-w-0">
               <h3 className="text-xl font-bold text-gray-800">
-                Dr. {data.doctor.full_name}
+                Dr. {doctorData.doctor.full_name}
               </h3>
               <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4 mt-1">
                 <div className="flex items-center gap-1.5 text-gray-500">
                   {(() => {
-                    const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(data.doctor.specialty.name);
+                    const { icon: SpecialtyIcon, label: specialtyLabel } = getSpecialtyConfig(doctorData.doctor.specialty.name);
                     return (
                       <>
                         <SpecialtyIcon className="w-4 h-4 shrink-0" />
@@ -53,7 +53,7 @@ export default function DoctorDetailPage() {
                 <span className="hidden sm:block text-gray-300">|</span>
                 <div className="flex items-center gap-1.5 text-gray-500">
                   <Mail className="w-4 h-4 shrink-0" />
-                  <span className="text-sm truncate">{data.doctor.email}</span>
+                  <span className="text-sm truncate">{doctorData.doctor.email}</span>
                 </div>
               </div>
             </div>
@@ -61,7 +61,7 @@ export default function DoctorDetailPage() {
         </div>
       </div>
 
-      {data.pendingAppointment && (
+      {doctorData.pendingAppointment && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
@@ -77,7 +77,7 @@ export default function DoctorDetailPage() {
             </div>
           </div>
           <Link
-            to={`/dashboard/patient/my-appointments/${data.pendingAppointment.id}`}
+            to={`/dashboard/patient/my-appointments/${doctorData.pendingAppointment.id}`}
             className="px-4 py-2 text-sm font-medium text-amber-700 bg-amber-100 border border-amber-300 rounded-lg hover:bg-amber-200 transition-colors cursor-pointer whitespace-nowrap"
           >
             Ver Cita
@@ -95,10 +95,10 @@ export default function DoctorDetailPage() {
           </div>
         </div>
         <div className="p-6 space-y-3">
-          {data.availableSlots && data.availableSlots.length > 0 ? (
+          {doctorData.availableSlots && doctorData.availableSlots.length > 0 ? (
             <DoctorSlotsCard
-              availableSlots={data.availableSlots}
-              doctorId={data.doctor.id}
+              availableSlots={doctorData.availableSlots}
+              doctorId={doctorData.doctor.id}
             />
           ) : (
             <div className="flex items-center justify-center py-8">

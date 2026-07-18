@@ -18,7 +18,7 @@ export default function AppointmentsPage() {
     handleCleanFilters,
     handlePageChange,
   } = useAppointmentsFilters();
-  const { data, isLoading, error } = useAppointments(
+  const { appointmentsData, isLoading, error } = useAppointments(
     page,
     limit,
     patientFilter || undefined,
@@ -39,7 +39,7 @@ export default function AppointmentsPage() {
       </div>
 
       <AppointmentsTable
-        data={data}
+        appointmentsData={appointmentsData}
         page={page}
         dateFilter={dateFilter}
         handleDateFilterChange={handleDateFilter}

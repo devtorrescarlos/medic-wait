@@ -5,6 +5,7 @@ import {
   deleteNotificationById,
   markAllAsRead,
 } from "../../services/notificationsService";
+import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 
 export const useNotificationsMutations = () => {
@@ -16,10 +17,12 @@ export const useNotificationsMutations = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["unread-count"] });
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Error al completar la cita";
-      toast.error(message);
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "Error al completar la cita",
+        );
+      }
     },
   });
 
@@ -29,10 +32,12 @@ export const useNotificationsMutations = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["unread-count"] });
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Error al eliminar la notificación";
-      toast.error(message);
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "Error al eliminar la notificación",
+        );
+      }
     },
   });
 
@@ -42,11 +47,13 @@ export const useNotificationsMutations = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["unread-count"] });
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message ||
-        "Error al marcar todas las notificaciones como leídas";
-      toast.error(message);
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            "Error al marcar todas las notificaciones como leídas",
+        );
+      }
     },
   });
 

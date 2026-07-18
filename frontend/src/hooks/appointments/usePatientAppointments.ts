@@ -9,7 +9,7 @@ export const usePatientAppointments = (
   date?: string,
   status?: string,
 ) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: appointmentsData, isLoading, error } = useQuery({
     queryKey: ["patientAppointments", page, limit, doctor, date, status],
     queryFn: () =>
       getAppointments(page, limit, undefined, date, status, doctor),
@@ -17,7 +17,7 @@ export const usePatientAppointments = (
   });
 
   return {
-    data: data as AppointmentsData,
+    appointmentsData: appointmentsData as AppointmentsData,
     isLoading,
     error,
   };

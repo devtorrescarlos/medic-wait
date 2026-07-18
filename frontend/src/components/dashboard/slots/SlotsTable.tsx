@@ -12,7 +12,7 @@ import Pagination from "../../shared/Pagination";
 import { daysOfWeek, SLOT_STATUS_FILTER } from "../../../constants";
 
 type SlotsTableProps = {
-  data: SlotsData;
+  slotsData: SlotsData;
   page: number;
   handlePageChange: (newPage: number) => void;
   statusFilter: string;
@@ -25,7 +25,7 @@ type SlotsTableProps = {
 };
 
 export default function SlotsTable({
-  data,
+  slotsData,
   page,
   handlePageChange,
   statusFilter,
@@ -75,7 +75,7 @@ export default function SlotsTable({
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        {data.slots.length === 0 ? (
+        {slotsData.slots.length === 0 ? (
           <p className="text-center text-gray-500 py-4">
             No se encontraron registros
           </p>
@@ -105,7 +105,7 @@ export default function SlotsTable({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {data.slots.map((slot) => (
+                {slotsData.slots.map((slot) => (
                   <tr
                     key={slot.id}
                     className="hover:bg-gray-50 transition-colors"
@@ -165,10 +165,10 @@ export default function SlotsTable({
 
       <Pagination
         page={page}
-        totalPages={data.totalPages}
+        totalPages={slotsData.totalPages}
         handlePageChange={handlePageChange}
         label="slots"
-        totalItems={data.totalItems}
+        totalItems={slotsData.totalItems}
       />
     </div>
   );

@@ -3,12 +3,12 @@ import { getPatientById } from "../../services/medicalRecordsService";
 import type { PatientByIdResponse } from "../../types";
 
 export const useGetPatientById = (id: string) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: patientData, isLoading, error } = useQuery({
     queryKey: ["patient", id],
     queryFn: () => getPatientById(id),
   });
   return {
-    data: data as PatientByIdResponse,
+    patientData: patientData as PatientByIdResponse,
     isLoading,
     error,
   };

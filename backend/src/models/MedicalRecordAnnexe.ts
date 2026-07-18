@@ -33,7 +33,7 @@ export default class MedicalRecordAnnexe extends Model {
   @Column({ type: DataType.UUID, allowNull: false })
   declare doctor_id: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING(1000), allowNull: false })
   declare content: string;
 
   @Column({

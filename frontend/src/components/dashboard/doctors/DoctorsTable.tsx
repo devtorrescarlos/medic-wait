@@ -7,7 +7,7 @@ import Pagination from "../../shared/Pagination";
 import { getSpecialtyConfig } from "../../../constants";
 
 type DoctorsTableProps = {
-  data: DoctorsData;
+  doctorsData: DoctorsData;
   page: number;
   inputName: string;
   inputEmail: string;
@@ -20,7 +20,7 @@ type DoctorsTableProps = {
 };
 
 export default function DoctorsTable({
-  data,
+  doctorsData,
   page,
   inputName,
   inputEmail,
@@ -94,7 +94,7 @@ export default function DoctorsTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {data.doctors.length === 0 ? (
+              {doctorsData.doctors.length === 0 ? (
                 <tr>
                   <td
                     colSpan={4}
@@ -104,7 +104,7 @@ export default function DoctorsTable({
                   </td>
                 </tr>
               ) : (
-                data.doctors.map((doctor) => (
+          doctorsData.doctors.map((doctor) => (
                   <DoctorRow key={doctor.id} doctor={doctor} />
                 ))
               )}
@@ -114,23 +114,23 @@ export default function DoctorsTable({
       </div>
 
       <div className="md:hidden space-y-3">
-        {data.doctors.length === 0 ? (
+        {doctorsData.doctors.length === 0 ? (
           <p className="text-center text-gray-500 py-12">
             No se encontraron doctores que coincidan con la búsqueda.
           </p>
         ) : (
-          data.doctors.map((doctor) => (
-            <DoctorCard key={doctor.id} doctor={doctor} />
-          ))
+                doctorsData.doctors.map((doctor) => (
+                  <DoctorRow key={doctor.id} doctor={doctor} />
+                ))
         )}
       </div>
 
       <Pagination
         page={page}
-        totalPages={data.totalPages}
+        totalPages={doctorsData.totalPages}
         handlePageChange={handlePageChange}
         label="doctores"
-        totalItems={data.totalItems}
+        totalItems={doctorsData.totalItems}
       />
     </div>
   );

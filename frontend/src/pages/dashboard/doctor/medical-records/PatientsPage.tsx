@@ -19,7 +19,7 @@ export default function PatientsPage() {
     page,
   } = usePatientsFilters();
 
-  const { data, isLoading, error } = useGetPatients(
+  const { patientsData, isLoading, error } = useGetPatients(
     page,
     limit,
     nameFilter,
@@ -45,7 +45,7 @@ export default function PatientsPage() {
       </div>
 
       <PatientsTable
-        data={data}
+        patientsData={patientsData}
         page={page}
         nameInput={nameInput}
         emailInput={emailInput}

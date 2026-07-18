@@ -16,7 +16,7 @@ export default function SlotsPage() {
     handleCleanFilters,
     handleStatusFilterChange,
   } = useSlotsFilters();
-  const { data, isLoading, error } = useSlots(
+  const { slotsData, isLoading, error } = useSlots(
     page,
     limit,
     dayFilter || undefined,
@@ -38,7 +38,7 @@ export default function SlotsPage() {
       </div>
 
       <SlotsTable
-        data={data}
+        slotsData={slotsData}
         page={page}
         handlePageChange={handlePageChange}
         statusFilter={statusFilter}

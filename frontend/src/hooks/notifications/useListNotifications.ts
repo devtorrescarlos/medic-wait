@@ -3,11 +3,11 @@ import { listNotifications } from "../../services/notificationsService";
 import type { NotificationsData } from "../../types";
 
 export const useListNotifications = (page: number, limit: number) => {
-  const { data, isLoading, error } = useQuery({
+  const { data: notificationsData, isLoading, error } = useQuery({
     queryKey: ["notifications", page, limit],
     queryFn: () => listNotifications(page, limit),
     placeholderData: keepPreviousData,
   });
 
-  return { data: data as NotificationsData, isLoading, error };
+  return { notificationsData: notificationsData as NotificationsData, isLoading, error };
 };

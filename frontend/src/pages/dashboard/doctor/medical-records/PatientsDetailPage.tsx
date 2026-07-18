@@ -9,7 +9,7 @@ import MedicalRecordsSection from "../../../../components/dashboard/medical-reco
 
 export default function PatientsDetailPage() {
   const { id } = useParams();
-  const { data, isLoading, error } = useGetPatientById(id!);
+  const { patientData, isLoading, error } = useGetPatientById(id!);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -27,11 +27,11 @@ export default function PatientsDetailPage() {
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <div className="p-6">
           <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-            <PatientInfoCard data={data} />
+            <PatientInfoCard patientData={patientData} />
             <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-full shrink-0">
               <CalendarCheck className="w-5 h-5 text-emerald-600" />
               <span className="text-sm font-semibold text-emerald-700">
-                Citas completadas: {data.appointmentsCount}
+                Citas completadas: {patientData.appointmentsCount}
               </span>
             </div>
           </div>
@@ -40,8 +40,8 @@ export default function PatientsDetailPage() {
 
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         <MedicalRecordsSection
-          medicalRecords={data.medicalRecords}
-          citaId={data.lastAppointment?.id!}
+          medicalRecords={patientData.medicalRecords}
+          citaId={patientData.lastAppointment?.id!}
         />
       </div>
     </div>
