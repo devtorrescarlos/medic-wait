@@ -6,7 +6,7 @@ import { ScheduleData } from "../../types/schedules.types";
 import { invalidateDoctorSlotsCache } from "../../utils/invalidateCache";
 import { toMinutes } from "../../utils/convertToMinutes";
 
-const DAYS_TO_GENERATE = 14;
+const DAYS_TO_GENERATE = parseInt(process.env.SLOT_REGENERATION_DAYS || "7", 10);
 const SLOT_DURATION = 60;
 
 export const createScheduleAndGenerateSlots = async (
@@ -102,8 +102,24 @@ const generateSlotsForSchedule = async (
   }
 
   if (slotsToCreate.length > 0) {
-    await Slot.bulkCreate(slotsToCreate);
-    slotsCreated = slotsToCreate.length;
+    const uniqueDates = [...new Set(slotsToCreate.map((s: any) => s.date))];
+    const existingSlots = await Slot.findAll({
+      where: {
+        schedule_id: schedule.id,
+        is_active: true,
+        date: { [Op.in]: uniqueDates },
+      },
+      attributes: ["date"],
+    });
+    const existingDates = new Set(existingSlots.map((s) => s.date));
+    const filteredSlots = slotsToCreate.filter(
+      (s: any) => !existingDates.has(s.date),
+    );
+
+    if (filteredSlots.length > 0) {
+      await Slot.bulkCreate(filteredSlots);
+      slotsCreated = filteredSlots.length;
+    }
   }
 
   await invalidateDoctorSlotsCache(doctorId);

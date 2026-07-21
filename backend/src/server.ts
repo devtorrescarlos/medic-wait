@@ -9,6 +9,7 @@ import medicalRecordsRoutes from "./modules/medical-records/medical-records-rout
 import doctorsRoutes from "./modules/doctors/doctors.routes";
 import notificationsRoutes from "./modules/notifications/notifications.routes";
 import { limiter } from "./config/limiter";
+import bullBoardAdapter from "./config/bullBoard";
 
 export const connectDB = async () => {
   try {
@@ -39,6 +40,7 @@ app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/medical-records", medicalRecordsRoutes);
 app.use("/api/doctors", doctorsRoutes);
 app.use("/api/notifications", notificationsRoutes);
+app.use("/admin/queues", bullBoardAdapter.getRouter());
 
 app.get("/", (req, res) => {
   res.json("OK!");

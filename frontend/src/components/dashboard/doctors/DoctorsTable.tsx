@@ -2,7 +2,6 @@ import { useGetSpecialties } from "../../../hooks/auth/useGetSpecialties";
 import TableFilters from "../../shared/TableFilters";
 import type { DoctorsData } from "../../../types";
 import DoctorRow from "./DoctorRow";
-import DoctorCard from "./DoctorCard";
 import Pagination from "../../shared/Pagination";
 import { getSpecialtyConfig } from "../../../constants";
 
@@ -41,7 +40,10 @@ export default function DoctorsTable({
       onChange: handleSpecialtyFilter,
       options: [
         { value: "", label: "Todas las especialidades" },
-        ...specialties.map((s) => ({ value: s.id, label: getSpecialtyConfig(s.name).label })),
+        ...specialties.map((s) => ({
+          value: s.id,
+          label: getSpecialtyConfig(s.name).label,
+        })),
       ],
     },
     {
@@ -104,7 +106,7 @@ export default function DoctorsTable({
                   </td>
                 </tr>
               ) : (
-          doctorsData.doctors.map((doctor) => (
+                doctorsData.doctors.map((doctor) => (
                   <DoctorRow key={doctor.id} doctor={doctor} />
                 ))
               )}
@@ -119,9 +121,9 @@ export default function DoctorsTable({
             No se encontraron doctores que coincidan con la búsqueda.
           </p>
         ) : (
-                doctorsData.doctors.map((doctor) => (
-                  <DoctorRow key={doctor.id} doctor={doctor} />
-                ))
+          doctorsData.doctors.map((doctor) => (
+            <DoctorRow key={doctor.id} doctor={doctor} />
+          ))
         )}
       </div>
 

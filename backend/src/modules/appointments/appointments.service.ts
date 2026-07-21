@@ -235,7 +235,7 @@ export const cancelAppointment = async (
   const now = new Date();
   const minutesRemaining = differenceInMinutes(assignedSlot.start_time, now);
 
-  if (minutesRemaining < 30) {
+  if (minutesRemaining >= 0 && minutesRemaining < 30) {
     throw {
       status: 403,
       message:

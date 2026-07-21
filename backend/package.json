@@ -39,8 +39,11 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@bull-board/api": "^8.1.2",
+    "@bull-board/express": "^8.1.2",
     "axios": "^1.14.0",
     "bcrypt": "^6.0.0",
+    "bullmq": "^5.80.9",
     "cors": "^2.8.6",
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",

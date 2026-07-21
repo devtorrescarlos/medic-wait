@@ -1,4 +1,12 @@
-import { Calendar, Users, Bell, Stethoscope, Plus, List, FileText, AlertCircle } from "lucide-react";
+import {
+  Calendar,
+  Users,
+  Bell,
+  Plus,
+  List,
+  FileText,
+  AlertCircle,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import { usePatientDashboard } from "../../../hooks/dashboard/usePatientDashboard";
@@ -23,10 +31,26 @@ export default function PatientDashboard() {
   if (isLoading) return <LoadingSpinner />;
 
   const quickActions = [
-    { label: "Buscar doctores", to: "/dashboard/patient/doctors", icon: Stethoscope, color: "text-emerald-600 bg-emerald-50 border-emerald-200 hover:bg-emerald-100" },
-    { label: "Mis citas", to: "/dashboard/patient/my-appointments", icon: List, color: "text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-100" },
-    { label: "Mi historial", to: "/dashboard/patient/history", icon: FileText, color: "text-purple-600 bg-purple-50 border-purple-200 hover:bg-purple-100" },
-    { label: "Agendar cita", to: "/dashboard/patient/doctors", icon: Plus, color: "text-orange-600 bg-orange-50 border-orange-200 hover:bg-orange-100" },
+    {
+      label: "Mis citas",
+      to: "/dashboard/patient/my-appointments",
+      icon: List,
+      color: "text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-100",
+    },
+    {
+      label: "Mi historial",
+      to: "/dashboard/patient/history",
+      icon: FileText,
+      color:
+        "text-purple-600 bg-purple-50 border-purple-200 hover:bg-purple-100",
+    },
+    {
+      label: "Agendar cita",
+      to: "/dashboard/patient/doctors",
+      icon: Plus,
+      color:
+        "text-orange-600 bg-orange-50 border-orange-200 hover:bg-orange-100",
+    },
   ];
 
   return (
@@ -74,12 +98,13 @@ export default function PatientDashboard() {
           <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-gray-800">Mis próximas citas</h3>
+                <h3 className="font-semibold text-gray-800">
+                  Mis próximas citas
+                </h3>
                 <p className="text-sm text-gray-500 mt-0.5">
                   {upcomingAppointments.length === 0
                     ? "No tienes citas programadas"
-                    : `${upcomingAppointments.length} cita${upcomingAppointments.length !== 1 ? "s" : ""} programada${upcomingAppointments.length !== 1 ? "s" : ""}`
-                  }
+                    : `${upcomingAppointments.length} cita${upcomingAppointments.length !== 1 ? "s" : ""} programada${upcomingAppointments.length !== 1 ? "s" : ""}`}
                 </p>
               </div>
               {nextAppointment && (
@@ -106,7 +131,10 @@ export default function PatientDashboard() {
             ) : (
               <div className="divide-y divide-gray-100">
                 {upcomingAppointments.map((appointment) => {
-                  const status = statusConfig[appointment.status as keyof typeof statusConfig] || statusConfig.pending;
+                  const status =
+                    statusConfig[
+                      appointment.status as keyof typeof statusConfig
+                    ] || statusConfig.pending;
                   const StatusIcon = status.icon;
                   return (
                     <Link
@@ -114,7 +142,7 @@ export default function PatientDashboard() {
                       to={`/dashboard/patient/my-appointments/${appointment.id}`}
                       className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors group"
                     >
-                      <div className="hidden sm:flex flex-col items-center min-w-[80px]">
+                      <div className="hidden sm:flex flex-col items-center min-w-20">
                         <span className="text-xs font-semibold text-gray-800">
                           {formatDate(appointment.slot.date)}
                         </span>
@@ -123,7 +151,7 @@ export default function PatientDashboard() {
                         </span>
                       </div>
 
-                      <div className="sm:hidden flex flex-col items-center min-w-[72px]">
+                      <div className="sm:hidden flex flex-col items-center min-w-18">
                         <span className="text-sm font-semibold text-gray-800">
                           {formatTime(appointment.slot.start_time)}
                         </span>
@@ -133,7 +161,10 @@ export default function PatientDashboard() {
                       </div>
 
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <UserInitials name={appointment.doctor.full_name} size="small" />
+                        <UserInitials
+                          name={appointment.doctor.full_name}
+                          size="small"
+                        />
                         <div>
                           <p className="text-sm font-medium text-gray-800 truncate group-hover:text-emerald-600 transition-colors">
                             Dr. {appointment.doctor.full_name}
@@ -144,9 +175,13 @@ export default function PatientDashboard() {
                         </div>
                       </div>
 
-                      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${status.bg} border ${status.border} shrink-0`}>
+                      <div
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${status.bg} border ${status.border} shrink-0`}
+                      >
                         <StatusIcon className={`w-3.5 h-3.5 ${status.text}`} />
-                        <span className={`text-xs font-medium ${status.text}`}>{status.label}</span>
+                        <span className={`text-xs font-medium ${status.text}`}>
+                          {status.label}
+                        </span>
                       </div>
                     </Link>
                   );
@@ -193,10 +228,18 @@ export default function PatientDashboard() {
               </div>
               <div className="p-5">
                 <div className="flex items-center gap-3 mb-4">
-                  <UserInitials name={nextAppointment.doctor.full_name} size="medium" />
+                  <UserInitials
+                    name={nextAppointment.doctor.full_name}
+                    size="medium"
+                  />
                   <div>
-                    <p className="text-sm font-medium text-gray-800">Dr. {nextAppointment.doctor.full_name}</p>
-                    <p className="text-xs text-gray-500">{formatDate(nextAppointment.slot.date)} — {formatTime(nextAppointment.slot.start_time)}</p>
+                    <p className="text-sm font-medium text-gray-800">
+                      Dr. {nextAppointment.doctor.full_name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDate(nextAppointment.slot.date)} —{" "}
+                      {formatTime(nextAppointment.slot.start_time)}
+                    </p>
                   </div>
                 </div>
                 <Link
@@ -212,7 +255,9 @@ export default function PatientDashboard() {
           {recentDoctors.length > 0 && (
             <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
               <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">Últimos doctores</h3>
+                <h3 className="font-semibold text-gray-800">
+                  Últimos doctores
+                </h3>
                 <Link
                   to="/dashboard/patient/history"
                   className="text-xs font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
@@ -232,11 +277,17 @@ export default function PatientDashboard() {
                       <p className="text-sm font-medium text-gray-800 truncate group-hover:text-emerald-600 transition-colors">
                         Dr. {doctor.full_name}
                       </p>
-                      <p className="text-xs text-gray-500">{getSpecialtyConfig(doctor.specialty?.name ?? "").label}</p>
+                      <p className="text-xs text-gray-500">
+                        {getSpecialtyConfig(doctor.specialty?.name ?? "").label}
+                      </p>
                     </div>
                     {(() => {
-                      const { icon: SpecialtyIcon } = getSpecialtyConfig(doctor.specialty?.name ?? "");
-                      return <SpecialtyIcon className="w-4 h-4 text-gray-300 group-hover:text-emerald-400 transition-colors shrink-0" />;
+                      const { icon: SpecialtyIcon } = getSpecialtyConfig(
+                        doctor.specialty?.name ?? "",
+                      );
+                      return (
+                        <SpecialtyIcon className="w-4 h-4 text-gray-300 group-hover:text-emerald-400 transition-colors shrink-0" />
+                      );
                     })()}
                   </Link>
                 ))}
