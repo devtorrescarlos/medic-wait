@@ -18,7 +18,7 @@
     "dev": "nodemon src/index.ts",
     "dev:api": "nodemon src/index.ts --api",
     "build": "tsc",
-    "start": "npm run migrate && node dist/index.js",
+    "start": "npm run migrate && npm run seed && node dist/index.js",
     "test:concurrency": "nodemon test-concurrency.ts",
     "migrate": "sequelize-cli db:migrate",
     "migrate:undo": "sequelize-cli db:migrate:undo",
