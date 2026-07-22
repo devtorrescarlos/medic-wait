@@ -9,7 +9,7 @@ import LoadingSpinner from "../../../../components/shared/LoadingSpinner";
 
 export default function MedicalRecordCreatePage() {
   const { id } = useParams();
-  const { data: appointment, isLoading } = useAppointmentById(id!);
+  const { appointment, isLoading } = useAppointmentById(id!);
   const methods = useForm<MedicalRecordFormData>({
     defaultValues: {
       initial_diagnosis: "",
