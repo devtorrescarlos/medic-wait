@@ -1,5 +1,5 @@
 import { Trash2, Pencil } from "lucide-react";
-import type { Slot, SlotsData } from "../../../types";
+import type { SlotsData } from "../../../types";
 import { Link } from "react-router-dom";
 import { useSlotsMutations } from "../../../hooks/slots/useSlotsMutations";
 import {

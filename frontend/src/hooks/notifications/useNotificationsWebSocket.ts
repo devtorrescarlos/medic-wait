@@ -1,7 +1,8 @@
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const SOCKET_URL = import.meta.env.VITE_API_URL
-  .replace(/^https?:\/\//, "ws://")
+  .replace(/^https:\/\//, "wss://")
+  .replace(/^http:\/\//, "ws://")
   .replace(/\/api$/, "/ws");
 
 export default function useNotificationsWebSocket() {
