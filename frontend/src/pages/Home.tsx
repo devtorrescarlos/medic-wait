@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/auth/useAuth";
 
 export default function Home() {
+  const { isAuthenticated, role } = useAuth();
+
+  const dashboardPath = role === "doctor" ? "/dashboard/doctor" : "/dashboard/patient";
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-teal-50 to-white">
       <header className="px-6 lg:px-16 py-5 flex items-center justify-between">
@@ -24,18 +28,29 @@ export default function Home() {
         </div>
 
         <nav className="flex items-center gap-4">
-          <Link
-            to="/auth/login"
-            className="text-gray-600 hover:text-emerald-600 font-medium transition-colors"
-          >
-            Iniciar sesión
-          </Link>
-          <Link
-            to="/auth/create-account"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors"
-          >
-            Registrarse
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              to={dashboardPath}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors"
+            >
+              Ir al Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/auth/login"
+                className="text-gray-600 hover:text-emerald-600 font-medium transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                to="/auth/create-account"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors"
+              >
+                Registrarse
+              </Link>
+            </>
+          )}
         </nav>
       </header>
 
@@ -74,18 +89,29 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/auth/create-account"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-xl font-semibold text-lg transition-colors shadow-lg shadow-emerald-200"
-                >
-                  Comenzar ahora
-                </Link>
-                <Link
-                  to="/auth/login"
-                  className="border-2 border-gray-200 hover:border-emerald-500 text-gray-700 hover:text-emerald-600 px-8 py-3.5 rounded-xl font-semibold text-lg transition-colors"
-                >
-                  Ya tengo cuenta
-                </Link>
+                {isAuthenticated ? (
+                  <Link
+                    to={dashboardPath}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-xl font-semibold text-lg transition-colors shadow-lg shadow-emerald-200"
+                  >
+                    Ir al Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      to="/auth/create-account"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-xl font-semibold text-lg transition-colors shadow-lg shadow-emerald-200"
+                    >
+                      Comenzar ahora
+                    </Link>
+                    <Link
+                      to="/auth/login"
+                      className="border-2 border-gray-200 hover:border-emerald-500 text-gray-700 hover:text-emerald-600 px-8 py-3.5 rounded-xl font-semibold text-lg transition-colors"
+                    >
+                      Ya tengo cuenta
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 
@@ -345,12 +371,21 @@ export default function Home() {
                 Únete a MedicWait y descubre cómo la tecnología puede
                 simplificar la gestión de tu consultorio médico.
               </p>
-              <Link
-                to="/auth/create-account"
-                className="inline-block bg-white text-emerald-700 hover:bg-emerald-50 px-10 py-4 rounded-xl font-semibold text-lg transition-colors shadow-lg"
-              >
-                Crear cuenta gratuita
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  to={dashboardPath}
+                  className="inline-block bg-white text-emerald-700 hover:bg-emerald-50 px-10 py-4 rounded-xl font-semibold text-lg transition-colors shadow-lg"
+                >
+                  Ir al Dashboard
+                </Link>
+              ) : (
+                <Link
+                  to="/auth/create-account"
+                  className="inline-block bg-white text-emerald-700 hover:bg-emerald-50 px-10 py-4 rounded-xl font-semibold text-lg transition-colors shadow-lg"
+                >
+                  Crear cuenta gratuita
+                </Link>
+              )}
             </div>
           </div>
         </section>
