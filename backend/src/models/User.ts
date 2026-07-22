@@ -9,6 +9,7 @@ import {
   CreatedAt,
   UpdatedAt,
   BelongsTo,
+  AllowNull,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
 import Role from "./Role";
@@ -48,6 +49,9 @@ export default class User extends Model {
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   declare is_approved_by_admin: boolean;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare refresh_token: string | null;
 
   @CreatedAt
   @Column({ type: DataType.DATE, defaultValue: () => new Date() })

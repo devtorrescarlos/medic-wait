@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws";
-import { verifyJWT } from "../utils/jwt";
+import { verifyAccessToken } from "../utils/jwt";
 import { format } from "date-fns";
 import Appointment from "../models/Appointment";
 import Slot from "../models/Slot";
@@ -51,7 +51,7 @@ export const attachWebSocketServer = (server: any) => {
         }
 
         try {
-            const decoded = verifyJWT(token);
+            const decoded = verifyAccessToken(token);
             socket.userId = decoded.id;
             clients.set(decoded.id, socket);
             sendJson(socket, { type: "authenticated", userId: decoded.id });

@@ -6,7 +6,7 @@ export type AuthContextType = {
   isLoading: boolean;
   isAuthenticated: boolean;
   role: string;
-  login: (token: string) => void;
+  login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
 };
 

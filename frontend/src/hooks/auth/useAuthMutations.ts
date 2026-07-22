@@ -35,9 +35,9 @@ export const useAuthMutations = () => {
             }
         },
         onSuccess: (data) => {
-            login(data.token);
+            login(data.accessToken, data.refreshToken);
             toast.success(data.message);
-            const decoded = decodeJWT(data.token);
+            const decoded = decodeJWT(data.accessToken);
             const role = decoded?.role || 'patient';
             navigate(`/dashboard/${role}`);
         }

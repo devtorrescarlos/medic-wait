@@ -5,9 +5,11 @@ import type { RegisterData, LoginData } from "../../types/auth.types";
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
 import { sendVerificationEmail, sendForgotPasswordEmail } from "../../emails";
 import {
-  generateJWT,
+  generateAccessToken,
+  generateRefreshToken,
   generateVerificationJWT,
-  verifyVerificationJWT,
+  verifyRefreshToken,
+  verifyEmailVerificationJWT,
 } from "../../utils/jwt";
 import { getUserRole } from "../../utils";
 import Specialty from "../../models/Specialty";
@@ -94,9 +96,13 @@ export const login = async (userData: LoginData) => {
     };
   }
 
-  const token = generateJWT(user.id, userRole || "patient");
+  const accessToken = generateAccessToken(user.id, userRole || "patient");
+  const refreshToken = generateRefreshToken(user.id);
 
-  return token;
+  user.refresh_token = refreshToken;
+  await user.save();
+
+  return { accessToken, refreshToken };
 };
 
 export const resendConfirmationEmail = async (email: string) => {
@@ -118,7 +124,7 @@ export const resendConfirmationEmail = async (email: string) => {
 };
 
 export const confirmAccount = async (token: string) => {
-  const decoded = verifyVerificationJWT(token);
+  const decoded = verifyEmailVerificationJWT(token);
   const user = await User.findByPk(decoded.id);
 
   if (!user) {
@@ -153,7 +159,7 @@ export const forgotPassword = async (email: string) => {
 };
 
 export const verifyToken = async (token: string) => {
-  const decoded = verifyVerificationJWT(token);
+  const decoded = verifyEmailVerificationJWT(token);
   const user = await User.findByPk(decoded.id);
 
   if (!user) {
@@ -170,7 +176,7 @@ export const resetPasswordWithToken = async (
   token: string,
   password: string,
 ) => {
-  const decoded = verifyVerificationJWT(token);
+  const decoded = verifyEmailVerificationJWT(token);
   const user = await User.findByPk(decoded.id);
 
   if (!user) {
@@ -190,4 +196,47 @@ export const resetPasswordWithToken = async (
 export const getSpecialties = async () => {
   const specialties = await Specialty.findAll();
   return specialties;
+};
+
+export const refreshToken = async (refreshToken: string) => {
+  const user = await User.findOne({ where: { refresh_token: refreshToken } });
+
+  if (!user) {
+    throw {
+      status: 401,
+      message: "Token no válido",
+    };
+  }
+
+  const decoded = verifyRefreshToken(refreshToken);
+
+  if (decoded.id !== user.id) {
+    throw {
+      status: 401,
+      message: "Token no válido",
+    };
+  }
+
+  const userRole = await getUserRole(user.id);
+  const accessToken = generateAccessToken(user.id, userRole || "patient");
+  const newRefreshToken = generateRefreshToken(user.id);
+
+  user.refresh_token = newRefreshToken;
+  await user.save();
+
+  return { accessToken, refreshToken: newRefreshToken };
+};
+
+export const logout = async (userId: string) => {
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    throw {
+      status: 404,
+      message: "Usuario no encontrado",
+    };
+  }
+
+  user.refresh_token = null;
+  await user.save();
 };
