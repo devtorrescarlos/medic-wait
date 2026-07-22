@@ -85,6 +85,10 @@ router.post(
 
 router.get("/user", authenticate, AuthController.getUser);
 
+router.post("/refresh", AuthController.refreshToken);
+
+router.post("/logout", authenticate, AuthController.logout);
+
 router.get("/specialties", AuthController.getSpecialties);
 
 export default router;

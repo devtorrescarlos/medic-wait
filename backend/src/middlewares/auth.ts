@@ -32,7 +32,15 @@ export const authenticate = async (
   try {
     const decoded = jwt.verify(token, process.env.SUPER_SECRET as string) as {
       id: string;
+      type: "access";
     };
+
+    if (decoded.type !== "access") {
+      throw {
+        status: 401,
+        message: "Token no válido",
+      };
+    }
 
     const user = await User.findByPk(decoded.id);
 
@@ -46,8 +54,10 @@ export const authenticate = async (
 
     req.user = user;
     return next();
-  } catch (error) {
-    console.log("Error:", error);
+  } catch (error: any) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ error: "TOKEN_EXPIRED" });
+    }
     return res.status(401).json({
       error: "Token no válido",
     });

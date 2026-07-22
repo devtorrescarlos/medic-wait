@@ -22,8 +22,8 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const userData: LoginData = req.body;
   try {
-    const token = await authService.login(userData);
-    res.status(200).json({ token });
+    const { accessToken, refreshToken } = await authService.login(userData);
+    res.status(200).json({ accessToken, refreshToken });
   } catch (error: any) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });
@@ -118,6 +118,31 @@ export const getSpecialties = async (req: Request, res: Response) => {
   try {
     const specialties = await authService.getSpecialties();
     res.status(200).json(specialties);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const { refreshToken } = req.body;
+  try {
+    const tokens = await authService.refreshToken(refreshToken);
+    res.status(200).json(tokens);
+  } catch (error: any) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    await authService.logout(req.user!.id);
+    res.status(200).json({ message: "Sesión cerrada correctamente" });
   } catch (error: any) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });
