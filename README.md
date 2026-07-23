@@ -221,12 +221,12 @@ Todos los endpoints están prefijados con `/api/`. JWT se envía via header `Aut
 ## Deuda técnica
 
 - [ ] Configurar framework de testing (Jest/Vitest) y cubrir servicios críticos
-- [ ] Implementar migraciones automáticas en el arranque del contenedor
+- [✓] Implementar migraciones automáticas en el arranque del contenedor
 - [ ] Centralizar manejo de errores con middleware global
-- [ ] Implementar refresh tokens para mejorar seguridad de sesiones
+- [✓] Implementar refresh tokens para mejorar seguridad de sesiones
 - [ ] Agregar paginación server-side en todos los endpoints de listado
 - [ ] Agregar tests de integración para concurrencia de citas
-- [ ] Agregar cola de tareas para limpieza de slots no agendados
+- [✓] Agregar cola de tareas para limpieza de slots no agendados
 - [ ] Agregar ZOD para validación de datos
 
 ---
