@@ -79,8 +79,23 @@ module.exports = {
       { full_name: "Valeria Soto", email: "valeria.soto@paciente.com", age: 36 },
     ];
 
-    // Create doctors with assigned specialties
-    const doctorUsers = doctors.map((doc, index) => ({
+    const allEmails = [...doctors, ...patients].map((u) => u.email);
+    const emailPlaceholders = allEmails.map((_, i) => `$${i + 1}`).join(", ");
+    const existingUsers = await queryInterface.sequelize.query(
+      `SELECT email FROM users WHERE email IN (${emailPlaceholders})`,
+      { bind: allEmails, type: Sequelize.QueryTypes.SELECT },
+    );
+    const existingEmailSet = new Set(existingUsers.map((u) => u.email));
+
+    const newDoctors = doctors.filter((d) => !existingEmailSet.has(d.email));
+    const newPatients = patients.filter((p) => !existingEmailSet.has(p.email));
+
+    if (newDoctors.length === 0 && newPatients.length === 0) {
+      console.log("All demo users already exist — skipping user seed");
+      return;
+    }
+
+    const doctorUsers = newDoctors.map((doc, index) => ({
       id: uuid(),
       full_name: doc.full_name,
       email: doc.email,
@@ -94,8 +109,7 @@ module.exports = {
       updated_at: now,
     }));
 
-    // Create patients
-    const patientUsers = patients.map((pat) => ({
+    const patientUsers = newPatients.map((pat) => ({
       id: uuid(),
       full_name: pat.full_name,
       email: pat.email,
@@ -111,7 +125,6 @@ module.exports = {
 
     await queryInterface.bulkInsert("users", [...doctorUsers, ...patientUsers]);
 
-    // Assign roles
     const userRoles = [
       ...doctorUsers.map((user) => ({
         user_id: user.id,
@@ -127,7 +140,9 @@ module.exports = {
       })),
     ];
 
-    await queryInterface.bulkInsert("user_roles", userRoles);
+    if (userRoles.length > 0) {
+      await queryInterface.bulkInsert("user_roles", userRoles);
+    }
   },
 
   async down(queryInterface, Sequelize) {
